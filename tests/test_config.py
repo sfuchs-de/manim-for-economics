@@ -70,6 +70,13 @@ transformation = "None"
         load_data_manifest(tmp_path)
 
 
+def test_manifest_requires_at_least_one_dataset(tmp_path):
+    (tmp_path / "data_manifest.toml").write_text("", encoding="utf-8")
+
+    with pytest.raises(ConfigError, match="at least one"):
+        load_data_manifest(tmp_path)
+
+
 def test_project_rejects_missing_entrypoint(tmp_path):
     (tmp_path / "project.toml").write_text(
         """
@@ -120,4 +127,24 @@ theme = "chartreuse"
         encoding="utf-8",
     )
     with pytest.raises(ConfigError, match="unknown theme"):
+        load_project(tmp_path)
+
+
+def test_project_rejects_non_positive_render_configuration(tmp_path):
+    (tmp_path / "scenes.py").write_text("", encoding="utf-8")
+    (tmp_path / "project.toml").write_text(
+        """
+[project]
+title = "Bad render"
+entrypoint = "scenes.py"
+scene = "Scene"
+output_file = "bad"
+
+[render]
+preview_fps = 0
+""".strip(),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ConfigError, match="preview_fps"):
         load_project(tmp_path)

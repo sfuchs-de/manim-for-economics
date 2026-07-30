@@ -38,9 +38,9 @@ and example content. See `NOTICE.md` for paper-specific terms.
 Tag tested public snapshots:
 
 ```bash
-git tag -a v0.1.0 -m "Manim for Economics v0.1.0"
-git push origin v0.1.0
+git tag -a v0.2.0 -m "Manim for Economics v0.2.0"
+git push origin v0.2.0
 ```
 
 Describe changes to the starter API and example in the GitHub release notes.
-There is no PyPI publication in v0.1.0.
+There is no PyPI publication in v0.2.0.

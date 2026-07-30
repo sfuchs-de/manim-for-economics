@@ -47,4 +47,4 @@ fade, preserves the video stream, and writes an AAC audio master below
 
 For narration-led work, establish the narration script and timestamps before
 animation. This repository documents that extension but does not automate
-speech generation or alignment in v0.1.0.
+speech generation or alignment in v0.2.0.

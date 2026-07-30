@@ -164,7 +164,8 @@ paper and its replication files.
 | `econ-manim preview PROJECT` | Render an 854×480, 15 fps draft |
 | `econ-manim preview PROJECT --overlay` | Add title-safe and content-region guides |
 | `econ-manim frames PROJECT` | Extract declared inspection frames and a contact sheet |
-| `econ-manim qa PROJECT` | Check source, provenance, checksums, and rendered media |
+| `econ-manim frames PROJECT --transition-sweep` | Build separate settled, five-point transition, and combined contact sheets |
+| `econ-manim qa PROJECT` | Check source, provenance, checksums, inspection coverage, media profile, decoding, and audio expectations |
 | `econ-manim render PROJECT` | Render the silent 1920×1080, 30 fps master |
 | `econ-manim audio PROJECT` | Mix documented music or narration into the master |
 
@@ -191,7 +192,7 @@ renders, restricted worker microdata, or the uncleared soundtrack.
 
 ```bash
 uv run econ-manim preview examples/economic_diversity --overlay
-uv run econ-manim frames examples/economic_diversity
+uv run econ-manim frames examples/economic_diversity --transition-sweep
 uv run econ-manim render examples/economic_diversity
 uv run econ-manim qa examples/economic_diversity
 ```
@@ -266,6 +267,7 @@ Continue with the checkpoint prompts in
 - [Add narration or music](docs/audio.md)
 - [Publish responsibly](docs/publishing.md)
 - [Troubleshoot](docs/troubleshooting.md)
+- [Read the changelog](CHANGELOG.md)
 
 ## License and citation
 

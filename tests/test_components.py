@@ -4,6 +4,8 @@ import pytest
 
 from econ_manim import (
     ECON_DARK,
+    IVORY,
+    MIDNIGHT,
     AgentToken,
     CausalChain,
     ChannelDecomposition,
@@ -135,6 +137,36 @@ def test_channel_decomposition_exposes_incremental_parts():
     assert len(decomposition.channels) == 3
     assert len(decomposition.arrows) == 3
     assert decomposition.channels.get_center()[0] < decomposition.outcome.get_center()[0]
+
+
+@pytest.mark.parametrize("theme", (MIDNIGHT, IVORY))
+def test_v020_components_construct_in_both_themes(theme):
+    components = (
+        PathFlow(((-2, 0, 0), (2, 0, 0)), label="response", theme=theme),
+        ChannelDecomposition(
+            (("direct", theme.blue), ("spillover", theme.green)),
+            outcome="outcome",
+            theme=theme,
+        ),
+        CoefficientPlot(
+            (("estimate", -0.2, -0.3, -0.1, theme.blue),),
+            theme=theme,
+        ),
+        ImpulseResponsePlot(
+            {"response": ([0.0, -0.2, -0.1], theme.blue)},
+            horizons=(-1, 0, 1),
+            confidence_intervals={
+                "response": ([-0.1, -0.4, -0.3], [0.1, 0.0, 0.1]),
+            },
+            event_time=0,
+            theme=theme,
+        ),
+    )
+
+    for component in components:
+        assert component.width > 0
+        assert component.height > 0
+        assert_within_frame(component)
 
 
 def test_visual_formats_construct_without_hidden_data():

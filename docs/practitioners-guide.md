@@ -469,7 +469,7 @@ declared in
 
 ```bash
 uv run econ-manim preview projects/my-paper --overlay
-uv run econ-manim frames projects/my-paper
+uv run econ-manim frames projects/my-paper --transition-sweep
 uv run econ-manim qa projects/my-paper
 ```
 
@@ -482,7 +482,7 @@ To inspect the complete real example:
 
 ```bash
 uv run econ-manim preview examples/economic_diversity --overlay
-uv run econ-manim frames examples/economic_diversity
+uv run econ-manim frames examples/economic_diversity --transition-sweep
 uv run econ-manim qa examples/economic_diversity
 ```
 
@@ -570,11 +570,11 @@ Render the representative scene:
 
 ```bash
 uv run econ-manim preview projects/my-paper --overlay
-uv run econ-manim frames projects/my-paper
+uv run econ-manim frames projects/my-paper --transition-sweep
 ```
 
-Inspect the contact sheet and individual frames under
-`projects/my-paper/build/qa/`.
+Inspect the separate settled-state and transition-sweep sheets, the combined
+contact sheet, and the individual frames under `projects/my-paper/build/qa/`.
 
 Check:
 
