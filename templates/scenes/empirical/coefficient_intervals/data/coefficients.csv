@@ -1,0 +1,4 @@
+order,label,estimate,lower,upper,color_role
+1,baseline group,-0.18,-0.31,-0.05,blue
+2,comparison group,-0.42,-0.60,-0.24,orange
+3,pooled estimate,-0.29,-0.39,-0.19,green

@@ -1,0 +1,11 @@
+[[dataset]]
+id = "path-flow-recipe"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/path_flow.csv"
+sha256 = "2cb2bc2e013e0a77a8891cf2f68530c261f5829dabb71484cca596f6a2d89ace"
+transformation = "Coordinates are read directly as schematic route points."
+displayed_values = ["Two illustrative paths and their labels"]
+note = "These coordinates are not empirical observations."

@@ -12,6 +12,7 @@ from manim import (
     Arrow,
     Line,
     Rectangle,
+    RoundedRectangle,
     Text,
     VGroup,
 )
@@ -220,3 +221,73 @@ class DivergingBarChart(VGroup):
         self.labels = labels
         self.bars = bars
         self.values = values
+
+
+class ChannelDecomposition(VGroup):
+    """Connect named economic channels to one common outcome."""
+
+    def __init__(
+        self,
+        channels: Sequence[tuple[str, str]],
+        *,
+        outcome: str = "outcome",
+        outcome_color: str | None = None,
+        max_channels: int = 4,
+        theme: VideoTheme = ECON_DARK,
+    ) -> None:
+        if not 2 <= len(channels) <= max_channels:
+            raise ValueError(
+                f"a channel decomposition requires between two and {max_channels} channels"
+            )
+
+        channel_groups = VGroup()
+        for label, color in channels:
+            text = Text(label, font_size=20, color=color)
+            if text.width > 2.45:
+                text.scale_to_fit_width(2.45)
+            box = RoundedRectangle(
+                width=2.85,
+                height=0.62,
+                corner_radius=0.11,
+                stroke_color=color,
+                stroke_width=1.5,
+                fill_color=theme.card,
+                fill_opacity=0.94,
+            )
+            text.move_to(box)
+            channel_groups.add(VGroup(box, text))
+        channel_groups.arrange(DOWN, buff=0.28).move_to(LEFT * 2.45)
+
+        resolved_outcome_color = outcome_color or theme.foreground
+        outcome_text = Text(outcome, font_size=23, color=resolved_outcome_color)
+        if outcome_text.width > 2.55:
+            outcome_text.scale_to_fit_width(2.55)
+        outcome_box = RoundedRectangle(
+            width=3.05,
+            height=0.86,
+            corner_radius=0.14,
+            stroke_color=resolved_outcome_color,
+            stroke_width=1.8,
+            fill_color=theme.card,
+            fill_opacity=0.96,
+        )
+        outcome_text.move_to(outcome_box)
+        outcome_group = VGroup(outcome_box, outcome_text).move_to(RIGHT * 2.45)
+
+        arrows = VGroup()
+        for channel, (_, color) in zip(channel_groups, channels, strict=True):
+            arrows.add(
+                Arrow(
+                    channel.get_right(),
+                    outcome_group.get_left(),
+                    buff=0.13,
+                    color=color,
+                    stroke_width=2.0,
+                    tip_length=0.13,
+                )
+            )
+
+        super().__init__(channel_groups, arrows, outcome_group)
+        self.channels = channel_groups
+        self.arrows = arrows
+        self.outcome = outcome_group

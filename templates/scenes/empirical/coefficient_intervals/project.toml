@@ -1,0 +1,28 @@
+[project]
+title = "Coefficient Intervals Recipe"
+entrypoint = "recipe.py"
+scene = "CoefficientIntervalsRecipe"
+output_file = "coefficient_intervals_recipe"
+theme = "midnight"
+
+[render]
+preview_width = 854
+preview_height = 480
+preview_fps = 15
+width = 1920
+height = 1080
+fps = 30
+key_times = [1.8, 4.0]
+
+[[qa.frame]]
+time = 1.8
+label = "first interval appears against the reference"
+kind = "transition"
+
+[[qa.frame]]
+time = 4.0
+label = "complete coefficient comparison"
+kind = "settled"
+
+[audio]
+enabled = false

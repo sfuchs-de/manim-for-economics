@@ -15,6 +15,14 @@ from pathlib import Path
 
 from .config import ConfigError, load_project, sha256_file, validate_data_manifest
 from .media import extract_contact_sheet, probe_video
+from .scene_templates import (
+    SCENE_TEMPLATES,
+    get_scene_template,
+    scene_categories,
+    scene_template_destination,
+    scene_template_ids,
+    scene_template_source,
+)
 from .templates import PROJECT_TEMPLATES, get_template, template_names, template_source
 from .theme import THEMES, theme_names
 
@@ -186,6 +194,85 @@ def command_themes(args: argparse.Namespace) -> int:
             f"background {theme.background} · ink {theme.foreground} · "
             f"blue {theme.blue} · green {theme.green} · orange {theme.orange}.\n"
         )
+    return 0
+
+
+def command_scenes(args: argparse.Namespace) -> int:
+    selected = [
+        template
+        for template in SCENE_TEMPLATES
+        if args.category is None or template.category == args.category
+    ]
+    for template in selected:
+        print(f"{template.identifier}\n  {template.title}")
+        print(f"  Use when: {template.use_when}.")
+        print(f"  Avoid when: {template.avoid_when}.")
+        print(f"  Inputs: {', '.join(template.required_inputs)}.")
+        print(f"  Informed by: {template.source_inspiration}.\n")
+    return 0
+
+
+def command_preview_scene(args: argparse.Namespace) -> int:
+    repo_root = Path(__file__).resolve().parents[2]
+    source = scene_template_source(args.identifier, repo_root)
+    video = _render(
+        source,
+        preview=True,
+        scene=get_scene_template(args.identifier).preview_class,
+        overlay=args.overlay,
+        theme=args.theme,
+    )
+    print(json.dumps(asdict(probe_video(video)), indent=2))
+    return 0
+
+
+def command_add_scene(args: argparse.Namespace) -> int:
+    repo_root = Path(__file__).resolve().parents[2]
+    source = scene_template_source(args.identifier, repo_root)
+    project_root = Path(args.project).expanduser().resolve()
+    load_project(project_root)
+    destination = scene_template_destination(args.identifier, project_root)
+    if destination.exists():
+        raise ConfigError(f"scene recipe already exists: {destination}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(
+        source,
+        destination,
+        ignore=shutil.ignore_patterns(
+            "build",
+            "preview",
+            "__pycache__",
+            "*.pyc",
+            "project.toml",
+            "paper_brief.md",
+            "storyboard.md",
+        ),
+    )
+    manifest_path = destination / "data_manifest.toml"
+    manifest_text = manifest_path.read_text(encoding="utf-8")
+    recipe_prefix = destination.relative_to(project_root).as_posix()
+    manifest_text = re.sub(
+        r'(?m)^local_path = "([^"]+)"$',
+        lambda match: f'local_path = "{recipe_prefix}/{match.group(1)}"',
+        manifest_text,
+    )
+    manifest_path.write_text(manifest_text, encoding="utf-8")
+    for package in (
+        project_root / "recipes",
+        destination.parent,
+        destination,
+    ):
+        init_file = package / "__init__.py"
+        init_file.touch(exist_ok=True)
+    category, name = args.identifier.split(".", 1)
+    module = f"recipes.{category}.{name.replace('-', '_')}.recipe"
+    print(f"Added {args.identifier} to {destination}")
+    print(f"Import its build function from {module}.")
+    print(f"Call build_{name.replace('-', '_')}(self) inside your ResearchScene.")
+    print(
+        f"Merge the entries in {destination / 'data_manifest.toml'} "
+        "into the project manifest."
+    )
     return 0
 
 
@@ -383,6 +470,30 @@ def build_parser() -> argparse.ArgumentParser:
         help="list the available visual theme presets",
     )
     themes.set_defaults(handler=command_themes)
+
+    scenes = subparsers.add_parser(
+        "scenes",
+        help="list the available atomic scene recipes",
+    )
+    scenes.add_argument("--category", choices=scene_categories())
+    scenes.set_defaults(handler=command_scenes)
+
+    preview_scene = subparsers.add_parser(
+        "preview-scene",
+        help="render one atomic scene recipe",
+    )
+    preview_scene.add_argument("identifier", choices=scene_template_ids())
+    preview_scene.add_argument("--theme", choices=theme_names())
+    preview_scene.add_argument("--overlay", action="store_true")
+    preview_scene.set_defaults(handler=command_preview_scene)
+
+    add_scene = subparsers.add_parser(
+        "add-scene",
+        help="copy an atomic recipe into an existing project",
+    )
+    add_scene.add_argument("project")
+    add_scene.add_argument("identifier", choices=scene_template_ids())
+    add_scene.set_defaults(handler=command_add_scene)
 
     checksum = subparsers.add_parser(
         "checksum",

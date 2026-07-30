@@ -1,0 +1,11 @@
+[[dataset]]
+id = "impulse-response-recipe"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/impulse_response.csv"
+sha256 = "1fc2f34070356adda32893fd4630ecba181d810cce1c4e0aee31c3ebfebd3ddb"
+transformation = "Horizons, estimates, and confidence bounds are plotted directly."
+displayed_values = ["Nine illustrative horizons and confidence intervals"]
+note = "These values are not estimates from a paper."

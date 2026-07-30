@@ -1,0 +1,28 @@
+[project]
+title = "Impulse Response Recipe"
+entrypoint = "recipe.py"
+scene = "ImpulseResponseRecipe"
+output_file = "impulse_response_recipe"
+theme = "midnight"
+
+[render]
+preview_width = 854
+preview_height = 480
+preview_fps = 15
+width = 1920
+height = 1080
+fps = 30
+key_times = [1.7, 3.6]
+
+[[qa.frame]]
+time = 1.7
+label = "event marker and confidence band enter"
+kind = "transition"
+
+[[qa.frame]]
+time = 3.6
+label = "complete dynamic response"
+kind = "settled"
+
+[audio]
+enabled = false

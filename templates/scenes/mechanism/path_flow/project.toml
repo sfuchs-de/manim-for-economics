@@ -1,0 +1,28 @@
+[project]
+title = "Path Flow Recipe"
+entrypoint = "recipe.py"
+scene = "PathFlowRecipe"
+output_file = "path_flow_recipe"
+theme = "midnight"
+
+[render]
+preview_width = 854
+preview_height = 480
+preview_fps = 15
+width = 1920
+height = 1080
+fps = 30
+key_times = [1.6, 3.7]
+
+[[qa.frame]]
+time = 1.6
+label = "routes enter the stable system"
+kind = "transition"
+
+[[qa.frame]]
+time = 3.7
+label = "both adjustment routes are visible"
+kind = "settled"
+
+[audio]
+enabled = false
