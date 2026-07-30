@@ -65,7 +65,7 @@ uv run econ-manim demo
 uv run ruff check .
 uv run pytest
 uv run econ-manim preview <project> --overlay
-uv run econ-manim frames <project>
+uv run econ-manim frames <project> --transition-sweep
 uv run econ-manim qa <project>
 uv run econ-manim render <project>
 ```

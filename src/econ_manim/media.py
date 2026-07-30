@@ -9,6 +9,10 @@ from pathlib import Path
 import av
 from PIL import Image, ImageDraw
 
+from .config import InspectionFrame
+
+TRANSITION_SWEEP_OFFSETS = (-0.50, -0.25, 0.0, 0.25, 0.50)
+
 
 @dataclass(frozen=True, slots=True)
 class VideoInfo:
@@ -64,6 +68,32 @@ def frame_at(path: str | Path, time_seconds: float) -> Image.Image:
         return candidate.to_image().convert("RGB")
 
 
+def transition_sweep_frames(
+    frames: tuple[InspectionFrame, ...],
+    duration: float,
+    *,
+    offsets: tuple[float, ...] = TRANSITION_SWEEP_OFFSETS,
+) -> tuple[InspectionFrame, ...]:
+    """Expand declared transitions into clamped before/during/after samples."""
+
+    if duration <= 0:
+        raise ValueError("video duration must be positive")
+    sweep: list[InspectionFrame] = []
+    for frame in frames:
+        if frame.kind != "transition":
+            continue
+        for offset in offsets:
+            time = min(duration, max(0.0, frame.time + offset))
+            sweep.append(
+                InspectionFrame(
+                    time=time,
+                    label=f"{frame.label} ({offset:+.2f}s)",
+                    kind="transition",
+                )
+            )
+    return tuple(sweep)
+
+
 def extract_contact_sheet(
     video: str | Path,
     times: tuple[float, ...],
@@ -73,6 +103,8 @@ def extract_contact_sheet(
     kinds: tuple[str, ...] | None = None,
     columns: int = 3,
     thumbnail_width: int = 480,
+    sheet_name: str = "contact_sheet.png",
+    frames_subdir: str = "frames",
 ) -> Path:
     if not times:
         raise ValueError("at least one inspection time is required")
@@ -81,7 +113,7 @@ def extract_contact_sheet(
     if kinds is not None and len(kinds) != len(times):
         raise ValueError("kinds must match the number of inspection times")
     target = Path(output_dir).resolve()
-    frames_dir = target / "frames"
+    frames_dir = target / frames_subdir
     frames_dir.mkdir(parents=True, exist_ok=True)
     for old_frame in frames_dir.glob("*.png"):
         old_frame.unlink()
@@ -110,6 +142,6 @@ def extract_contact_sheet(
         draw.text((x + 10, y + image.height + 6), metadata, fill="#F1E9DA")
         if label:
             draw.text((x + 10, y + image.height + 27), label, fill="#9DAAB7")
-    sheet_path = target / "contact_sheet.png"
+    sheet_path = target / sheet_name
     sheet.save(sheet_path)
     return sheet_path

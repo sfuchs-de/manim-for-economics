@@ -13,8 +13,21 @@ import sys
 from dataclasses import asdict
 from pathlib import Path
 
-from .config import ConfigError, load_project, sha256_file, validate_data_manifest
-from .media import extract_contact_sheet, probe_video
+from .config import (
+    ConfigError,
+    InspectionFrame,
+    ProjectConfig,
+    load_project,
+    sha256_file,
+    validate_data_manifest,
+)
+from .media import (
+    VideoInfo,
+    extract_contact_sheet,
+    frame_at,
+    probe_video,
+    transition_sweep_frames,
+)
 from .scene_templates import (
     SCENE_TEMPLATES,
     get_scene_template,
@@ -348,6 +361,67 @@ def command_render(args: argparse.Namespace) -> int:
 def command_frames(args: argparse.Namespace) -> int:
     config = load_project(args.project)
     video = Path(args.video).resolve() if args.video else _find_video(config)
+    if args.transition_sweep:
+        if args.times:
+            raise ConfigError("--times cannot be combined with --transition-sweep")
+        info = probe_video(video)
+        settled = tuple(
+            frame
+            for frame in config.render.inspection_frames
+            if frame.kind == "settled"
+        )
+        transitions = transition_sweep_frames(
+            config.render.inspection_frames,
+            info.duration,
+        )
+        if not settled or not transitions:
+            raise ConfigError(
+                "--transition-sweep requires at least one settled and one "
+                "transition qa.frame"
+            )
+        qa_dir = config.root / "build" / "qa"
+
+        def make_sheet(
+            frames: tuple[InspectionFrame, ...],
+            *,
+            sheet_name: str,
+            frames_subdir: str,
+            columns: int,
+        ) -> Path:
+            return extract_contact_sheet(
+                video,
+                tuple(frame.time for frame in frames),
+                qa_dir,
+                labels=tuple(frame.label for frame in frames),
+                kinds=tuple(frame.kind for frame in frames),
+                columns=columns,
+                sheet_name=sheet_name,
+                frames_subdir=frames_subdir,
+            )
+
+        settled_sheet = make_sheet(
+            settled,
+            sheet_name="settled_states.png",
+            frames_subdir="frames/settled",
+            columns=3,
+        )
+        transition_sheet = make_sheet(
+            transitions,
+            sheet_name="transition_sweep.png",
+            frames_subdir="frames/transitions",
+            columns=5,
+        )
+        combined = tuple(sorted((*settled, *transitions), key=lambda frame: frame.time))
+        combined_sheet = make_sheet(
+            combined,
+            sheet_name="contact_sheet.png",
+            frames_subdir="frames/combined",
+            columns=5,
+        )
+        print(f"settled states: {settled_sheet}")
+        print(f"transition sweep: {transition_sheet}")
+        print(f"combined: {combined_sheet}")
+        return 0
     if args.times:
         times = tuple(args.times)
         labels = None
@@ -371,11 +445,54 @@ def command_frames(args: argparse.Namespace) -> int:
     return 0
 
 
+def _validate_media_profile(config: ProjectConfig, info: VideoInfo) -> str:
+    profiles = {
+        "preview": (
+            config.render.preview_width,
+            config.render.preview_height,
+            config.render.preview_fps,
+        ),
+        "master": (
+            config.render.width,
+            config.render.height,
+            config.render.fps,
+        ),
+    }
+    for name, (width, height, fps) in profiles.items():
+        fps_tolerance = max(0.1, fps * 0.005)
+        if (
+            info.width == width
+            and info.height == height
+            and abs(info.fps - fps) <= fps_tolerance
+        ):
+            return name
+    expected = " or ".join(
+        f"{name} {width}x{height} at {fps} fps"
+        for name, (width, height, fps) in profiles.items()
+    )
+    raise ConfigError(
+        f"rendered media does not match a configured profile; expected {expected}, "
+        f"got {info.width}x{info.height} at {info.fps:.3f} fps"
+    )
+
+
+def _validate_inspection_coverage(config: ProjectConfig) -> None:
+    kinds = {frame.kind for frame in config.render.inspection_frames}
+    missing = {"settled", "transition"} - kinds
+    if missing:
+        raise ConfigError(
+            "qa.frame requires at least one settled and one transition frame; "
+            f"missing: {', '.join(sorted(missing))}"
+        )
+
+
 def command_qa(args: argparse.Namespace) -> int:
     config = load_project(args.project)
     print(f"[OK] project: {config.title}")
     py_compile.compile(str(config.entrypoint), doraise=True)
     print(f"[OK] source compiles: {config.entrypoint.name}")
+    _validate_inspection_coverage(config)
+    print("[OK] inspection coverage: settled and transition frames declared")
     for message in validate_data_manifest(config.root):
         print(f"[OK] data: {message}")
     try:
@@ -386,6 +503,15 @@ def command_qa(args: argparse.Namespace) -> int:
     info = probe_video(video)
     if info.width <= 0 or info.height <= 0 or info.duration <= 0:
         raise ConfigError(f"invalid rendered media: {info}")
+    profile = _validate_media_profile(config, info)
+    print(f"[OK] media profile: {profile}")
+    is_final_audio = config.audio.enabled and (
+        video.parent.name == "final" or video.stem.endswith("_audio")
+    )
+    if is_final_audio and not info.has_audio:
+        raise ConfigError("configured final audio render has no audio stream")
+    if not is_final_audio and info.has_audio:
+        raise ConfigError("silent preview/master unexpectedly contains an audio stream")
     out_of_range = [
         frame
         for frame in config.render.inspection_frames
@@ -398,6 +524,10 @@ def command_qa(args: argparse.Namespace) -> int:
         raise ConfigError(
             f"inspection frames exceed the {info.duration:.2f}s video duration: {details}"
         )
+    decode_times = (0.0, max(0.0, info.duration / 2))
+    for time in decode_times:
+        frame_at(video, time)
+    print("[OK] media decoding: opening and midpoint frames")
     print(json.dumps(asdict(info), indent=2))
     return 0
 
@@ -546,6 +676,11 @@ def build_parser() -> argparse.ArgumentParser:
     frames.add_argument("project")
     frames.add_argument("--video")
     frames.add_argument("--times", type=float, nargs="+")
+    frames.add_argument(
+        "--transition-sweep",
+        action="store_true",
+        help="sample each declared transition at ±0.50s and ±0.25s",
+    )
     frames.set_defaults(handler=command_frames)
 
     qa = subparsers.add_parser("qa", help="validate source, provenance, and rendered media")

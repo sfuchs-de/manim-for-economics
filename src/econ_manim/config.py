@@ -117,6 +117,29 @@ def load_project(project: str | Path) -> ProjectConfig:
                 "use settled or transition"
             )
         inspection_frames.append(InspectionFrame(time=time, label=label, kind=kind))
+    render_config = RenderConfig(
+        preview_width=int(render.get("preview_width", 854)),
+        preview_height=int(render.get("preview_height", 480)),
+        preview_fps=int(render.get("preview_fps", 15)),
+        width=int(render.get("width", 1920)),
+        height=int(render.get("height", 1080)),
+        fps=int(render.get("fps", 30)),
+        key_times=key_times,
+        inspection_frames=tuple(inspection_frames),
+    )
+    positive_render_fields = {
+        "preview_width": render_config.preview_width,
+        "preview_height": render_config.preview_height,
+        "preview_fps": render_config.preview_fps,
+        "width": render_config.width,
+        "height": render_config.height,
+        "fps": render_config.fps,
+    }
+    invalid = [name for name, value in positive_render_fields.items() if value <= 0]
+    if invalid:
+        raise ConfigError(
+            f"{path} has non-positive render fields: {', '.join(invalid)}"
+        )
     return ProjectConfig(
         root=root,
         title=str(section["title"]),
@@ -124,16 +147,7 @@ def load_project(project: str | Path) -> ProjectConfig:
         scene=str(section["scene"]),
         output_file=str(section["output_file"]),
         theme=theme,
-        render=RenderConfig(
-            preview_width=int(render.get("preview_width", 854)),
-            preview_height=int(render.get("preview_height", 480)),
-            preview_fps=int(render.get("preview_fps", 15)),
-            width=int(render.get("width", 1920)),
-            height=int(render.get("height", 1080)),
-            fps=int(render.get("fps", 30)),
-            key_times=key_times,
-            inspection_frames=tuple(inspection_frames),
-        ),
+        render=render_config,
         audio=AudioConfig(
             enabled=bool(audio.get("enabled", False)),
             track=str(audio.get("track", "")),
@@ -148,6 +162,8 @@ def load_data_manifest(project: str | Path) -> tuple[DatasetEntry, ...]:
     path = root / "data_manifest.toml"
     raw = _read_toml(path)
     datasets = raw.get("dataset", ())
+    if not datasets:
+        raise ConfigError(f"{path} requires at least one [[dataset]] entry")
     entries = []
     for index, item in enumerate(datasets):
         identifier = str(item.get("id", "")).strip()

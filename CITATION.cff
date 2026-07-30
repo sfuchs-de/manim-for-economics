@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If this starter helps your research communication, please cite the repository."
 title: "Manim for Economics"
 type: software
-version: 0.1.0
+version: 0.2.0
 date-released: 2026-07-30
 authors:
   - family-names: Fuchs
@@ -15,6 +15,6 @@ preferred-citation:
     - family-names: Fuchs
       given-names: Simon
   title: "Manim for Economics"
-  version: 0.1.0
+  version: 0.2.0
   year: 2026
   url: "https://github.com/sfuchs-de/manim-for-economics"
