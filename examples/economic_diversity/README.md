@@ -9,6 +9,8 @@ history. It demonstrates:
 - First- and second-order welfare intuition before the published decomposition.
 - Separate evaluation of positive and negative realizations in the French shock
   series.
+- An adjustment-and-welfare narrative format: one worker's routes persist from
+  the choice problem through the sufficient-statistic interpretation.
 
 Paper: <https://doi.org/10.1016/j.jinteco.2025.104184>
 
@@ -21,6 +23,10 @@ Repository preview:
 [silent 480p video](preview/economic_diversity_preview.mp4) ·
 [full contact sheet](preview/contact_sheet.png) ·
 [verification record](QA.md)
+
+The format is generalized in
+[`docs/visual-formats.md`](../../docs/visual-formats.md) and
+[`templates/storyboards/adjustment-welfare.md`](../../templates/storyboards/adjustment-welfare.md).
 
 Render from the repository root:
 

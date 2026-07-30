@@ -2,6 +2,7 @@
 
 from .charts import EquationBuild, ImpulseResponsePlot, ResultTable, ShockDistribution
 from .components import CityLaborMarket, WorkerToken, adjustment_route
+from .formats import CausalChain, DivergingBarChart, LinkedViews
 from .layout import LayoutError, assert_no_overlap, assert_within_frame
 from .scene import ResearchScene
 from .theme import ECON_DARK, VideoTheme
@@ -9,9 +10,12 @@ from .theme import ECON_DARK, VideoTheme
 __all__ = [
     "ECON_DARK",
     "CityLaborMarket",
+    "CausalChain",
+    "DivergingBarChart",
     "EquationBuild",
     "ImpulseResponsePlot",
     "LayoutError",
+    "LinkedViews",
     "ResearchScene",
     "ResultTable",
     "ShockDistribution",

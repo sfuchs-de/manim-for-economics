@@ -10,6 +10,17 @@ Who should understand the video, and what can they safely be assumed to know?
 
 What does the paper establish that was not known before?
 
+## Narrative format
+
+Choose one format from `docs/visual-formats.md` and explain why it fits:
+
+- mechanism-led;
+- adjustment and welfare;
+- empirical-result-led;
+- method or theory.
+
+Name the single economic object that should persist across beats.
+
 ## Economic mechanism
 
 Describe the mechanism without notation. Name the economic agents, choices,
@@ -30,6 +41,9 @@ evaluated separately.
 
 Assign one stable color to each economically meaningful object. Prefer direct
 labels over legends and small multiples over crowded composite charts.
+
+State which pairs of representations must remain synchronized, such as a
+network and a cost curve or worker routes and a welfare term.
 
 ## Claims to exclude
 

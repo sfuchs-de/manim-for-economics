@@ -9,14 +9,12 @@ from manim import (
     LEFT,
     RIGHT,
     UP,
-    AnimationGroup,
     Create,
     FadeIn,
     FadeOut,
     Line,
     Rectangle,
     Scene,
-    Succession,
     Text,
     VGroup,
 )
@@ -55,6 +53,11 @@ class ResearchScene(Scene):
         bottom.set_stroke(opacity=0.45)
         return VGroup(frame, top, bottom)
 
+    def remove_group(self, group: VGroup) -> None:
+        """Remove a group whether Manim registered it or its children on scene."""
+
+        self.remove(group, *group.submobjects)
+
     def make_title(self, title: str, kicker: str | None = None) -> VGroup:
         title_mobject = Text(
             title,
@@ -74,16 +77,10 @@ class ResearchScene(Scene):
     def show_title(self, title: str, kicker: str | None = None, *, run_time: float = 0.7):
         new_title = self.make_title(title, kicker)
         if len(self._title_group):
-            outgoing = [FadeOut(self._title_group, shift=UP * 0.04)]
+            self.remove_group(self._title_group)
             if len(self._caption_group):
-                outgoing.append(FadeOut(self._caption_group))
-            self.play(
-                Succession(
-                    AnimationGroup(*outgoing, lag_ratio=0),
-                    FadeIn(new_title, shift=DOWN * 0.04),
-                ),
-                run_time=run_time,
-            )
+                self.remove_group(self._caption_group)
+            self.play(FadeIn(new_title, shift=DOWN * 0.04), run_time=run_time)
             self._caption_group = VGroup()
         else:
             self.play(FadeIn(new_title, shift=DOWN * 0.08), run_time=run_time)
@@ -108,13 +105,8 @@ class ResearchScene(Scene):
     def set_caption(self, text: str, *, color: str | None = None, run_time: float = 0.45):
         new_caption = self.make_caption(text, color=color)
         if len(self._caption_group):
-            self.play(
-                Succession(
-                    FadeOut(self._caption_group),
-                    FadeIn(new_caption),
-                ),
-                run_time=run_time,
-            )
+            self.remove_group(self._caption_group)
+            self.play(FadeIn(new_caption), run_time=run_time)
         else:
             self.play(Create(new_caption[0]), FadeIn(new_caption[1]), run_time=run_time)
         self._caption_group = new_caption

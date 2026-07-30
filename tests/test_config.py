@@ -17,6 +17,11 @@ def test_starter_project_loads():
     assert project.scene == "PaperExplainer"
     assert project.render.preview_width == 854
     assert project.render.fps == 30
+    assert project.render.inspection_frames
+    assert {frame.kind for frame in project.render.inspection_frames} == {
+        "settled",
+        "transition",
+    }
     assert project.audio.enabled is False
 
 
@@ -65,4 +70,25 @@ output_file = "missing"
         encoding="utf-8",
     )
     with pytest.raises(ConfigError, match="entrypoint does not exist"):
+        load_project(tmp_path)
+
+
+def test_project_rejects_unknown_inspection_frame_kind(tmp_path):
+    (tmp_path / "scenes.py").write_text("", encoding="utf-8")
+    (tmp_path / "project.toml").write_text(
+        """
+[project]
+title = "Bad frame"
+entrypoint = "scenes.py"
+scene = "Scene"
+output_file = "bad"
+
+[[qa.frame]]
+time = 1.0
+label = "not classified"
+kind = "maybe"
+""".strip(),
+        encoding="utf-8",
+    )
+    with pytest.raises(ConfigError, match="invalid kind"):
         load_project(tmp_path)

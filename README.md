@@ -6,6 +6,7 @@ from an empty scene or asking an AI agent to guess what the paper means.
 This repository combines:
 
 - A sparse visual system for workers, labor markets, shocks, impulse responses,
+  causal chains, linked analytical views, benchmark comparisons,
   decompositions, and welfare.
 - A paper brief and timed storyboard that separate economic reasoning from
   animation code.
@@ -24,7 +25,8 @@ little or no Manim experience.
 ![Contact sheet from the economic-diversity example](examples/economic_diversity/preview/contact_sheet.png)
 
 The contact sheet is generated from settled and transition frames. It is a QA
-artifact, not a collage designed after the fact.
+artifact, not a collage designed after the fact. Named frame labels make the
+intended check explicit.
 
 ## Quick start
 
@@ -97,6 +99,25 @@ Read the [case-study guide](examples/economic_diversity/README.md), the
 [published paper](https://doi.org/10.1016/j.jinteco.2025.104184), and the
 [CC BY 4.0 replication package](https://doi.org/10.17632/hnxp6dckyp.1).
 
+## Choose a format
+
+Read [visual and narrative formats](docs/visual-formats.md) before writing scene
+code. The guide distills patterns from the multimodal-transport and
+economic-diversity production videos into:
+
+- a persistent causal chain;
+- linked views of one economic state;
+- a benchmark-centered comparison;
+- a words-first equation build with general operators.
+
+The [format gallery](examples/format_gallery/) is a short, paper-independent
+example with explicitly illustrative values:
+
+```bash
+uv run econ-manim preview examples/format_gallery --overlay
+uv run econ-manim frames examples/format_gallery
+```
+
 ## Use Codex
 
 Open the repository as a Codex project. The root `AGENTS.md` supplies durable
@@ -116,6 +137,7 @@ Continue with the checkpoint prompts in
 
 - [Install and verify](docs/setup.md)
 - [From paper to storyboard](docs/storyboarding.md)
+- [Choose visual and narrative formats](docs/visual-formats.md)
 - [Use Codex](docs/codex-workflow.md)
 - [Protect data integrity](docs/data-integrity.md)
 - [Run visual and timing QA](docs/visual-qa.md)

@@ -11,10 +11,109 @@ preview_fps = 15
 width = 1920
 height = 1080
 fps = 30
-key_times = [2.0, 5.5, 8.0, 12.0, 16.0, 21.0, 25.0, 27.0, 30.0, 35.0, 40.0, 45.0, 47.5, 49.0, 51.5, 55.5, 57.5, 61.0, 64.0]
 
 [audio]
 enabled = false
 track = ""
 license = ""
 attribution = ""
+
+[[qa.frame]]
+time = 2.0
+label = "same employment, different composition"
+kind = "settled"
+
+[[qa.frame]]
+time = 5.5
+label = "same shocked labor market"
+kind = "settled"
+
+[[qa.frame]]
+time = 8.0
+label = "opening to worker adjustment"
+kind = "transition"
+
+[[qa.frame]]
+time = 12.0
+label = "local and spatial routes enter"
+kind = "transition"
+
+[[qa.frame]]
+time = 16.0
+label = "three adjustment margins"
+kind = "settled"
+
+[[qa.frame]]
+time = 21.0
+label = "diversity expands the local menu"
+kind = "settled"
+
+[[qa.frame]]
+time = 25.0
+label = "mechanism to identification handoff"
+kind = "transition"
+
+[[qa.frame]]
+time = 27.0
+label = "released local shocks"
+kind = "settled"
+
+[[qa.frame]]
+time = 30.0
+label = "Bartik construction and LPIV"
+kind = "settled"
+
+[[qa.frame]]
+time = 35.0
+label = "impulse responses draw in"
+kind = "transition"
+
+[[qa.frame]]
+time = 40.0
+label = "adverse-shock responses"
+kind = "settled"
+
+[[qa.frame]]
+time = 45.0
+label = "first-order welfare term"
+kind = "settled"
+
+[[qa.frame]]
+time = 46.2
+label = "second-order welfare term enters"
+kind = "transition"
+
+[[qa.frame]]
+time = 47.5
+label = "second-order term and interactions"
+kind = "settled"
+
+[[qa.frame]]
+time = 49.0
+label = "welfare statistic to result table"
+kind = "transition"
+
+[[qa.frame]]
+time = 51.5
+label = "negative realized welfare effects"
+kind = "settled"
+
+[[qa.frame]]
+time = 55.5
+label = "positive realized welfare effects"
+kind = "settled"
+
+[[qa.frame]]
+time = 57.5
+label = "welfare to conclusion handoff"
+kind = "transition"
+
+[[qa.frame]]
+time = 61.0
+label = "urban-insurance mechanism"
+kind = "settled"
+
+[[qa.frame]]
+time = 64.0
+label = "final citation"
+kind = "settled"

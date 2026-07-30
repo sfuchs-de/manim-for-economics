@@ -36,11 +36,15 @@ Do not write scene code while material interpretations remain unresolved.
 
 ### 3. Build the timed storyboard
 
+- Compare the narrative formats in `docs/visual-formats.md` and select one
+  because it fits the contribution.
+- Start from a copyable template in `templates/storyboards/` when applicable.
 - Use six or seven beats with one learning goal each.
 - Reuse one economic object across beats.
 - Record time, on-screen words, visual action, transition logic, and source.
 - Introduce equations term by term and activate the matching economic margin.
 - Budget longer holds for unfamiliar notation and multi-row results.
+- Declare named `settled` and `transition` inspection frames in `project.toml`.
 
 Read [checkpoint-criteria.md](references/checkpoint-criteria.md) before treating
 the storyboard as approved.
@@ -51,6 +55,8 @@ the storyboard as approved.
 - Keep title, stage, and caption regions stable.
 - Prefer direct labels, symmetric geometry, restrained arrows, and semantic
   color.
+- When two views show the same economic state, reveal corresponding elements at
+  the same time.
 - Implement the opening and one technical beat before expanding the full video.
 - Run:
 

@@ -29,8 +29,8 @@ through horizon 20 with a discount factor of 0.99.
 
 ## Visual and timing checks
 
-The final 1080p master was sampled at 19 declared times spanning settled states
-and chapter transitions. Native-resolution checks covered the worker routes,
+The preview and final master were sampled at 20 named times spanning settled
+states and chapter transitions. Native-resolution checks covered the worker routes,
 released-shock distribution, sufficient-statistic build, both welfare tables,
 and conclusion. The final pass found no clipping, undeclared overlap, garbled
 title transitions, or objects outside the title-safe frame.
@@ -41,7 +41,7 @@ The delivery master has:
 
 - 1920×1080 dimensions.
 - 30 fps target frame rate.
-- 64.06-second duration.
+- 64.66-second preview duration (64.06 seconds for the archived delivery master).
 - No audio stream.
 - Successful full-stream decode.
 

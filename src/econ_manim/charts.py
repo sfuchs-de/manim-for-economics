@@ -146,14 +146,18 @@ class EquationBuild(VGroup):
         terms: Sequence[tuple[str, str]],
         *,
         lhs: str = "worker welfare",
+        operators: Sequence[str] | None = None,
         theme: VideoTheme = ECON_DARK,
     ) -> None:
         if not terms:
             raise ValueError("terms cannot be empty")
+        operator_values = tuple(operators or ("+",) * (len(terms) - 1))
+        if len(operator_values) != len(terms) - 1:
+            raise ValueError("operators must contain one item between each pair of terms")
         lhs_mobject = Text(lhs, font_size=25, color=theme.foreground)
         equals = MathTex("=", font_size=34, color=theme.muted)
         term_groups = VGroup()
-        operators = VGroup()
+        operator_mobjects = VGroup()
         for index, (text, color) in enumerate(terms):
             label = Text(text, font_size=22, color=color)
             box = RoundedRectangle(
@@ -168,12 +172,18 @@ class EquationBuild(VGroup):
             label.move_to(box)
             term_groups.add(VGroup(box, label))
             if index:
-                operators.add(MathTex("+", font_size=30, color=theme.muted))
+                operator_mobjects.add(
+                    MathTex(
+                        operator_values[index - 1],
+                        font_size=30,
+                        color=theme.muted,
+                    )
+                )
 
         sequence = VGroup(lhs_mobject, equals)
         for index, term in enumerate(term_groups):
             if index:
-                sequence.add(operators[index - 1])
+                sequence.add(operator_mobjects[index - 1])
             sequence.add(term)
         sequence.arrange(RIGHT, buff=0.20)
         if sequence.width > 12.5:
@@ -182,7 +192,7 @@ class EquationBuild(VGroup):
         self.lhs = lhs_mobject
         self.equals = equals
         self.terms = term_groups
-        self.operators = operators
+        self.operators = operator_mobjects
         self.sequence = sequence
 
 

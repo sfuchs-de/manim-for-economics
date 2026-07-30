@@ -1,0 +1,54 @@
+[project]
+title = "Economics Explainer Format Gallery"
+entrypoint = "scenes.py"
+scene = "FormatGallery"
+output_file = "economics_format_gallery"
+
+[render]
+preview_width = 854
+preview_height = 480
+preview_fps = 15
+width = 1920
+height = 1080
+fps = 30
+
+[audio]
+enabled = false
+track = ""
+license = ""
+attribution = ""
+
+[[qa.frame]]
+time = 2.2
+label = "causal chain building"
+kind = "transition"
+
+[[qa.frame]]
+time = 4.5
+label = "complete causal chain"
+kind = "settled"
+
+[[qa.frame]]
+time = 6.3
+label = "chain to linked views"
+kind = "transition"
+
+[[qa.frame]]
+time = 9.0
+label = "synchronized system and equation"
+kind = "settled"
+
+[[qa.frame]]
+time = 11.4
+label = "linked views to benchmark chart"
+kind = "transition"
+
+[[qa.frame]]
+time = 14.2
+label = "benchmark comparison building"
+kind = "transition"
+
+[[qa.frame]]
+time = 16.5
+label = "complete benchmark comparison"
+kind = "settled"

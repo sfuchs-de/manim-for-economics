@@ -16,6 +16,23 @@ Complete five objects:
 
 Write these in words. Add notation only where it makes a relationship clearer.
 
+## Choose the narrative format
+
+Decide what must persist before allocating scenes:
+
+- A mechanism-led paper usually keeps one system on screen while it is built,
+  perturbed, and compared with restricted cases.
+- An adjustment-and-welfare paper usually keeps one agent and its choice routes
+  visible as responses become welfare inputs.
+- An empirical-result-led paper usually keeps one estimand and one identifying
+  contrast stable.
+- A method or theory paper usually keeps one mathematical or economic object
+  stable while successive operations transform it.
+
+See [visual and narrative formats](visual-formats.md) and the copyable
+[`templates/storyboards`](../templates/storyboards/) before creating a custom
+beat structure.
+
 ## Build a claim-to-source crosswalk
 
 For every factual statement that may appear on screen, record:
@@ -41,6 +58,10 @@ A concise video usually needs six or seven beats:
 Give each beat one sentence the viewer should be able to repeat afterward.
 Budget at least two seconds for a short sentence and longer for unfamiliar
 notation or a multi-row result.
+
+Add a **conceptual handoff** column. It should state why the last visual state of
+one beat becomes the first visual state of the next. If the handoff cannot be
+written in one sentence, the order may be wrong or the beats may be unrelated.
 
 ## Reuse visual objects
 
@@ -69,3 +90,6 @@ Before implementing:
 - The proposed timing is realistic.
 - The video does not imply stronger identification or welfare interpretation
   than the paper supports.
+- The selected format fits the contribution rather than merely the available
+  components.
+- Every major handoff has a planned transition frame for QA.

@@ -30,11 +30,13 @@ Review the brief as an economics argument, not as marketing copy.
 >
 > **Context:** Use `paper_brief.md` and `data_manifest.toml`.
 >
-> **Constraints:** One learning goal per beat; reuse one economic object; explain
+> **Constraints:** Compare the formats in `docs/visual-formats.md` and select one
+> explicitly. One learning goal per beat; reuse one economic object; explain
 > equations term by term; connect transitions to the economic logic.
 >
 > **Done when:** `storyboard.md` specifies time, on-screen words, visual action,
-> and evidence for every beat, with no unresolved factual claims.
+> conceptual handoff, and evidence for every beat; `project.toml` contains named
+> settled and transition inspection frames; no factual claim is unresolved.
 
 ## Prompt 3: establish the visual system
 
@@ -43,7 +45,8 @@ Review the brief as an economics argument, not as marketing copy.
 > **Context:** Use the existing `econ_manim` theme and components.
 >
 > **Constraints:** Keep title, stage, and caption regions stable. Use direct
-> labels. Preserve symmetric geometry. Do not create a full-quality render.
+> labels. Preserve symmetric geometry. If two views represent the same economic
+> state, reveal matching elements together. Do not create a full-quality render.
 >
 > **Done when:** A low-quality preview and contact sheet have been visually
 > inspected for clipping, overlaps, arrow placement, and readable holds.

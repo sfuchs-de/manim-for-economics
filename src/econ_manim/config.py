@@ -13,6 +13,13 @@ class ConfigError(ValueError):
 
 
 @dataclass(frozen=True, slots=True)
+class InspectionFrame:
+    time: float
+    label: str
+    kind: str
+
+
+@dataclass(frozen=True, slots=True)
 class RenderConfig:
     preview_width: int = 854
     preview_height: int = 480
@@ -21,6 +28,7 @@ class RenderConfig:
     height: int = 1080
     fps: int = 30
     key_times: tuple[float, ...] = ()
+    inspection_frames: tuple[InspectionFrame, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -73,6 +81,7 @@ def load_project(project: str | Path) -> ProjectConfig:
     section = raw.get("project", {})
     render = raw.get("render", {})
     audio = raw.get("audio", {})
+    qa = raw.get("qa", {})
     required = ("title", "entrypoint", "scene", "output_file")
     missing = [key for key in required if not section.get(key)]
     if missing:
@@ -83,6 +92,24 @@ def load_project(project: str | Path) -> ProjectConfig:
     key_times = tuple(float(value) for value in render.get("key_times", ()))
     if any(value < 0 for value in key_times):
         raise ConfigError("render.key_times cannot contain negative values")
+    inspection_frames = []
+    for index, item in enumerate(qa.get("frame", ())):
+        try:
+            time = float(item["time"])
+        except (KeyError, TypeError, ValueError) as error:
+            raise ConfigError(f"qa.frame {index + 1} requires a numeric time") from error
+        label = str(item.get("label", "")).strip()
+        kind = str(item.get("kind", "")).strip()
+        if time < 0:
+            raise ConfigError("qa.frame times cannot be negative")
+        if not label:
+            raise ConfigError(f"qa.frame {index + 1} requires a label")
+        if kind not in {"settled", "transition"}:
+            raise ConfigError(
+                f"qa.frame {index + 1} has invalid kind {kind!r}; "
+                "use settled or transition"
+            )
+        inspection_frames.append(InspectionFrame(time=time, label=label, kind=kind))
     return ProjectConfig(
         root=root,
         title=str(section["title"]),
@@ -97,6 +124,7 @@ def load_project(project: str | Path) -> ProjectConfig:
             height=int(render.get("height", 1080)),
             fps=int(render.get("fps", 30)),
             key_times=key_times,
+            inspection_frames=tuple(inspection_frames),
         ),
         audio=AudioConfig(
             enabled=bool(audio.get("enabled", False)),

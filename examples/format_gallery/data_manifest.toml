@@ -1,0 +1,11 @@
+[[dataset]]
+id = "format-gallery-values"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = ""
+sha256 = ""
+transformation = "Hand-authored values used only to demonstrate a diverging benchmark chart."
+displayed_values = ["+40%", "+12%", "-25%"]
+note = "These are not estimates and are labeled illustrative in the scene."

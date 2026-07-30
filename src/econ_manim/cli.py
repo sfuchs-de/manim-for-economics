@@ -141,8 +141,25 @@ def command_render(args: argparse.Namespace) -> int:
 def command_frames(args: argparse.Namespace) -> int:
     config = load_project(args.project)
     video = Path(args.video).resolve() if args.video else _find_video(config)
-    times = tuple(args.times) if args.times else config.render.key_times
-    sheet = extract_contact_sheet(video, times, config.root / "build" / "qa")
+    if args.times:
+        times = tuple(args.times)
+        labels = None
+        kinds = None
+    elif config.render.inspection_frames:
+        times = tuple(frame.time for frame in config.render.inspection_frames)
+        labels = tuple(frame.label for frame in config.render.inspection_frames)
+        kinds = tuple(frame.kind for frame in config.render.inspection_frames)
+    else:
+        times = config.render.key_times
+        labels = None
+        kinds = None
+    sheet = extract_contact_sheet(
+        video,
+        times,
+        config.root / "build" / "qa",
+        labels=labels,
+        kinds=kinds,
+    )
     print(sheet)
     return 0
 
@@ -162,6 +179,18 @@ def command_qa(args: argparse.Namespace) -> int:
     info = probe_video(video)
     if info.width <= 0 or info.height <= 0 or info.duration <= 0:
         raise ConfigError(f"invalid rendered media: {info}")
+    out_of_range = [
+        frame
+        for frame in config.render.inspection_frames
+        if frame.time > info.duration
+    ]
+    if out_of_range:
+        details = ", ".join(
+            f"{frame.label} ({frame.time:.2f}s)" for frame in out_of_range
+        )
+        raise ConfigError(
+            f"inspection frames exceed the {info.duration:.2f}s video duration: {details}"
+        )
     print(json.dumps(asdict(info), indent=2))
     return 0
 

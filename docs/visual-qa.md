@@ -28,6 +28,25 @@ Rendering without an exception is necessary, not sufficient.
 crossing arrows, partially transformed equations, and brief overlaps. Add key
 times just before, during, and just after major transitions.
 
+Name both types in `project.toml` so the contact sheet states what each frame is
+meant to verify:
+
+```toml
+[[qa.frame]]
+time = 8.2
+label = "completed choice menu"
+kind = "settled"
+
+[[qa.frame]]
+time = 10.4
+label = "choice menu to response chart"
+kind = "transition"
+```
+
+The older `render.key_times` list remains supported, but named frames are the
+recommended format. `econ-manim qa` rejects named frames that lie beyond the
+rendered duration.
+
 ## Layout checklist
 
 - Title and caption remain in their fixed regions.

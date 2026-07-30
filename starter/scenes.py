@@ -1,6 +1,6 @@
 """A deliberately small scene to replace after the storyboard is approved."""
 
-from manim import UP, FadeIn, FadeOut, Text, VGroup
+from manim import UP, FadeIn, Text, VGroup
 
 from econ_manim import (
     ECON_DARK,
@@ -23,13 +23,15 @@ class PaperExplainer(ResearchScene):
         ).move_to([0, 0.45, 0])
         self.play(FadeIn(question, shift=UP * 0.10), run_time=0.8)
         self.wait(2.0)
+        self.clear_stage(question, run_time=0.35)
 
         self.next_section("agent")
         self.show_title("Situate the economic agent")
         self.set_caption("Use one recurring object so choices and shocks remain concrete.")
         city = CityLaborMarket("example city", (2, 2, 2, 2)).move_to([0, -0.15, 0])
-        self.play(FadeOut(question), FadeIn(city), run_time=0.8)
+        self.play(FadeIn(city), run_time=0.8)
         self.wait(2.2)
+        self.clear_stage(city, run_time=0.35)
 
         self.next_section("evidence")
         self.show_title("Show one empirical object")
@@ -42,8 +44,9 @@ class PaperExplainer(ResearchScene):
                 (0.7, ECON_DARK.green),
             ]
         ).move_to([0, -0.25, 0])
-        self.play(FadeOut(city), FadeIn(distribution), run_time=0.8)
+        self.play(FadeIn(distribution), run_time=0.8)
         self.wait(2.2)
+        self.clear_stage(distribution, run_time=0.35)
 
         self.next_section("interpretation")
         self.show_title("Build the interpretation")
@@ -54,9 +57,7 @@ class PaperExplainer(ResearchScene):
                 ("second-order correction", ECON_DARK.orange),
             ]
         ).move_to([0, 0.10, 0])
-        equation.terms.set_opacity(0)
-        equation.operators.set_opacity(0)
-        self.play(FadeOut(distribution), FadeIn(VGroup(equation.lhs, equation.equals)), run_time=0.7)
+        self.play(FadeIn(VGroup(equation.lhs, equation.equals)), run_time=0.7)
         self.play(FadeIn(equation.terms[0]), run_time=0.6)
         self.wait(1.0)
         self.play(FadeIn(equation.operators), FadeIn(equation.terms[1]), run_time=0.6)

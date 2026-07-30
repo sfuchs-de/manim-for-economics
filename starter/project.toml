@@ -11,10 +11,59 @@ preview_fps = 15
 width = 1920
 height = 1080
 fps = 30
-key_times = [1.5, 5.0, 9.0, 13.0]
 
 [audio]
 enabled = false
 track = ""
 license = ""
 attribution = ""
+
+[[qa.frame]]
+time = 2.3
+label = "opening question"
+kind = "settled"
+
+[[qa.frame]]
+time = 4.7
+label = "question to agent handoff"
+kind = "transition"
+
+[[qa.frame]]
+time = 7.0
+label = "recurring economic agent"
+kind = "settled"
+
+[[qa.frame]]
+time = 9.2
+label = "agent to evidence handoff"
+kind = "transition"
+
+[[qa.frame]]
+time = 11.5
+label = "illustrative evidence"
+kind = "settled"
+
+[[qa.frame]]
+time = 13.7
+label = "evidence to interpretation handoff"
+kind = "transition"
+
+[[qa.frame]]
+time = 15.5
+label = "first interpretation term enters"
+kind = "transition"
+
+[[qa.frame]]
+time = 16.5
+label = "first interpretation term"
+kind = "settled"
+
+[[qa.frame]]
+time = 17.2
+label = "second interpretation term enters"
+kind = "transition"
+
+[[qa.frame]]
+time = 18.5
+label = "complete incremental interpretation"
+kind = "settled"

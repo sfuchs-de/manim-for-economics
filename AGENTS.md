@@ -16,6 +16,10 @@ For the selected project, read:
 4. `project.toml`
 5. Its scene and data modules
 
+If the storyboard is not yet approved, compare `docs/visual-formats.md` and the
+copyable templates under `templates/storyboards/` before proposing a custom
+structure.
+
 Do not implement unresolved economic interpretations. Ask for a decision when
 two readings would materially change the story.
 
@@ -60,6 +64,8 @@ uv run econ-manim render <project>
 - Smoke-render after any structural scene change.
 - Inspect both settled frames and transitions; a clean contact sheet of only
   settled frames is insufficient.
+- Name inspection frames in `project.toml`; each major beat needs a settled
+  frame and each major handoff needs a transition frame.
 - Check clipping, overlaps, label placement, arrow geometry, text hold times,
   and blank or duplicated frames.
 - Do not claim completion from successful Python compilation alone.

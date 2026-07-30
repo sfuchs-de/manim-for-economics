@@ -29,6 +29,18 @@ Figure 3 and are labeled as such in the example manifest.
 The paper PDF remains subject to the publisher's terms and is linked rather
 than redistributed.
 
+## Multimodal-transport design study
+
+The visual-format guide also draws general design lessons from the authors'
+private production animation for:
+
+> Simon Fuchs and Woan Foong Wong, “Multimodal Transport Networks,” NBER
+> Working Paper No. 35065 (2026).
+
+No paper-specific data, figures, source code, audio, or numerical results from
+that animation are redistributed. The format gallery uses generic labels and
+explicitly illustrative values.
+
 ## Excluded media
 
 The soundtrack used in the original production video is not included because

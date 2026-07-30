@@ -69,34 +69,47 @@ def extract_contact_sheet(
     times: tuple[float, ...],
     output_dir: str | Path,
     *,
+    labels: tuple[str, ...] | None = None,
+    kinds: tuple[str, ...] | None = None,
     columns: int = 3,
     thumbnail_width: int = 480,
 ) -> Path:
     if not times:
         raise ValueError("at least one inspection time is required")
+    if labels is not None and len(labels) != len(times):
+        raise ValueError("labels must match the number of inspection times")
+    if kinds is not None and len(kinds) != len(times):
+        raise ValueError("kinds must match the number of inspection times")
     target = Path(output_dir).resolve()
     frames_dir = target / "frames"
     frames_dir.mkdir(parents=True, exist_ok=True)
-    thumbnails: list[tuple[float, Image.Image]] = []
+    for old_frame in frames_dir.glob("*.png"):
+        old_frame.unlink()
+    thumbnails: list[tuple[float, str, str, Image.Image]] = []
     for index, time_seconds in enumerate(times):
         image = frame_at(video, time_seconds)
+        label = labels[index] if labels else ""
+        kind = kinds[index] if kinds else ""
         image_path = frames_dir / f"{index + 1:02d}_{time_seconds:06.2f}s.png"
         image.save(image_path)
         ratio = thumbnail_width / image.width
         thumb = image.resize((thumbnail_width, int(image.height * ratio)))
-        thumbnails.append((time_seconds, thumb))
+        thumbnails.append((time_seconds, label, kind, thumb))
 
-    label_height = 30
+    label_height = 54 if labels or kinds else 30
     cell_width = thumbnail_width
-    cell_height = thumbnails[0][1].height + label_height
+    cell_height = thumbnails[0][3].height + label_height
     rows = math.ceil(len(thumbnails) / columns)
     sheet = Image.new("RGB", (cell_width * columns, cell_height * rows), "#101922")
     draw = ImageDraw.Draw(sheet)
-    for index, (time_seconds, image) in enumerate(thumbnails):
+    for index, (time_seconds, label, kind, image) in enumerate(thumbnails):
         x = (index % columns) * cell_width
         y = (index // columns) * cell_height
         sheet.paste(image, (x, y))
-        draw.text((x + 10, y + image.height + 7), f"{time_seconds:.2f}s", fill="#F1E9DA")
+        metadata = f"{kind.upper()} · {time_seconds:.2f}s" if kind else f"{time_seconds:.2f}s"
+        draw.text((x + 10, y + image.height + 6), metadata, fill="#F1E9DA")
+        if label:
+            draw.text((x + 10, y + image.height + 27), label, fill="#9DAAB7")
     sheet_path = target / "contact_sheet.png"
     sheet.save(sheet_path)
     return sheet_path
