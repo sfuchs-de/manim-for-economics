@@ -47,6 +47,13 @@ rows = read_csv_rows(
 )
 ```
 
+Generate a manifest checksum without relying on an operating-system-specific
+command:
+
+```bash
+uv run econ-manim checksum <project>/data/results.csv
+```
+
 Run:
 
 ```bash

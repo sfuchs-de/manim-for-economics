@@ -1,3 +1,5 @@
+import hashlib
+
 import pytest
 
 from econ_manim.cli import build_parser, main
@@ -11,6 +13,7 @@ def test_cli_exposes_planned_commands():
         "doctor",
         "templates",
         "themes",
+        "checksum",
         "demo",
         "new",
         "preview",
@@ -101,6 +104,15 @@ def test_themes_explains_visual_presets(capsys):
     assert "Dark navy field" in output
     assert "ivory" in output
     assert "Warm paper field" in output
+
+
+def test_checksum_prints_a_manifest_ready_hash(tmp_path, capsys):
+    source = tmp_path / "values.csv"
+    source.write_text("value\n1\n", encoding="utf-8")
+    assert main(["checksum", str(source)]) == 0
+    digest, path = capsys.readouterr().out.strip().split("  ", maxsplit=1)
+    assert digest == hashlib.sha256(source.read_bytes()).hexdigest()
+    assert path == str(source.resolve())
 
 
 def test_missing_project_reports_a_concise_error(tmp_path, capsys):

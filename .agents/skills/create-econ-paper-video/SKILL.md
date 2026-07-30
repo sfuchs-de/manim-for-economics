@@ -8,6 +8,10 @@ description: Turn an economics paper, draft, replication package, or research re
 Build the economic argument before building the animation. Treat source
 integrity, visual inspection, and timing as required deliverables.
 
+Use [the practitioner’s guide](../../../docs/practitioners-guide.md) as the
+end-to-end operating sequence. The checkpoints below define the required
+Codex review gates.
+
 ## Workflow
 
 ### 1. Inspect the paper and assets

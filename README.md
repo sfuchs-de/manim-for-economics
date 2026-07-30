@@ -77,6 +77,8 @@ Then edit, in this order:
 4. `projects/my-paper/scenes.py`
 
 See [setup](docs/setup.md) for macOS, Windows, Linux, and `pip` instructions.
+The [practitioner’s guide](docs/practitioners-guide.md) walks through the full
+paper-to-video process.
 
 ## Commands
 
@@ -85,6 +87,7 @@ See [setup](docs/setup.md) for macOS, Windows, Linux, and `pip` instructions.
 | `econ-manim doctor` | Diagnose Python, Manim, LaTeX, fonts, and optional FFmpeg |
 | `econ-manim templates` | Explain the available paper-story templates |
 | `econ-manim themes` | List paper-independent visual presets |
+| `econ-manim checksum FILE` | Generate the SHA-256 value for a manifest input |
 | `econ-manim demo` | Render and inspect the bundled starter end to end |
 | `econ-manim new NAME --template TYPE --theme PRESET` | Select narrative structure and appearance independently |
 | `econ-manim preview PROJECT` | Render an 854×480, 15 fps draft |
@@ -175,6 +178,7 @@ Continue with the checkpoint prompts in
 
 - [Install and verify](docs/setup.md)
 - [Use the self-contained environment](docs/self-contained.md)
+- [Follow the practitioner’s guide](docs/practitioners-guide.md)
 - [From paper to storyboard](docs/storyboarding.md)
 - [Choose visual and narrative formats](docs/visual-formats.md)
 - [Choose a visual theme](docs/themes.md)

@@ -1,0 +1,470 @@
+# Practitioner’s guide
+
+This is the working manual for taking one research paper from a blank project
+to a verified, silent explainer. It assumes that the researcher knows the paper
+but may know little Python or Manim.
+
+The central discipline is simple: settle the economics before polishing the
+animation. A clean video cannot rescue an ambiguous estimand, an unsupported
+welfare claim, or a number with no source.
+
+## 1. Verify the toolchain
+
+Choose one setup route.
+
+### Docker
+
+Docker is the most contained option. It includes Python, Manim, TeX, FFmpeg,
+native rendering libraries, and fonts:
+
+```bash
+docker compose build
+docker compose run --rm econ-manim demo
+```
+
+### Native
+
+If the system dependencies are installed locally:
+
+```bash
+uv sync --frozen
+uv run econ-manim demo
+```
+
+The demo should produce a preview and contact sheet under `starter/build/`.
+Do not begin paper-specific work until the strict doctor and demo pass.
+
+The commands below use the native form, `uv run econ-manim`. Docker users can
+replace that prefix with `docker compose run --rm econ-manim`.
+
+## 2. Decide what the video is for
+
+A paper video is not a compressed seminar. Choose one job:
+
+- explain a mechanism;
+- make an empirical result interpretable;
+- teach a method or theoretical construction;
+- connect an agent’s responses to welfare or policy value;
+- establish one descriptive fact and why it matters.
+
+Write down these seven items before creating scenes:
+
+1. The audience.
+2. The opening question.
+3. The one-sentence contribution.
+4. The object that should remain recognizable across the video.
+5. The result that carries the argument.
+6. The relevant comparison, baseline, sample, and horizon.
+7. The claim the video must not make.
+
+If two plausible interpretations would change the visual story, resolve them
+with the authors before implementation.
+
+## 3. Choose narrative structure and appearance separately
+
+Inspect the included choices:
+
+```bash
+uv run econ-manim templates
+uv run econ-manim themes
+```
+
+### Narrative templates
+
+| Template | Use it when | Persistent object |
+|---|---|---|
+| `general` | No specialized sequence fits the paper | Model object, treatment comparison, theorem, measurement problem, or other research object |
+| `mechanism-led` | One change propagates through a system | Network, market, equilibrium, technology, or policy channel |
+| `agent-choice-welfare` | Choices and responses connect to value | Household, firm, worker, institution, or other decision maker |
+
+The storyboard-only formats in `templates/storyboards/` cover
+empirical-result-led and method-or-theory papers. Start those from `general`
+and replace its storyboard.
+
+### Visual themes
+
+- `midnight` is a dark navy editorial theme.
+- `ivory` is a warm paper-like light theme.
+
+Either theme works with any narrative template. Choose based on the venue,
+surrounding material, and display conditions—not the paper’s field.
+
+## 4. Create the project
+
+For example:
+
+```bash
+uv run econ-manim new my-paper \
+  --template mechanism-led \
+  --theme ivory
+```
+
+The new project contains:
+
+```text
+projects/my-paper/
+├── paper_brief.md
+├── storyboard.md
+├── data_manifest.toml
+├── project.toml
+├── scenes.py
+└── data/
+```
+
+Work through those files in that order. `scenes.py` comes last.
+
+## 5. Prepare a compact source pack
+
+Do not ask the animation code to discover the paper’s argument. Assemble a
+small set of authoritative inputs:
+
+- the paper or manuscript source;
+- the abstract, introduction, and conclusion;
+- the model, design, or institutional section carrying the mechanism;
+- the two or three result-bearing figures, tables, or propositions;
+- public replication files for displayed empirical values;
+- notes defining units, samples, baselines, and horizons;
+- disclosure-cleared images or data extracts, if required.
+
+For a long paper, this compact source pack is more useful during scene work
+than repeatedly searching the entire manuscript.
+
+Restricted data do not belong in the repository. Export only
+disclosure-cleared moments or construct a synthetic fixture with the same
+schema.
+
+## 6. Complete the paper brief
+
+`paper_brief.md` is the editorial contract. It should answer:
+
+- What should a viewer understand after 60–90 seconds?
+- What is the mechanism in words?
+- Which evidence distinguishes this paper from a generic model?
+- What is measured, proved, or approximated?
+- Relative to what?
+- For whom?
+- Over what horizon?
+- Which interpretation is tempting but unsupported?
+
+Keep notation out of the first explanation. If the mechanism cannot be stated
+in ordinary economic language, the animation is not ready.
+
+## 7. Put displayed values in local files
+
+Classify every visual input:
+
+- `released`: included in a public source or replication package;
+- `digitized`: recovered from a published visual;
+- `illustrative`: invented solely to teach a mechanism or format.
+
+Use `actual` for released and digitized inputs and `illustrative` for synthetic
+inputs. Never let an illustrative point resemble an estimate without a visible
+label.
+
+Prefer project-local CSV files over numbers repeated inside `scenes.py`:
+
+```python
+from pathlib import Path
+
+from econ_manim import read_csv_rows
+
+rows = read_csv_rows(
+    Path(__file__).with_name("data") / "results.csv",
+    required_columns=("label", "value"),
+)
+```
+
+Generate the file checksum:
+
+```bash
+uv run econ-manim checksum projects/my-paper/data/results.csv
+```
+
+Then record the file in `data_manifest.toml`:
+
+```toml
+[[dataset]]
+id = "main-result"
+status = "released"
+classification = "actual"
+source_url = "DOI or stable public URL"
+license = "License or documented reuse basis"
+local_path = "data/results.csv"
+sha256 = "checksum printed by econ-manim"
+transformation = "Selection, aggregation, rescaling, or digitization steps"
+displayed_values = ["Treatment: +1.4 percentage points"]
+note = "Table 3, column 2; baseline is the untreated sample."
+```
+
+Run `qa` whenever a source file changes:
+
+```bash
+uv run econ-manim qa projects/my-paper
+```
+
+A checksum mismatch is a reason to investigate the source, not merely update
+the manifest.
+
+## 8. Write the storyboard as a sequence of handoffs
+
+Each beat needs:
+
+- one learning goal;
+- the exact on-screen words;
+- one visual action;
+- a reason the next beat follows;
+- an evidentiary source or an `illustrative` label.
+
+A workable first cut usually has six or seven beats:
+
+```text
+question → object → change or comparison → response
+         → evidence → interpretation → conclusion
+```
+
+The sequence should follow the paper’s logic, not its section headings.
+
+### Timing rules
+
+- Keep a short sentence stable for roughly two seconds.
+- Hold charts after the final series appears.
+- Give unfamiliar notation and multi-row tables more time.
+- Use motion to represent a change in the economic state.
+- Remove motion that merely decorates a pause.
+
+Declare both settled and transition inspection frames in `project.toml`:
+
+```toml
+[[qa.frame]]
+time = 12.8
+label = "completed treatment comparison"
+kind = "settled"
+
+[[qa.frame]]
+time = 15.1
+label = "comparison to mechanism handoff"
+kind = "transition"
+```
+
+Transitions deserve explicit inspection because temporary overlaps often occur
+between otherwise clean settled frames.
+
+## 9. Establish the visual system with one technical beat
+
+Implement the opening and one representative technical beat first. This is the
+cheapest point to change typography, spacing, color roles, and the recurring
+visual object.
+
+Use the smallest component that expresses the economics:
+
+| Need | Component |
+|---|---|
+| Stable title, stage, caption, and cleanup | `ResearchScene` |
+| Sequential economic logic | `CausalChain` |
+| The same state in two representations | `LinkedViews` |
+| A decision maker and alternatives | `AgentToken`, `ChoiceMap` |
+| A domain-specific labor-market example | `WorkerToken`, `CityLaborMarket` |
+| Dynamic estimated paths | `ImpulseResponsePlot` |
+| Realized shock observations | `ShockDistribution` |
+| Incremental words-first decomposition | `EquationBuild` |
+| Small welfare or accounting decomposition | `ResultTable` |
+| Comparison with one benchmark | `DivergingBarChart` |
+
+Access the selected palette through `self.theme`:
+
+```python
+class MyExplainer(ResearchScene):
+    def construct(self):
+        theme = self.theme
+        self.show_title("What changes?")
+        # Pass theme=theme into reusable components.
+```
+
+Do not copy a case-study object merely because it already exists. A worker,
+network, or shock distribution belongs only when it matches the paper.
+
+## 10. Use a cheap render loop
+
+Render the representative scene:
+
+```bash
+uv run econ-manim preview projects/my-paper --overlay
+uv run econ-manim frames projects/my-paper
+```
+
+Inspect the contact sheet and individual frames under
+`projects/my-paper/build/qa/`.
+
+Check:
+
+- clipping and safe-area violations;
+- competing titles or captions;
+- text covering paths or nodes;
+- arrowheads entering objects;
+- labels that move between settled states;
+- equations appearing before their economic meaning;
+- charts disappearing too soon;
+- faint text in either selected theme.
+
+Fix density by reducing simultaneous content or splitting a beat. Shrinking
+every object is rarely the right correction.
+
+## 11. Complete the scenes
+
+Once the representative beat is approved:
+
+1. Implement only storyboarded content.
+2. Preserve the recurring object across scenes.
+3. Keep semantic color roles stable.
+4. Introduce formal terms only when their corresponding margin is visible.
+5. Render after structural changes.
+6. Add transition frames when a handoff becomes more complicated.
+
+Do not wait for the complete video before checking timing. A two-second hold
+that feels adequate in code may be unreadable in the rendered sequence.
+
+## 12. Run conceptual QA
+
+Review the completed preview against the paper, not against the storyboard
+alone.
+
+For every displayed number verify:
+
+- source;
+- sign;
+- units;
+- scaling and rounding;
+- sample;
+- baseline or counterfactual;
+- horizon;
+- whether uncertainty is shown or intentionally omitted.
+
+For every verbal result ask:
+
+- Does the design identify this claim?
+- Is a conditional result being described as universal?
+- Is a local approximation being presented as exact?
+- Are positive and negative realizations separate objects or components of one
+  transition?
+- Does the conclusion exceed the displayed evidence?
+
+Update the brief, storyboard, manifest, and scene together when a claim
+changes.
+
+## 13. Work effectively with Codex
+
+Give Codex one checkpoint at a time. Use four explicit fields:
+
+```text
+Goal:
+Context:
+Constraints:
+Done when:
+```
+
+For example:
+
+> **Goal:** Implement the opening and the main empirical beat.
+>
+> **Context:** Read `paper_brief.md`, `storyboard.md`,
+> `data_manifest.toml`, and `project.toml`.
+>
+> **Constraints:** Do not change the economic interpretation or displayed
+> values. Use the existing theme and components. Keep illustrative objects
+> visibly labeled.
+>
+> **Done when:** The preview renders, settled and transition frames have been
+> inspected, and no clipping, overlap, or unreadably short hold remains.
+
+Ask Codex to report which frames it inspected. A successful Manim command is
+not evidence of visual review.
+
+The complete staged prompts are in [Use Codex](codex-workflow.md).
+
+## 14. Produce the master
+
+Run:
+
+```bash
+uv run ruff check .
+uv run pytest
+uv run econ-manim qa projects/my-paper
+uv run econ-manim render projects/my-paper
+uv run econ-manim frames projects/my-paper
+uv run econ-manim qa projects/my-paper
+```
+
+Confirm:
+
+- 1920×1080 output;
+- 30 fps target;
+- expected duration;
+- successful full decode;
+- no unintended audio;
+- readable final citation;
+- no inspection frame beyond the video duration.
+
+Add narration or music only after the silent master is stable and the rights
+are documented.
+
+## 15. Publish the evidence with the video
+
+Keep the public project understandable without private context. Include:
+
+- the paper brief;
+- timed storyboard;
+- data manifest;
+- local released or illustrative inputs;
+- source and transformation notes;
+- a representative contact sheet;
+- a lightweight preview;
+- render and QA commands;
+- links to the paper and replication package;
+- license and attribution information.
+
+Do not publish restricted data, absolute private paths, a render cache, a full
+iteration history, or an undocumented soundtrack.
+
+## Paper-type recipes
+
+### Empirical result
+
+Lead with the comparison or variation, reveal the estimate in its native form,
+and then state the estimand, sample, and baseline. Avoid rebuilding a complete
+institutional history unless it is needed to interpret the design.
+
+### Mechanism or quantitative model
+
+Build one system, change one object, and trace propagation without resetting
+the viewer’s mental map. Compare counterfactuals against one explicit
+benchmark.
+
+### Method or theory
+
+Begin with the problem the result solves. Keep the mathematical object and its
+geometric or algorithmic representation synchronized. Introduce assumptions
+when they become active, not as an opening list.
+
+### Choice, welfare, or policy value
+
+Show the agent’s available responses before the welfare expression. Reveal
+each term with the matching behavioral margin and state the baseline, horizon,
+and population directly.
+
+## Definition of done
+
+- [ ] One contribution, one audience, and one supported conclusion.
+- [ ] Every factual beat has a source.
+- [ ] Every displayed data file is local and checksummed.
+- [ ] Illustrative values are visibly labeled.
+- [ ] The storyboard records conceptual handoffs.
+- [ ] Both settled and transition frames were inspected.
+- [ ] Equations enter incrementally with their economic meaning.
+- [ ] No clipping, overlap, unstable labels, or malformed arrows remain.
+- [ ] All numbers match the paper or released files.
+- [ ] The master decodes with the expected metadata.
+- [ ] Paper, replication, license, and attribution links are present.
+
+For deeper reference, use [data integrity](data-integrity.md),
+[visual formats](visual-formats.md), [themes](themes.md),
+[visual QA](visual-qa.md), and [publishing](publishing.md).

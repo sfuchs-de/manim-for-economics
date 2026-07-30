@@ -13,7 +13,7 @@ import sys
 from dataclasses import asdict
 from pathlib import Path
 
-from .config import ConfigError, load_project, validate_data_manifest
+from .config import ConfigError, load_project, sha256_file, validate_data_manifest
 from .media import extract_contact_sheet, probe_video
 from .templates import PROJECT_TEMPLATES, get_template, template_names, template_source
 from .theme import THEMES, theme_names
@@ -186,6 +186,16 @@ def command_themes(args: argparse.Namespace) -> int:
             f"background {theme.background} · ink {theme.foreground} · "
             f"blue {theme.blue} · green {theme.green} · orange {theme.orange}.\n"
         )
+    return 0
+
+
+def command_checksum(args: argparse.Namespace) -> int:
+    """Print the SHA-256 value required by a data manifest."""
+
+    path = Path(args.file).expanduser().resolve()
+    if not path.is_file():
+        raise ConfigError(f"file does not exist: {path}")
+    print(f"{sha256_file(path)}  {path}")
     return 0
 
 
@@ -373,6 +383,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="list the available visual theme presets",
     )
     themes.set_defaults(handler=command_themes)
+
+    checksum = subparsers.add_parser(
+        "checksum",
+        help="print a local file's SHA-256 manifest checksum",
+    )
+    checksum.add_argument("file")
+    checksum.set_defaults(handler=command_checksum)
 
     demo = subparsers.add_parser(
         "demo",
