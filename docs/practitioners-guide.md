@@ -8,6 +8,30 @@ The central discipline is simple: settle the economics before polishing the
 animation. A clean video cannot rescue an ambiguous estimand, an unsupported
 welfare claim, or a number with no source.
 
+## Recommended input: TeX plus replication files
+
+Give Codex direct, local access to the paper’s TeX project and replication
+package whenever possible. The strongest source pack contains:
+
+- the complete Overleaf/TeX tree, including files reached through `\input`,
+  `\include`, bibliography commands, and figure paths;
+- the compiled PDF, which remains useful for checking final pagination and
+  visual context;
+- the public replication package, including the scripts and intermediate
+  outputs that produce displayed results;
+- disclosure-cleared author notes explaining samples, baselines, horizons,
+  units, or draft-to-publication changes.
+
+The TeX files reveal how notation is defined and how propositions, equations,
+figures, tables, and appendix results relate to one another. The replication
+files reveal where a displayed number came from and what transformation lies
+between the raw output and the paper. Together they sharply reduce the risk of
+an animation that is visually plausible but conceptually wrong.
+
+The package can still be used with only a PDF. In that case, treat equation
+reconstruction, digitized values, and ambiguous definitions as manual review
+points rather than assuming that Codex has recovered them exactly.
+
 ## 1. Verify the toolchain
 
 Choose one setup route.
@@ -129,6 +153,46 @@ small set of authoritative inputs:
 For a long paper, this compact source pack is more useful during scene work
 than repeatedly searching the entire manuscript.
 
+### Clone an Overleaf project locally
+
+If Git access is enabled for the Overleaf project, use the Git URL shown by
+Overleaf and clone it into the repository’s ignored `source_material/`
+directory. For example:
+
+```bash
+mkdir -p source_material/my-paper
+git clone https://git.overleaf.com/YOUR_PROJECT_ID \
+  source_material/my-paper/tex
+mkdir -p source_material/my-paper/replication
+unzip /path/to/replication-package.zip \
+  -d source_material/my-paper/replication
+cp /path/to/published-paper.pdf \
+  source_material/my-paper/paper.pdf
+```
+
+This produces a useful working layout:
+
+```text
+source_material/my-paper/
+├── tex/
+│   ├── main.tex
+│   ├── sections/
+│   ├── figures/
+│   └── references.bib
+├── paper.pdf
+└── replication/
+    ├── README
+    ├── code/
+    ├── data/
+    └── output/
+```
+
+The exact TeX and replication layouts may differ. Tell Codex which file is the
+TeX root and which script or README describes the replication workflow. Do not
+put an Overleaf token in a prompt or embed credentials in a committed remote
+URL. `source_material/` is ignored by Git, but it remains visible to Codex when
+the repository is opened as the working project.
+
 Restricted data do not belong in the repository. Export only
 disclosure-cleared moments or construct a synthetic fixture with the same
 schema.
@@ -204,6 +268,184 @@ uv run econ-manim qa projects/my-paper
 
 A checksum mismatch is a reason to investigate the source, not merely update
 the manifest.
+
+## Worked example: a published result becomes a Manim scene
+
+The bundled
+[economic-diversity example](../examples/economic_diversity/README.md) shows
+the complete chain for an existing paper. One of its empirical beats visualizes
+the adjustment paths reported in Figure 3 of “Economic Diversity and the
+Resilience of Cities.”
+
+### 1. Start with the source, not a hand-drawn chart
+
+The project records the interpretation in its
+[paper brief](../examples/economic_diversity/paper_brief.md) and the location of
+every beat in its
+[storyboard](../examples/economic_diversity/storyboard.md). The released local
+shock series comes from the public replication package. The published Figure 3
+central paths are explicitly classified as `digitized`, because the exact
+plotted series was not used as though it were a released data file.
+
+That distinction is visible in
+[the data manifest](../examples/economic_diversity/data_manifest.toml), which
+records the source, classification, checksum, transformation, displayed
+series, and omitted confidence bands.
+
+### 2. Create the paper project
+
+For a comparable paper, create the project before asking Codex to write scenes:
+
+```bash
+uv run econ-manim new my-paper \
+  --template agent-choice-welfare \
+  --theme midnight
+```
+
+Then give Codex a source-specific first task:
+
+> Use `$create-econ-paper-video`.
+>
+> **Goal:** Build the brief and claim-to-source crosswalk for the adjustment
+> result in the existing paper.
+>
+> **Context:** Read `source_material/my-paper/tex/main.tex`, all included TeX
+> sections, `source_material/my-paper/paper.pdf`, and the README and scripts
+> under `source_material/my-paper/replication/`. Write the animation materials
+> under `projects/my-paper/`.
+>
+> **Constraints:** Identify the estimand, sample, comparison groups, horizon,
+> units, and uncertainty before selecting a chart. Prefer a released
+> replication output. If a series must be digitized, label it `digitized` and
+> document the procedure. Do not write Manim code yet.
+>
+> **Done when:** `paper_brief.md`, `storyboard.md`, and
+> `data_manifest.toml` agree about the result and every displayed value has a
+> source.
+
+### 3. Export one display-ready file
+
+Preserve the replication package unchanged. Put only the released,
+disclosure-cleared, or documented digitized series needed by the animation
+under `projects/my-paper/data/`. A dynamic result might use:
+
+```csv
+horizon,lower_exposure,higher_exposure
+0,0.00,0.00
+1,-0.08,-0.15
+2,-0.12,-0.28
+```
+
+Those numbers are only a schema illustration. They must be replaced with the
+paper’s values and classified correctly before use. The bundled case study’s
+actual working file is
+[`figure3_point_estimates.csv`](../examples/economic_diversity/data/figure3_point_estimates.csv).
+
+Generate its checksum:
+
+```bash
+uv run econ-manim checksum projects/my-paper/data/figure3.csv
+```
+
+Replace the starter’s illustrative manifest entry with the Figure 3 entry
+using the schema in Section 7. Set `status` to `released` or `digitized` as
+appropriate, use `classification = "actual"`, paste the printed checksum, and
+record the exact source, transformation, and displayed series.
+
+Then validate the completed manifest:
+
+```bash
+uv run econ-manim qa projects/my-paper
+```
+
+### 4. Connect the data to a reusable visual
+
+Load the local file once and pass the series to the component that matches the
+result’s native form. Replacing the generated `scenes.py` with the following
+produces one complete empirical scene while preserving the starter’s
+`PaperExplainer` class name:
+
+```python
+from pathlib import Path
+
+from manim import FadeIn
+
+from econ_manim import ImpulseResponsePlot, ResearchScene, read_csv_rows
+
+ROWS = read_csv_rows(
+    Path(__file__).with_name("data") / "figure3.csv",
+    required_columns=("horizon", "lower_exposure", "higher_exposure"),
+)
+HORIZONS = [int(row["horizon"]) for row in ROWS]
+if HORIZONS != list(range(len(HORIZONS))):
+    raise ValueError("ImpulseResponsePlot expects sequential horizons starting at zero")
+
+
+class PaperExplainer(ResearchScene):
+    def construct(self):
+        lower = [float(row["lower_exposure"]) for row in ROWS]
+        higher = [float(row["higher_exposure"]) for row in ROWS]
+        plot = ImpulseResponsePlot(
+            {
+                "lower exposure": (lower, self.theme.green),
+                "higher exposure": (higher, self.theme.orange),
+            },
+            title="response after the shock",
+            x_label="periods after shock",
+            theme=self.theme,
+        ).move_to([0, -0.10, 0])
+
+        self.show_title("Adjustment differs after adverse shocks")
+        self.set_caption(
+            "Published point estimates · state sample and uncertainty here."
+        )
+        self.play(FadeIn(plot), run_time=0.8)
+        self.wait(3.0)
+```
+
+Because this minimal scene is shorter than the generated starter, also replace
+the starter’s `[[qa.frame]]` entries in `project.toml` with times that fall
+inside the new scene:
+
+```toml
+[[qa.frame]]
+time = 1.6
+label = "result enters"
+kind = "transition"
+
+[[qa.frame]]
+time = 3.2
+label = "published response paths"
+kind = "settled"
+```
+
+The complete implementation is in
+[the evidence chapter](../examples/economic_diversity/chapters.py); its data
+loading is separated into
+[`data.py`](../examples/economic_diversity/data.py), and inspection times are
+declared in
+[`project.toml`](../examples/economic_diversity/project.toml).
+
+### 5. Render, inspect, and cross-check
+
+```bash
+uv run econ-manim preview projects/my-paper --overlay
+uv run econ-manim frames projects/my-paper
+uv run econ-manim qa projects/my-paper
+```
+
+Ask Codex to inspect the rendered settled frame and the transitions on both
+sides of the result. Then ask it to compare the final labels, paths, signs,
+units, horizon, and interpretation against the TeX and replication files
+again. The finished scene is not verified merely because the chart rendered.
+
+To inspect the complete real example:
+
+```bash
+uv run econ-manim preview examples/economic_diversity --overlay
+uv run econ-manim frames examples/economic_diversity
+uv run econ-manim qa examples/economic_diversity
+```
 
 ## 8. Write the storyboard as a sequence of handoffs
 

@@ -8,6 +8,12 @@ render speed.
 
 ## Read before editing a project
 
+For an existing paper, first locate its TeX root, compiled PDF, and replication
+package. Prefer the complete TeX tree over extracting notation from the PDF
+alone, and inspect the replication README and result-producing scripts before
+transcribing empirical values. User-provided source material normally belongs
+under the ignored `source_material/` directory.
+
 For the selected project and template, read:
 
 1. `paper_brief.md`

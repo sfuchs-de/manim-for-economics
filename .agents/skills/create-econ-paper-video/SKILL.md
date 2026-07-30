@@ -18,6 +18,9 @@ Codex review gates.
 
 - Locate the paper source or PDF, replication files, existing figures, fonts,
   and media.
+- Prefer a complete local Overleaf/TeX checkout plus the compiled PDF and
+  replication package. Follow included TeX files and inspect the replication
+  README and result-producing scripts before reconstructing notation or values.
 - Compare the project templates with `uv run econ-manim templates` and choose a
   narrative grammar because it matches the paper's contribution.
 - Compare the visual presets with `uv run econ-manim themes`. Choose appearance

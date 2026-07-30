@@ -3,6 +3,12 @@
 Open this repository as the project root. Codex will discover the repository
 `AGENTS.md` and the shared `create-econ-paper-video` skill.
 
+For an existing paper, place its Overleaf/TeX tree, compiled PDF, and
+replication package under the ignored `source_material/` directory or give
+Codex equivalent readable local paths. TeX plus replication files is the
+preferred input; a PDF alone provides less reliable access to definitions,
+cross-references, transformations, and exact plotted values.
+
 Use Plan mode while the interpretation or storyboard is unsettled. Switch to
 implementation only after the brief and claim/source crosswalk are coherent.
 
@@ -12,9 +18,11 @@ implementation only after the brief and claim/source crosswalk are coherent.
 >
 > **Goal:** Turn my paper into a paper brief and claim-to-source crosswalk.
 >
-> **Context:** The paper and replication assets are at [paths or URLs]. Read the
-> project templates and the repository guidance. Run `econ-manim templates`
-> and `econ-manim themes` before recommending a structure and visual system.
+> **Context:** The TeX root, compiled PDF, and replication package are at
+> [readable local paths]. Read included TeX files and the replication README and
+> scripts, then read the project templates and repository guidance. Run
+> `econ-manim templates` and `econ-manim themes` before recommending a structure
+> and visual system.
 >
 > **Constraints:** Do not write Manim code. Do not invent numbers. Separate
 > released, digitized, and illustrative inputs. Flag ambiguous welfare

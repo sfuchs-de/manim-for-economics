@@ -21,6 +21,41 @@ This repository combines:
 The intended audience is an economist who has a paper and a visual idea, but
 little or no Manim experience.
 
+## Start from the paper, not the PDF alone
+
+The workflow works best when Codex can inspect the paper’s source and the
+files that produced its results:
+
+- the Overleaf/TeX project, including included sections, bibliography, and
+  figure sources;
+- the compiled paper PDF;
+- the public replication package, including scripts, output tables, and
+  display-ready data;
+- any author notes needed to distinguish published results from illustrative
+  animation values.
+
+Direct TeX access makes definitions, equations, labels, and cross-references
+much easier to trace than a PDF alone. Replication files let Codex recover the
+actual plotted series, units, samples, and transformations instead of
+transcribing or guessing them.
+
+If the paper is on Overleaf and Git access is enabled, clone it into the
+ignored `source_material/` directory using the project’s Git URL:
+
+```bash
+mkdir -p source_material/my-paper
+git clone https://git.overleaf.com/YOUR_PROJECT_ID \
+  source_material/my-paper/tex
+mkdir -p source_material/my-paper/replication
+unzip /path/to/replication-package.zip \
+  -d source_material/my-paper/replication
+```
+
+Use the Git URL and authentication method supplied by Overleaf. Do not put
+tokens in a prompt or commit `source_material/`; the directory is ignored by
+default. A PDF-only workflow is possible, but empirical and mathematical
+cross-checks will require more manual review.
+
 ## See the method in one picture
 
 ![Contact sheet from the economic-diversity example](examples/economic_diversity/preview/contact_sheet.png)
@@ -61,6 +96,35 @@ uv run econ-manim new network-paper --template mechanism-led
 uv run econ-manim new choice-paper --template agent-choice-welfare
 ```
 
+For an existing paper, a practical first pass is:
+
+```bash
+uv run econ-manim new my-paper \
+  --template general \
+  --theme ivory
+```
+
+Then open this repository in Codex and ask:
+
+> Use `$create-econ-paper-video`.
+>
+> **Goal:** Turn the existing paper into a paper brief, claim-to-source
+> crosswalk, and timed storyboard.
+>
+> **Context:** The TeX root is
+> `source_material/my-paper/tex/main.tex`; the compiled paper and replication
+> package are under `source_material/my-paper/`. The animation project is
+> `projects/my-paper/`.
+>
+> **Constraints:** Read the TeX and replication scripts before proposing
+> scenes. Do not invent or silently transcribe empirical values. Record the
+> source and transformation for every displayed result. Do not write scene
+> code until the brief and storyboard are coherent.
+>
+> **Done when:** The brief and storyboard identify one persistent visual
+> object, every factual beat points to the paper or replication files, and one
+> representative scene is specified for implementation.
+
 Template and appearance can be mixed:
 
 ```bash
@@ -78,7 +142,8 @@ Then edit, in this order:
 
 See [setup](docs/setup.md) for macOS, Windows, Linux, and `pip` instructions.
 The [practitioner’s guide](docs/practitioners-guide.md) walks through the full
-paper-to-video process.
+paper-to-video process, including a worked example built from an existing
+paper and its replication files.
 
 ## Commands
 

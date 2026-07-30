@@ -14,6 +14,7 @@ partial_movie_files/
 
 # User-provided inputs and audio are private by default
 /projects/
+/source_material/
 *.mp3
 *.m4a
 *.wav
