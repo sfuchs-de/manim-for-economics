@@ -20,6 +20,10 @@ If the storyboard is not yet approved, run `econ-manim templates`, compare
 `docs/visual-formats.md`, and inspect the complete projects under
 `templates/projects/` before proposing a custom structure.
 
+Treat narrative template and visual theme as independent choices. Run
+`econ-manim themes`, and use `self.theme` plus component `theme=` arguments
+instead of hard-coding a preset in new project scenes.
+
 Do not implement unresolved economic interpretations. Ask for a decision when
 two readings would materially change the story.
 

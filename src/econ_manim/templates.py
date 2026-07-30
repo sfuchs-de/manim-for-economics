@@ -18,6 +18,7 @@ class ProjectTemplate:
     use_when: str
     sequence: str
     informed_by: str
+    default_theme: str
 
 
 PROJECT_TEMPLATES = (
@@ -28,6 +29,7 @@ PROJECT_TEMPLATES = (
         use_when="the paper does not fit a more specific narrative grammar",
         sequence="question → object → argument → result → interpretation",
         informed_by="shared lessons from both production videos",
+        default_theme="midnight",
     ),
     ProjectTemplate(
         name="mechanism-led",
@@ -36,6 +38,7 @@ PROJECT_TEMPLATES = (
         use_when="one intervention propagates through a system or equilibrium",
         sequence="question → build → perturb → trace → compare → synthesize",
         informed_by="the multimodal-transport explainer",
+        default_theme="ivory",
     ),
     ProjectTemplate(
         name="agent-choice-welfare",
@@ -44,6 +47,7 @@ PROJECT_TEMPLATES = (
         use_when="agent responses connect a choice menu to welfare or policy",
         sequence="agent → change → choices → evidence → decomposition → welfare",
         informed_by="the economic-diversity explainer",
+        default_theme="midnight",
     ),
 )
 

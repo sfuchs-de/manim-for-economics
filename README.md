@@ -13,6 +13,7 @@ This repository combines:
 - Provenance manifests that distinguish released, digitized, and illustrative
   inputs.
 - A render/inspection CLI built around cheap previews and contact sheets.
+- Independent narrative templates and light/dark visual themes.
 - Durable `AGENTS.md` instructions and a shared Codex skill.
 - A readable case study based on “Economic Diversity and the Resilience of
   Cities.”
@@ -43,9 +44,18 @@ Create your own project:
 
 ```bash
 uv run econ-manim templates
+uv run econ-manim themes
 uv run econ-manim new my-paper --template general
 uv run econ-manim new network-paper --template mechanism-led
 uv run econ-manim new choice-paper --template agent-choice-welfare
+```
+
+Template and appearance can be mixed:
+
+```bash
+uv run econ-manim new network-paper \
+  --template mechanism-led \
+  --theme midnight
 ```
 
 Then edit, in this order:
@@ -63,7 +73,8 @@ See [setup](docs/setup.md) for macOS, Windows, Linux, and `pip` instructions.
 |---|---|
 | `econ-manim doctor` | Diagnose Python, Manim, LaTeX, fonts, and optional FFmpeg |
 | `econ-manim templates` | Explain the available paper-story templates |
-| `econ-manim new NAME --template TYPE` | Create a project from a selected narrative grammar |
+| `econ-manim themes` | List paper-independent visual presets |
+| `econ-manim new NAME --template TYPE --theme PRESET` | Select narrative structure and appearance independently |
 | `econ-manim preview PROJECT` | Render an 854×480, 15 fps draft |
 | `econ-manim preview PROJECT --overlay` | Add title-safe and content-region guides |
 | `econ-manim frames PROJECT` | Extract declared inspection frames and a contact sheet |
@@ -120,6 +131,10 @@ papers without pretending that one generic chart fits every design or theorem.
 The general starter does not require a decision maker, shock, identification
 strategy, or welfare result.
 
+Visual appearance is a separate choice. The included `midnight` and `ivory`
+themes distill the diversity and multimodal production palettes without tying
+either palette to a paper type. See [themes](docs/themes.md).
+
 The [format gallery](examples/format_gallery/) is a short, paper-independent
 example with explicitly illustrative values:
 
@@ -149,6 +164,7 @@ Continue with the checkpoint prompts in
 - [Install and verify](docs/setup.md)
 - [From paper to storyboard](docs/storyboarding.md)
 - [Choose visual and narrative formats](docs/visual-formats.md)
+- [Choose a visual theme](docs/themes.md)
 - [Use Codex](docs/codex-workflow.md)
 - [Protect data integrity](docs/data-integrity.md)
 - [Run visual and timing QA](docs/visual-qa.md)

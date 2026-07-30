@@ -5,6 +5,7 @@ an agent-choice-welfare argument, first compare the complete project templates:
 
 ```bash
 uv run econ-manim templates
+uv run econ-manim themes
 ```
 
 1. Complete `paper_brief.md`.
@@ -12,9 +13,10 @@ uv run econ-manim templates
    `data_manifest.toml`.
 3. Turn the brief into a timed `storyboard.md`.
 4. Choose a narrative and visual format from `docs/visual-formats.md`.
-5. Edit `scenes.py`.
-6. Name the settled and transition inspection frames in `project.toml`.
-7. From the repository root, run:
+5. Choose `midnight` or `ivory` in `project.toml`.
+6. Edit `scenes.py`, using `self.theme` rather than a hard-coded preset.
+7. Name the settled and transition inspection frames in `project.toml`.
+8. From the repository root, run:
 
 ```bash
 uv run econ-manim preview starter --overlay

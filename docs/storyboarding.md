@@ -36,6 +36,10 @@ formats](visual-formats.md), the complete
 [`templates/storyboards`](../templates/storyboards/) before creating a custom
 beat structure.
 
+Choose appearance only after choosing the argument. A theme can change the
+viewing tone, but it must not change which claims, objects, or mechanisms the
+storyboard includes. See the [theme guide](themes.md).
+
 ## Build a claim-to-source crosswalk
 
 For every factual statement that may appear on screen, record:

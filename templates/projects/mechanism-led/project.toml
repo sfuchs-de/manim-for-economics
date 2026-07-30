@@ -3,6 +3,7 @@ title = "My Economics Paper"
 entrypoint = "scenes.py"
 scene = "MechanismExplainer"
 output_file = "my_economics_paper"
+theme = "ivory"
 
 [render]
 preview_width = 854

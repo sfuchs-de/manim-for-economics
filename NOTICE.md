@@ -41,6 +41,12 @@ No paper-specific data, figures, source code, audio, or numerical results from
 that animation are redistributed. The format gallery uses generic labels and
 explicitly illustrative values.
 
+The `ivory` preset recreates the general warm-paper direction of that video;
+the `midnight` preset recreates the general dark editorial direction of the
+economic-diversity video. Preset names and APIs are paper-independent. The
+light-palette text accents are adjusted for contrast, and no paper-specific
+artwork is included.
+
 ## Excluded media
 
 The soundtrack used in the original production video is not included because

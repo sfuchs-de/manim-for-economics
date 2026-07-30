@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_starter_project_loads():
     project = load_project(ROOT / "starter")
     assert project.scene == "PaperExplainer"
+    assert project.theme == "midnight"
     assert project.render.preview_width == 854
     assert project.render.fps == 30
     assert project.render.inspection_frames
@@ -102,4 +103,21 @@ kind = "maybe"
         encoding="utf-8",
     )
     with pytest.raises(ConfigError, match="invalid kind"):
+        load_project(tmp_path)
+
+
+def test_project_rejects_unknown_theme(tmp_path):
+    (tmp_path / "scenes.py").write_text("", encoding="utf-8")
+    (tmp_path / "project.toml").write_text(
+        """
+[project]
+title = "Bad theme"
+entrypoint = "scenes.py"
+scene = "Scene"
+output_file = "bad"
+theme = "chartreuse"
+""".strip(),
+        encoding="utf-8",
+    )
+    with pytest.raises(ConfigError, match="unknown theme"):
         load_project(tmp_path)

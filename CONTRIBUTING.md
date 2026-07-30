@@ -22,6 +22,11 @@ statement about whether any displayed values are released, digitized, or
 illustrative. Explain which class of paper needs the format and which persistent
 research object carries its narrative.
 
+New themes must use semantic roles, remain independent of paper content, pass
+the contrast tests in `tests/test_theme.py`, and be previewed on both settled
+and transition frames. Scene examples should use `self.theme`, not a preset
+constant.
+
 ## Pull requests
 
 Explain:

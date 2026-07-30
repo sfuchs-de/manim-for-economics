@@ -5,6 +5,9 @@ welfare or policy object. Its narrative grammar is informed by the
 economic-diversity explainer, but the template is not tied to workers, cities,
 or labor markets.
 
+It defaults to `midnight`; use `--theme ivory` for the same structure on a
+light field.
+
 The recurring token may represent a household, firm, investor, student,
 patient, platform, government, or other decision maker.
 

@@ -217,13 +217,14 @@ class CityLaborMarket(VGroup):
         self.workers = worker_groups
         self.title = title
         self.radius = radius
+        self.theme = theme
 
     def shock_cell(self, index: int = 0, *, color: str | None = None) -> RoundedRectangle:
         """Return a highlighted copy of a sector cell for shock animations."""
 
         target = self.cells[index].copy()
-        target.set_fill(color or ECON_DARK.orange, opacity=0.95)
-        target.set_stroke(color or ECON_DARK.orange, width=2.4)
+        target.set_fill(color or self.theme.orange, opacity=0.95)
+        target.set_stroke(color or self.theme.orange, width=2.4)
         return target
 
 

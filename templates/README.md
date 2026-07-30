@@ -3,6 +3,10 @@
 Templates encode a narrative grammar, not a discipline or dataset. Pick the one
 whose sequence matches the paper's contribution.
 
+Themes are independent. Use `--theme midnight` or `--theme ivory` with any
+template; the defaults below merely reproduce the contrast between the two
+reference videos.
+
 ## Complete project templates
 
 | CLI name | Best fit | Narrative sequence | Production lesson |
@@ -13,8 +17,12 @@ whose sequence matches the paper's contribution.
 
 ```bash
 uv run econ-manim templates
+uv run econ-manim themes
 uv run econ-manim new my-paper --template mechanism-led
 uv run econ-manim new my-other-paper --template agent-choice-welfare
+uv run econ-manim new light-choice-paper \
+  --template agent-choice-welfare \
+  --theme ivory
 ```
 
 Each command creates a complete project with its own brief, storyboard,

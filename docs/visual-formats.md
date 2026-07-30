@@ -15,6 +15,9 @@ Two production explainers informed the specialized project templates:
 The reusable lesson is continuity. A viewer should see the same economic object
 change state, not decode a new infographic on every beat.
 
+Narrative format is independent of visual theme. Choose the argument here, then
+choose `midnight` or `ivory` in the [theme guide](themes.md).
+
 ## Generic core versus paper-specific components
 
 The default starter uses only paper-independent objects:
@@ -49,6 +52,8 @@ uv run econ-manim new my-paper --template mechanism-led
 uv run econ-manim new my-paper --template agent-choice-welfare
 ```
 
+The snippets below assume `theme = self.theme` inside a `ResearchScene`.
+
 ## Format 1: causal chain
 
 Use a causal chain when the final takeaway depends on a sequence of economic
@@ -58,11 +63,12 @@ closing expression.
 ```python
 chain = CausalChain(
     (
-        ("intervention", ECON_DARK.orange),
-        ("choices adjust", ECON_DARK.blue),
-        ("spillovers propagate", ECON_DARK.green),
-        ("welfare changes", ECON_DARK.foreground),
-    )
+        ("intervention", theme.orange),
+        ("choices adjust", theme.blue),
+        ("spillovers propagate", theme.green),
+        ("welfare changes", theme.foreground),
+    ),
+    theme=theme,
 )
 ```
 
@@ -87,6 +93,7 @@ pair = LinkedViews(
     left_title="economic system",
     right_title="economic summary",
     relation="one intervention · two synchronized representations",
+    theme=theme,
 )
 ```
 
@@ -104,12 +111,13 @@ Use a diverging chart when every result is defined relative to one benchmark:
 ```python
 chart = DivergingBarChart(
     (
-        ("no congestion", 40, ECON_DARK.orange),
-        ("fixed choices", -25, ECON_DARK.blue),
+        ("no congestion", 40, theme.orange),
+        ("fixed choices", -25, theme.blue),
     ),
     benchmark_label="full model",
     left_label="smaller implied gain",
     right_label="larger implied gain",
+    theme=theme,
 )
 ```
 
@@ -124,12 +132,13 @@ project's responsibility and must appear in `data_manifest.toml`.
 ```python
 equation = EquationBuild(
     (
-        ("direct response", ECON_DARK.blue),
-        ("spillovers", ECON_DARK.green),
-        ("congestion", ECON_DARK.orange),
+        ("direct response", theme.blue),
+        ("spillovers", theme.green),
+        ("congestion", theme.orange),
     ),
     lhs="welfare",
     operators=("+", "-"),
+    theme=theme,
 )
 ```
 

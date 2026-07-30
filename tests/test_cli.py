@@ -10,6 +10,7 @@ def test_cli_exposes_planned_commands():
     assert set(choices) == {
         "doctor",
         "templates",
+        "themes",
         "new",
         "preview",
         "render",
@@ -28,17 +29,18 @@ def test_new_copies_a_renderable_project(tmp_path):
     project = load_project(tmp_path / "research-paper")
     assert project.title == "Research Paper"
     assert project.output_file == "research_paper"
+    assert project.theme == "midnight"
 
 
 @pytest.mark.parametrize(
-    ("template", "scene"),
+    ("template", "scene", "default_theme"),
     (
-        ("general", "PaperExplainer"),
-        ("mechanism-led", "MechanismExplainer"),
-        ("agent-choice-welfare", "ChoiceWelfareExplainer"),
+        ("general", "PaperExplainer", "midnight"),
+        ("mechanism-led", "MechanismExplainer", "ivory"),
+        ("agent-choice-welfare", "ChoiceWelfareExplainer", "midnight"),
     ),
 )
-def test_new_supports_each_project_template(tmp_path, template, scene):
+def test_new_supports_each_project_template(tmp_path, template, scene, default_theme):
     name = f"{template}-paper"
     assert (
         main(
@@ -55,8 +57,30 @@ def test_new_supports_each_project_template(tmp_path, template, scene):
     )
     project = load_project(tmp_path / name)
     assert project.scene == scene
+    assert project.theme == default_theme
     assert validate_data_manifest(tmp_path / name)
     assert not (tmp_path / name / "preview").exists()
+
+
+def test_new_keeps_theme_independent_from_narrative_template(tmp_path):
+    assert (
+        main(
+            [
+                "new",
+                "light-choice-paper",
+                "--template",
+                "agent-choice-welfare",
+                "--theme",
+                "ivory",
+                "--destination",
+                str(tmp_path),
+            ]
+        )
+        == 0
+    )
+    project = load_project(tmp_path / "light-choice-paper")
+    assert project.scene == "ChoiceWelfareExplainer"
+    assert project.theme == "ivory"
 
 
 def test_templates_explains_narrative_grammars(capsys):
@@ -66,6 +90,16 @@ def test_templates_explains_narrative_grammars(capsys):
     assert "multimodal-transport explainer" in output
     assert "agent-choice-welfare" in output
     assert "economic-diversity explainer" in output
+    assert "Default theme: ivory" in output
+
+
+def test_themes_explains_visual_presets(capsys):
+    assert main(["themes"]) == 0
+    output = capsys.readouterr().out
+    assert "midnight" in output
+    assert "Dark navy field" in output
+    assert "ivory" in output
+    assert "Warm paper field" in output
 
 
 def test_missing_project_reports_a_concise_error(tmp_path, capsys):

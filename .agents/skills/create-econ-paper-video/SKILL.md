@@ -16,6 +16,8 @@ integrity, visual inspection, and timing as required deliverables.
   and media.
 - Compare the project templates with `uv run econ-manim templates` and choose a
   narrative grammar because it matches the paper's contribution.
+- Compare the visual presets with `uv run econ-manim themes`. Choose appearance
+  separately from narrative structure and viewing context.
 - Read the selected project's `project.toml`, `paper_brief.md`,
   `storyboard.md`, and `data_manifest.toml`.
 - Identify the persistent research object, central change or comparison,
@@ -57,6 +59,8 @@ the storyboard as approved.
 ### 4. Establish one representative scene
 
 - Reuse `ResearchScene`, `VideoTheme`, and the smallest relevant components.
+- Use `self.theme` and pass it into components; do not bind paper content to a
+  preset palette.
 - Keep title, stage, and caption regions stable.
 - Prefer direct labels, symmetric geometry, restrained arrows, and semantic
   color.

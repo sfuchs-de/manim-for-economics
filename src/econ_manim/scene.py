@@ -20,7 +20,7 @@ from manim import (
 )
 
 from .layout import assert_within_frame
-from .theme import ECON_DARK, VideoTheme
+from .theme import ECON_DARK, VideoTheme, get_theme
 
 
 class ResearchScene(Scene):
@@ -29,6 +29,9 @@ class ResearchScene(Scene):
     theme: VideoTheme = ECON_DARK
 
     def setup(self) -> None:
+        selected_theme = os.getenv("ECON_MANIM_THEME", "").strip()
+        if selected_theme:
+            self.theme = get_theme(selected_theme)
         self.camera.background_color = self.theme.background
         self._title_group = VGroup()
         self._caption_group = VGroup()

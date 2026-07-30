@@ -3,6 +3,7 @@ title = "Economic Diversity and the Resilience of Cities"
 entrypoint = "scenes.py"
 scene = "EconomicDiversityExplainer"
 output_file = "economic_diversity_resilience"
+theme = "midnight"
 
 [render]
 preview_width = 854

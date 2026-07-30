@@ -14,7 +14,7 @@ implementation only after the brief and claim/source crosswalk are coherent.
 >
 > **Context:** The paper and replication assets are at [paths or URLs]. Read the
 > project templates and the repository guidance. Run `econ-manim templates`
-> before recommending a structure.
+> and `econ-manim themes` before recommending a structure and visual system.
 >
 > **Constraints:** Do not write Manim code. Do not invent numbers. Separate
 > released, digitized, and illustrative inputs. Flag ambiguous welfare
@@ -33,8 +33,9 @@ Review the brief as an economics argument, not as marketing copy.
 >
 > **Constraints:** Compare the complete projects in `templates/projects/` and
 > the formats in `docs/visual-formats.md`; select one explicitly or justify the
-> general template. One learning goal per beat; reuse one research object;
-> explain equations term by term; connect transitions to the economic logic.
+> general template. Choose the visual theme separately. One learning goal per
+> beat; reuse one research object; explain equations term by term; connect
+> transitions to the economic logic.
 >
 > **Done when:** `storyboard.md` specifies time, on-screen words, visual action,
 > conceptual handoff, and evidence for every beat; `project.toml` contains named

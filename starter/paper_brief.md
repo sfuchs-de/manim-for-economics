@@ -44,6 +44,10 @@ interpretation.
 
 ## Visual vocabulary
 
+Choose the visual theme independently from the narrative format. State whether
+`midnight` or `ivory` better fits the intended venue and viewing context; do
+not infer the theme from the paper's field.
+
 Assign one stable color to each economically meaningful object. Prefer direct
 labels over legends and small multiples over crowded composite charts.
 

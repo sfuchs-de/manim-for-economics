@@ -68,9 +68,16 @@ normal video output.
 ## 5. Render the starter
 
 ```bash
+uv run econ-manim themes
 uv run econ-manim preview starter --overlay
 uv run econ-manim frames starter
 uv run econ-manim qa starter
+```
+
+Preview the same project in the light preset:
+
+```bash
+uv run econ-manim preview starter --theme ivory
 ```
 
 The output is below `starter/build/`. Source files live directly in `starter/`;

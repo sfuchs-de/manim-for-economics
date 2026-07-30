@@ -7,6 +7,8 @@ import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
+from .theme import theme_names
+
 
 class ConfigError(ValueError):
     """Raised for invalid project or data configuration."""
@@ -46,6 +48,7 @@ class ProjectConfig:
     entrypoint: Path
     scene: str
     output_file: str
+    theme: str
     render: RenderConfig
     audio: AudioConfig
 
@@ -89,6 +92,10 @@ def load_project(project: str | Path) -> ProjectConfig:
     entrypoint = root / str(section["entrypoint"])
     if not entrypoint.is_file():
         raise ConfigError(f"entrypoint does not exist: {entrypoint}")
+    theme = str(section.get("theme", "midnight")).strip().lower()
+    if theme not in theme_names():
+        choices = ", ".join(theme_names())
+        raise ConfigError(f"{path} has unknown theme {theme!r}; choose one of: {choices}")
     key_times = tuple(float(value) for value in render.get("key_times", ()))
     if any(value < 0 for value in key_times):
         raise ConfigError("render.key_times cannot contain negative values")
@@ -116,6 +123,7 @@ def load_project(project: str | Path) -> ProjectConfig:
         entrypoint=entrypoint,
         scene=str(section["scene"]),
         output_file=str(section["output_file"]),
+        theme=theme,
         render=RenderConfig(
             preview_width=int(render.get("preview_width", 854)),
             preview_height=int(render.get("preview_height", 480)),

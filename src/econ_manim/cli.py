@@ -6,6 +6,7 @@ import argparse
 import importlib.metadata
 import json
 import py_compile
+import re
 import shutil
 import subprocess
 import sys
@@ -14,7 +15,8 @@ from pathlib import Path
 
 from .config import ConfigError, load_project, validate_data_manifest
 from .media import extract_contact_sheet, probe_video
-from .templates import PROJECT_TEMPLATES, template_names, template_source
+from .templates import PROJECT_TEMPLATES, get_template, template_names, template_source
+from .theme import THEMES, theme_names
 
 
 def _run(command: list[str], *, cwd: Path, env: dict | None = None) -> None:
@@ -44,14 +46,25 @@ def _find_video(config, *, prefer_master: bool = False) -> Path:
     return candidates[0]
 
 
-def _render(project: Path, *, preview: bool, scene: str | None, overlay: bool) -> Path:
+def _render(
+    project: Path,
+    *,
+    preview: bool,
+    scene: str | None,
+    overlay: bool,
+    theme: str | None,
+) -> Path:
     config = load_project(project)
     selected_scene = scene or config.scene
+    selected_theme = theme or config.theme
     width = config.render.preview_width if preview else config.render.width
     height = config.render.preview_height if preview else config.render.height
     fps = config.render.preview_fps if preview else config.render.fps
     quality = "-ql" if preview else "-qh"
-    output_name = f"{config.output_file}_{'preview' if preview else '1080p'}"
+    theme_suffix = f"_{selected_theme}" if theme else ""
+    output_name = (
+        f"{config.output_file}_{'preview' if preview else '1080p'}{theme_suffix}"
+    )
     media_dir = config.root / "build" / "media"
     command = [
         sys.executable,
@@ -72,9 +85,19 @@ def _render(project: Path, *, preview: bool, scene: str | None, overlay: bool) -
     _run(
         command,
         cwd=config.root,
-        env={"ECON_MANIM_QA": "1" if overlay else "0"},
+        env={
+            "ECON_MANIM_QA": "1" if overlay else "0",
+            "ECON_MANIM_THEME": selected_theme,
+        },
     )
-    return _find_video(config, prefer_master=not preview)
+    candidates = sorted(
+        (config.root / "build").glob(f"**/{output_name}.mp4"),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+    if not candidates:
+        raise ConfigError(f"render completed without the expected output {output_name}.mp4")
+    return candidates[0]
 
 
 def command_doctor(args: argparse.Namespace) -> int:
@@ -108,6 +131,7 @@ def command_doctor(args: argparse.Namespace) -> int:
 def command_new(args: argparse.Namespace) -> int:
     repo_root = Path(__file__).resolve().parents[2]
     starter = template_source(args.template, repo_root)
+    selected_theme = args.theme or get_template(args.template).default_theme
     destination_root = Path(args.destination).expanduser().resolve()
     target = destination_root / args.name
     if target.exists():
@@ -127,8 +151,17 @@ def command_new(args: argparse.Namespace) -> int:
     project_text = project_file.read_text(encoding="utf-8")
     project_text = project_text.replace("My Economics Paper", args.name.replace("-", " ").title())
     project_text = project_text.replace("my_economics_paper", args.name.replace("-", "_"))
+    project_text = re.sub(
+        r'(?m)^theme = "[^"]+"$',
+        f'theme = "{selected_theme}"',
+        project_text,
+        count=1,
+    )
     project_file.write_text(project_text, encoding="utf-8")
-    print(f"Created {target} from the {args.template!r} template")
+    print(
+        f"Created {target} from the {args.template!r} template "
+        f"with the {selected_theme!r} theme"
+    )
     print(f"Next: edit {target / 'paper_brief.md'}")
     return 0
 
@@ -139,18 +172,43 @@ def command_templates(args: argparse.Namespace) -> int:
         print(f"{template.name}\n  {template.title}")
         print(f"  Use when: {template.use_when}.")
         print(f"  Sequence: {template.sequence}.")
-        print(f"  Informed by: {template.informed_by}.\n")
+        print(f"  Informed by: {template.informed_by}.")
+        print(f"  Default theme: {template.default_theme}.\n")
+    return 0
+
+
+def command_themes(args: argparse.Namespace) -> int:
+    del args
+    for name, theme in THEMES.items():
+        print(f"{name}\n  {theme.description}.")
+        print(
+            "  Colors: "
+            f"background {theme.background} · ink {theme.foreground} · "
+            f"blue {theme.blue} · green {theme.green} · orange {theme.orange}.\n"
+        )
     return 0
 
 
 def command_preview(args: argparse.Namespace) -> int:
-    video = _render(Path(args.project), preview=True, scene=args.scene, overlay=args.overlay)
+    video = _render(
+        Path(args.project),
+        preview=True,
+        scene=args.scene,
+        overlay=args.overlay,
+        theme=args.theme,
+    )
     print(json.dumps(asdict(probe_video(video)), indent=2))
     return 0
 
 
 def command_render(args: argparse.Namespace) -> int:
-    video = _render(Path(args.project), preview=False, scene=args.scene, overlay=False)
+    video = _render(
+        Path(args.project),
+        preview=False,
+        scene=args.scene,
+        overlay=False,
+        theme=args.theme,
+    )
     print(json.dumps(asdict(probe_video(video)), indent=2))
     return 0
 
@@ -275,6 +333,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     templates.set_defaults(handler=command_templates)
 
+    themes = subparsers.add_parser(
+        "themes",
+        help="list the available visual theme presets",
+    )
+    themes.set_defaults(handler=command_themes)
+
     new = subparsers.add_parser("new", help="create a paper project from a template")
     new.add_argument("name")
     new.add_argument("--destination", default="projects")
@@ -283,6 +347,11 @@ def build_parser() -> argparse.ArgumentParser:
         choices=template_names(),
         default="general",
         help="narrative grammar to copy (default: general)",
+    )
+    new.add_argument(
+        "--theme",
+        choices=theme_names(),
+        help="visual preset; defaults to the selected template's example theme",
     )
     new.set_defaults(handler=command_new)
 
@@ -293,6 +362,7 @@ def build_parser() -> argparse.ArgumentParser:
         render_parser = subparsers.add_parser(name, help=help_text)
         render_parser.add_argument("project")
         render_parser.add_argument("--scene")
+        render_parser.add_argument("--theme", choices=theme_names())
         if name == "preview":
             render_parser.add_argument("--overlay", action="store_true")
         render_parser.set_defaults(handler=handler)

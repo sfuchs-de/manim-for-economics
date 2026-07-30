@@ -3,6 +3,7 @@ title = "Economics Explainer Format Gallery"
 entrypoint = "scenes.py"
 scene = "FormatGallery"
 output_file = "economics_format_gallery"
+theme = "midnight"
 
 [render]
 preview_width = 854

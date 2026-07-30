@@ -13,7 +13,6 @@ from manim import (
 )
 
 from econ_manim import (
-    ECON_DARK,
     CausalChain,
     DivergingBarChart,
     EquationBuild,
@@ -22,7 +21,7 @@ from econ_manim import (
 )
 
 
-def _network_view():
+def _network_view(theme):
     points = (
         [-1.65, 0.55, 0],
         [-0.55, -0.45, 0],
@@ -31,21 +30,22 @@ def _network_view():
     )
     nodes = VGroup(
         *[
-            Dot(point, radius=0.11, color=ECON_DARK.foreground)
+            Dot(point, radius=0.11, color=theme.foreground)
             for point in points
         ]
     )
     edges = VGroup(
-        Line(points[0], points[1], color=ECON_DARK.grid, stroke_width=2.0),
-        Line(points[1], points[2], color=ECON_DARK.grid, stroke_width=2.0),
-        Line(points[2], points[3], color=ECON_DARK.grid, stroke_width=2.0),
-        Line(points[0], points[2], color=ECON_DARK.grid, stroke_width=1.5),
+        Line(points[0], points[1], color=theme.grid, stroke_width=2.0),
+        Line(points[1], points[2], color=theme.grid, stroke_width=2.0),
+        Line(points[2], points[3], color=theme.grid, stroke_width=2.0),
+        Line(points[0], points[2], color=theme.grid, stroke_width=1.5),
     )
     return VGroup(edges, nodes), edges[1]
 
 
 class FormatGallery(ResearchScene):
     def construct(self):
+        theme = self.theme
         self.next_section("causal-chain")
         self.show_title("Format 1 · build one causal chain")
         self.set_caption(
@@ -53,11 +53,12 @@ class FormatGallery(ResearchScene):
         )
         chain = CausalChain(
             (
-                ("local intervention", ECON_DARK.orange),
-                ("choices adjust", ECON_DARK.blue),
-                ("spillovers propagate", ECON_DARK.green),
-                ("welfare changes", ECON_DARK.foreground),
-            )
+                ("local intervention", theme.orange),
+                ("choices adjust", theme.blue),
+                ("spillovers propagate", theme.green),
+                ("welfare changes", theme.foreground),
+            ),
+            theme=theme,
         ).move_to([0, 0.15, 0])
         self.play(FadeIn(chain.nodes[0], shift=UP * 0.06), run_time=0.45)
         for arrow, node in zip(chain.arrows, chain.nodes[1:], strict=True):
@@ -74,15 +75,16 @@ class FormatGallery(ResearchScene):
         self.set_caption(
             "Reuse the same color and timing when a mechanism appears in the system and the equation."
         )
-        network, treated_edge = _network_view()
+        network, treated_edge = _network_view(theme)
         equation = EquationBuild(
             (
-                ("direct response", ECON_DARK.blue),
-                ("spillovers", ECON_DARK.green),
-                ("congestion", ECON_DARK.orange),
+                ("direct response", theme.blue),
+                ("spillovers", theme.green),
+                ("congestion", theme.orange),
             ),
             lhs="welfare",
             operators=("+", "-"),
+            theme=theme,
         )
         pair = LinkedViews(
             network,
@@ -90,9 +92,10 @@ class FormatGallery(ResearchScene):
             left_title="economic system",
             right_title="economic summary",
             relation="one intervention · two synchronized representations",
+            theme=theme,
         ).move_to([0, -0.05, 0])
         treated_overlay = treated_edge.copy().set_stroke(
-            color=ECON_DARK.orange,
+            color=theme.orange,
             width=7.0,
         )
         self.play(FadeIn(pair.headings), FadeIn(pair.relation), FadeIn(network), run_time=0.65)
@@ -122,13 +125,14 @@ class FormatGallery(ResearchScene):
         )
         chart = DivergingBarChart(
             (
-                ("restriction A", 40, ECON_DARK.orange),
-                ("restriction B", 12, ECON_DARK.orange),
-                ("restriction C", -25, ECON_DARK.blue),
+                ("restriction A", 40, theme.orange),
+                ("restriction B", 12, theme.orange),
+                ("restriction C", -25, theme.blue),
             ),
             benchmark_label="full model",
             left_label="smaller implied gain",
             right_label="larger implied gain",
+            theme=theme,
         ).move_to([0, -0.05, 0])
         self.play(
             Create(chart.zero),
