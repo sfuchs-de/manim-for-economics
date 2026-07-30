@@ -1,0 +1,11 @@
+[[dataset]]
+id = "illustrative-shocks"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/example.csv"
+sha256 = "a764b5f63967c0e234a227fd3a047b40fe06a22849e13de4bd3476903d71961f"
+transformation = "None; the four synthetic values are read directly from the CSV."
+displayed_values = ["City A: -0.8", "City B: -0.2", "City C: 0.3", "City D: 0.7"]
+note = "Replace this synthetic data before presenting empirical results."

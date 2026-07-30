@@ -1,0 +1,101 @@
+---
+name: create-econ-paper-video
+description: Turn an economics paper, draft, replication package, or research result into a concise Manim explainer with a paper brief, timed storyboard, verified empirical claims, reusable economics visuals, low-cost render iteration, conceptual review, and final media QA. Use when Codex is asked to plan, create, revise, render, or audit an economics paper video or a Manim research explainer.
+---
+
+# Create an Economics Paper Video
+
+Build the economic argument before building the animation. Treat source
+integrity, visual inspection, and timing as required deliverables.
+
+## Workflow
+
+### 1. Inspect the paper and assets
+
+- Locate the paper source or PDF, replication files, existing figures, fonts,
+  and media.
+- Read the selected project's `project.toml`, `paper_brief.md`,
+  `storyboard.md`, and `data_manifest.toml`.
+- Identify the agent, choice set, shock, outcomes, identification, welfare
+  baseline, and result-bearing tables or figures.
+- Classify every proposed input as `released`, `digitized`, or `illustrative`.
+- Do not expose restricted data or infer missing values.
+
+Read [conceptual-integrity.md](references/conceptual-integrity.md) when the
+video contains empirical estimates, welfare results, or a sufficient statistic.
+
+### 2. Complete the paper brief
+
+- State the contribution in one sentence.
+- Explain the mechanism without notation.
+- Record the audience and what it can be assumed to know.
+- Define the welfare or policy object, baseline, horizon, and sample.
+- List claims the design does not support.
+
+Do not write scene code while material interpretations remain unresolved.
+
+### 3. Build the timed storyboard
+
+- Use six or seven beats with one learning goal each.
+- Reuse one economic object across beats.
+- Record time, on-screen words, visual action, transition logic, and source.
+- Introduce equations term by term and activate the matching economic margin.
+- Budget longer holds for unfamiliar notation and multi-row results.
+
+Read [checkpoint-criteria.md](references/checkpoint-criteria.md) before treating
+the storyboard as approved.
+
+### 4. Establish one representative scene
+
+- Reuse `ResearchScene`, `VideoTheme`, and the smallest relevant components.
+- Keep title, stage, and caption regions stable.
+- Prefer direct labels, symmetric geometry, restrained arrows, and semantic
+  color.
+- Implement the opening and one technical beat before expanding the full video.
+- Run:
+
+```bash
+uv run econ-manim preview <project> --overlay
+uv run econ-manim frames <project>
+```
+
+Inspect the images. Successful compilation is not visual QA.
+
+### 5. Complete and iterate
+
+- Implement only storyboarded content.
+- Smoke-render after structural changes.
+- Sample settled frames and frames inside each major transition.
+- Review clipping, overlaps, duplicated objects, arrows, axes, label stability,
+  equation density, and text hold time.
+- Compare all on-screen claims with the paper and manifest again.
+
+Read [visual-review.md](references/visual-review.md) for the inspection pass.
+
+### 6. Produce the delivery master
+
+Run:
+
+```bash
+uv run ruff check .
+uv run pytest
+uv run econ-manim qa <project>
+uv run econ-manim render <project>
+uv run econ-manim frames <project>
+uv run econ-manim qa <project>
+```
+
+Verify dimensions, frame rate, duration, decoding, final frames, and absence of
+unexpected audio. Add music or narration only when the project's audio fields
+contain a track, license, and attribution.
+
+## Defaults
+
+- Prefer a silent, text-led 16:9 explainer.
+- Prefer a 60–90 second first cut.
+- Prefer a words-first equation build over displaying the full derivation.
+- Prefer released data; use clearly labeled illustrative values only for
+  mechanisms.
+- Keep generated media below `build/`.
+- Never publish a full render history, private paths, restricted data, or
+  undocumented audio.

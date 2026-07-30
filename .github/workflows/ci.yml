@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Python checks (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.10.2"
+          enable-cache: true
+      - run: uv python install 3.12
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run pytest
+
+  render-smoke:
+    name: MathTex smoke render
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.10.2"
+          enable-cache: true
+      - name: Install system render dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential python3-dev libcairo2-dev libpango1.0-dev \
+            texlive-latex-base texlive-latex-extra texlive-fonts-recommended dvisvgm
+      - run: uv python install 3.12
+      - run: uv sync --frozen
+      - name: Render two-second scene
+        run: >
+          uv run manim -ql --disable_caching --fps 15 -r 854,480
+          --media_dir build/smoke tests/smoke_scene.py SmokeScene
+      - name: Probe rendered artifact
+        run: >
+          uv run python -c
+          "from pathlib import Path; from econ_manim.media import probe_video;
+          p=next(Path('build/smoke').glob('**/*.mp4')); i=probe_video(p);
+          assert (i.width,i.height)==(854,480);
+          assert abs(i.fps-15)<0.1; assert 1.5<i.duration<3.0;
+          assert not i.has_audio; print(i)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: smoke-render
+          path: build/smoke/**/*.mp4

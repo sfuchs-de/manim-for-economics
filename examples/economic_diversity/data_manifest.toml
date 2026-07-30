@@ -1,0 +1,35 @@
+[[dataset]]
+id = "released-bartik-selected-cities"
+status = "released"
+classification = "actual"
+source_url = "https://doi.org/10.17632/hnxp6dckyp.1"
+license = "CC BY 4.0"
+local_path = "data/bartik_selected.csv"
+sha256 = "6b354822b1ec59f982d2829bece0cb486860428c6c86a476a09531aad8a28aec"
+transformation = "Selected Paris, Lyon, Lille, Marseille, Bordeaux, and Nantes in 2005, 2009, and 2019 from the released Bartik-shock data; the animation plots the bartik column without rescaling."
+displayed_values = ["18 released bartik observations for the six named cities and three displayed years"]
+note = "Selected major French commuting zones in 2005, 2009, and 2019 from the released data_bartik.dta-derived files."
+
+[[dataset]]
+id = "figure-3-point-estimates"
+status = "digitized"
+classification = "actual"
+source_url = "https://doi.org/10.1016/j.jinteco.2025.104184"
+license = "Citation; underlying paper subject to publisher terms"
+local_path = ""
+sha256 = ""
+transformation = "Digitized the published central paths at horizons 0–20; retained three decimals and omitted confidence bands."
+displayed_values = ["within-city negative-shock paths for HHI deciles 1 and 10", "across-city negative-shock paths for HHI deciles 1 and 10"]
+note = "Central point-estimate paths digitized from published Figure 3; confidence intervals are omitted from this compact explainer."
+
+[[dataset]]
+id = "table-2-welfare"
+status = "released"
+classification = "actual"
+source_url = "https://doi.org/10.1016/j.jinteco.2025.104184"
+license = "Citation; numeric results reproduced for scholarly explanation"
+local_path = ""
+sha256 = ""
+transformation = "Transcribed Table 2 values for HHI deciles 1 and 10; retained the published percentage-point precision."
+displayed_values = ["negative, HHI decile 1: -1.00, -0.06, -1.06", "negative, HHI decile 10: -2.38, -2.55, -4.93", "positive, HHI decile 1: 7.10, -3.25, 3.85", "positive, HHI decile 10: 12.75, -6.94, 5.81"]
+note = "Discounted cumulative welfare effects, 2006Q1–2019Q4, beta=.99, horizons 0–20."

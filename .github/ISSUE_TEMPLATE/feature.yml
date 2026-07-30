@@ -1,0 +1,26 @@
+name: Economics visual or workflow idea
+description: Propose a reusable component or a clearer research-video workflow.
+title: "[Idea] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Repeated economics-communication problem
+      description: What do paper-video authors repeatedly need to explain or verify?
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Concrete example
+      description: Describe the paper object, intended visual, and why existing components are insufficient.
+    validations:
+      required: true
+  - type: textarea
+    id: qa
+    attributes:
+      label: Acceptance criteria
+      description: How would we know the addition is correct, legible, and reusable?
+    validations:
+      required: true

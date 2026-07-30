@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create an Economics Paper Video"
+  short_description: "Turn an economics paper into a verified Manim video"
+  default_prompt: "Use $create-econ-paper-video to turn my economics paper into a concise, visually verified Manim explainer."

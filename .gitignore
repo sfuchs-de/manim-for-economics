@@ -1,0 +1,23 @@
+.DS_Store
+.idea/
+.pytest_cache/
+.ruff_cache/
+.venv/
+__pycache__/
+*.egg-info/
+*.py[cod]
+
+# Generated animation and QA artifacts
+build/
+media/
+partial_movie_files/
+
+# User-provided inputs and audio are private by default
+projects/
+*.mp3
+*.m4a
+*.wav
+
+# Keep only deliberately curated example previews
+!examples/**/preview/
+!examples/**/preview/**

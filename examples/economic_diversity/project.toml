@@ -1,0 +1,20 @@
+[project]
+title = "Economic Diversity and the Resilience of Cities"
+entrypoint = "scenes.py"
+scene = "EconomicDiversityExplainer"
+output_file = "economic_diversity_resilience"
+
+[render]
+preview_width = 854
+preview_height = 480
+preview_fps = 15
+width = 1920
+height = 1080
+fps = 30
+key_times = [2.0, 5.5, 8.0, 12.0, 16.0, 21.0, 25.0, 27.0, 30.0, 35.0, 40.0, 45.0, 47.5, 49.0, 51.5, 55.5, 57.5, 61.0, 64.0]
+
+[audio]
+enabled = false
+track = ""
+license = ""
+attribution = ""

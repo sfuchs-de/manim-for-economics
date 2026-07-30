@@ -1,0 +1,68 @@
+from pathlib import Path
+
+import pytest
+
+from econ_manim.config import (
+    ConfigError,
+    load_data_manifest,
+    load_project,
+    validate_data_manifest,
+)
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_starter_project_loads():
+    project = load_project(ROOT / "starter")
+    assert project.scene == "PaperExplainer"
+    assert project.render.preview_width == 854
+    assert project.render.fps == 30
+    assert project.audio.enabled is False
+
+
+def test_case_study_manifest_is_explicit_and_valid():
+    entries = load_data_manifest(ROOT / "examples" / "economic_diversity")
+    assert {entry.status for entry in entries} == {"released", "digitized"}
+    assert {entry.classification for entry in entries} == {"actual"}
+    assert all(entry.transformation and entry.displayed_values for entry in entries)
+    messages = validate_data_manifest(ROOT / "examples" / "economic_diversity")
+    assert any("released-bartik-selected-cities" in message for message in messages)
+
+
+def test_manifest_rejects_unknown_status(tmp_path):
+    (tmp_path / "data_manifest.toml").write_text(
+        '[[dataset]]\nid="bad"\nstatus="probably-real"\n',
+        encoding="utf-8",
+    )
+    with pytest.raises(ConfigError, match="invalid status"):
+        load_data_manifest(tmp_path)
+
+
+def test_manifest_rejects_missing_displayed_values(tmp_path):
+    (tmp_path / "data_manifest.toml").write_text(
+        """
+[[dataset]]
+id = "incomplete"
+status = "illustrative"
+classification = "illustrative"
+transformation = "None"
+""".strip(),
+        encoding="utf-8",
+    )
+    with pytest.raises(ConfigError, match="displayed_values"):
+        load_data_manifest(tmp_path)
+
+
+def test_project_rejects_missing_entrypoint(tmp_path):
+    (tmp_path / "project.toml").write_text(
+        """
+[project]
+title = "Missing"
+entrypoint = "absent.py"
+scene = "MissingScene"
+output_file = "missing"
+""".strip(),
+        encoding="utf-8",
+    )
+    with pytest.raises(ConfigError, match="entrypoint does not exist"):
+        load_project(tmp_path)
