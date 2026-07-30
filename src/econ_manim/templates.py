@@ -49,6 +49,24 @@ PROJECT_TEMPLATES = (
         informed_by="the economic-diversity explainer",
         default_theme="midnight",
     ),
+    ProjectTemplate(
+        name="empirical-result-led",
+        source="templates/projects/empirical-result-led",
+        title="Empirical-result-led explainer",
+        use_when="one estimand connects identifying variation to evidence and interpretation",
+        sequence="question → variation → estimate → dynamics → heterogeneity → interpretation",
+        informed_by="empirical continuity lessons from the economic-diversity explainer",
+        default_theme="midnight",
+    ),
+    ProjectTemplate(
+        name="method-theory",
+        source="templates/projects/method-theory",
+        title="Method- or theory-led explainer",
+        use_when="one mathematical or economic object is transformed into a usable result",
+        sequence="problem → object → operation → result → comparative static → application",
+        informed_by="words-first equation and model-comparison lessons from both explainers",
+        default_theme="ivory",
+    ),
 )
 
 

@@ -161,10 +161,15 @@ def test_visual_formats_construct_without_hidden_data():
     assert len(chain.arrows) == 2
     assert len(chart.rows) == 2
     assert views.left_group.get_center()[0] < views.right_group.get_center()[0]
+    relation_line = views.relation[0]
+    assert relation_line.get_start()[1] == pytest.approx(relation_line.get_end()[1])
     for mobject in (chain, chart, views):
         assert mobject.width > 0
         assert mobject.height > 0
         assert_within_frame(mobject)
+    for row in chart.rows:
+        label, _, amount = row
+        assert label.get_right()[0] < amount.get_left()[0]
 
 
 @pytest.mark.skipif(shutil.which("latex") is None, reason="MathTex requires LaTeX")

@@ -1,0 +1,4 @@
+order,label,estimate,lower,upper,color_role
+1,overall estimate,-0.29,-0.39,-0.19,blue
+2,group A,-0.18,-0.31,-0.05,green
+3,group B,-0.42,-0.60,-0.24,orange

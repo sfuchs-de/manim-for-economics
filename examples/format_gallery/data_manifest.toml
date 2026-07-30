@@ -9,3 +9,27 @@ sha256 = "02e9666375d9880448c001150317e90505abeb0b370be3ecfd48dbb757d4c37f"
 transformation = "Hand-authored values used only to demonstrate a diverging benchmark chart."
 displayed_values = ["+40%", "+12%", "-25%"]
 note = "These are not estimates and are labeled illustrative in the scene."
+
+[[dataset]]
+id = "format-gallery-evidence"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/evidence.csv"
+sha256 = "bb9f176f303c2bcabfe5fc35a50a528d42609db00a87ed580729c4f547646746"
+transformation = "Rows are selected by visual type and plotted directly."
+displayed_values = ["Five shocks", "Two coefficients", "Seven response horizons"]
+note = "These are generic visual examples, not estimates."
+
+[[dataset]]
+id = "format-gallery-decomposition"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/decomposition.csv"
+sha256 = "f8c8e6ed09c644cdde7447901b09be633deebe7bda7f3f80ea3b35ad4a007377"
+transformation = "Direct and indirect entries are displayed with their row totals."
+displayed_values = ["Case A total -0.90", "Case B total -1.55"]
+note = "These are generic visual examples, not welfare calculations."

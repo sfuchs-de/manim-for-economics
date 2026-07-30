@@ -1,0 +1,11 @@
+[[dataset]]
+id = "illustrative-comparative-statics"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/comparative_statics.csv"
+sha256 = "e2ce62762cf5a4c11b18e7ed7214ec5600a0f2cd61d19e943d45961922cd5374"
+transformation = "Rows are ordered and plotted as relative illustrative changes."
+displayed_values = ["-32", "0", "+24"]
+note = "Replace with a proved comparative static, calibrated example, or remove the numeric panel."

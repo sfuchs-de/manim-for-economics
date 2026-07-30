@@ -1,0 +1,4 @@
+order,label,value,color_role
+1,weaker condition,-32,orange
+2,benchmark condition,0,blue
+3,stronger condition,24,green

@@ -110,9 +110,13 @@ class LinkedViews(VGroup):
         )
 
         relation_label = Text(relation, font_size=18, color=theme.muted)
+        relation_y = min(
+            left_group.get_bottom()[1],
+            right_group.get_bottom()[1],
+        ) - 0.18
         relation_rule = Line(
-            left_group.get_left() + DOWN * 0.18,
-            right_group.get_right() + DOWN * 0.18,
+            [left_group.get_left()[0], relation_y, 0],
+            [right_group.get_right()[0], relation_y, 0],
             color=theme.grid,
             stroke_width=1.0,
         )
@@ -194,8 +198,9 @@ class DivergingBarChart(VGroup):
             bar.move_to([direction * width / 2, y, 0])
 
             row_label = Text(label, font_size=19, color=theme.foreground)
-            row_label.move_to([-plot_half_width - 0.38, y, 0])
-            row_label.align_to([-plot_half_width - 0.38, y, 0], RIGHT)
+            label_anchor = -plot_half_width - 1.30
+            row_label.move_to([label_anchor, y, 0])
+            row_label.align_to([label_anchor, y, 0], RIGHT)
 
             amount = Text(
                 value_format.format(numeric_value),

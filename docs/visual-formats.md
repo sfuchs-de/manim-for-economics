@@ -146,6 +146,55 @@ Show the left-hand side first. Add one term only when the corresponding margin
 is active in the visual. The full mathematical notation can follow later if it
 adds information.
 
+## Format 5: path flow
+
+Use `PathFlow` when movement through alternatives is itself part of the
+mechanism. The path may be straight, curved, or multi-segment; its label should
+name the economic adjustment rather than the geometry.
+
+```python
+flow = PathFlow(
+    ((-3, 0, 0), (0, 1, 0), (3, 0, 0)),
+    label="reallocation across markets",
+    color=theme.orange,
+    curved=True,
+    theme=theme,
+)
+```
+
+Preview the complete `mechanism.path-flow` recipe before adapting it.
+
+## Format 6: channel decomposition
+
+Use `ChannelDecomposition` when two to four distinct margins contribute to one
+outcome:
+
+```python
+channels = ChannelDecomposition(
+    (
+        ("direct response", theme.blue),
+        ("market spillover", theme.green),
+        ("resource cost", theme.orange),
+    ),
+    outcome="change in welfare",
+    theme=theme,
+)
+```
+
+Reveal each channel and arrow together. Do not describe a conceptual channel as
+separately identified unless the paper supports that claim.
+
+## Format 7: estimates and dynamic responses
+
+Use `CoefficientPlot` for a small set of estimates sharing one scale and
+reference. Use `ImpulseResponsePlot` for common horizons, with optional
+confidence bands and an event marker. The atomic recipes
+`empirical.coefficient-intervals` and `empirical.impulse-response` include local
+illustrative data, manifests, and both-theme QA stills.
+
+State the estimand, units, baseline, sample, and confidence level near the
+visual. Preserve pre-event horizons when they diagnose the design.
+
 ## What did not transfer
 
 The starter deliberately does not reproduce:
@@ -173,6 +222,9 @@ uv run econ-manim frames examples/format_gallery
 ```
 
 Compare the complete template contact sheets before choosing:
+
+Browse the [scene catalog](scene-catalog.md) when choosing a component for an
+individual beat.
 
 ### Mechanism-led
 

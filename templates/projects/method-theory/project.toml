@@ -1,0 +1,85 @@
+[project]
+title = "My Economics Paper"
+entrypoint = "scenes.py"
+scene = "MethodTheoryExplainer"
+output_file = "my_economics_paper"
+theme = "ivory"
+
+[render]
+preview_width = 854
+preview_height = 480
+preview_fps = 15
+width = 1920
+height = 1080
+fps = 30
+
+[audio]
+enabled = false
+track = ""
+license = ""
+attribution = ""
+
+[[qa.frame]]
+time = 2.7
+label = "opening problem and persistent object"
+kind = "settled"
+
+[[qa.frame]]
+time = 4.5
+label = "problem to definitions"
+kind = "transition"
+
+[[qa.frame]]
+time = 8.5
+label = "object defined in words"
+kind = "settled"
+
+[[qa.frame]]
+time = 10.5
+label = "definitions to key operation"
+kind = "transition"
+
+[[qa.frame]]
+time = 12.5
+label = "operation applied to persistent object"
+kind = "settled"
+
+[[qa.frame]]
+time = 14.5
+label = "operation to result"
+kind = "transition"
+
+[[qa.frame]]
+time = 16.5
+label = "words-first result"
+kind = "settled"
+
+[[qa.frame]]
+time = 20.5
+label = "result to comparative static"
+kind = "transition"
+
+[[qa.frame]]
+time = 22.5
+label = "comparative static with fixed benchmark"
+kind = "settled"
+
+[[qa.frame]]
+time = 24.5
+label = "comparative static to application"
+kind = "transition"
+
+[[qa.frame]]
+time = 26.5
+label = "method connected to use"
+kind = "settled"
+
+[[qa.frame]]
+time = 28.5
+label = "application to solved object"
+kind = "transition"
+
+[[qa.frame]]
+time = 30.5
+label = "opening problem resolved"
+kind = "settled"

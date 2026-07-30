@@ -100,10 +100,11 @@ uv run econ-manim themes
 | `general` | No specialized sequence fits the paper | Model object, treatment comparison, theorem, measurement problem, or other research object |
 | `mechanism-led` | One change propagates through a system | Network, market, equilibrium, technology, or policy channel |
 | `agent-choice-welfare` | Choices and responses connect to value | Household, firm, worker, institution, or other decision maker |
+| `empirical-result-led` | Identifying variation connects to one central result | Estimand, comparison, or response |
+| `method-theory` | One operation turns an object into a usable result | Mathematical object, estimator, sufficient statistic, or model solution |
 
-The storyboard-only formats in `templates/storyboards/` cover
-empirical-result-led and method-or-theory papers. Start those from `general`
-and replace its storyboard.
+The shorter files in `templates/storyboards/` provide the same narrative
+grammars without copying their complete scene skeletons.
 
 ### Visual themes
 
@@ -137,7 +138,38 @@ projects/my-paper/
 
 Work through those files in that order. `scenes.py` comes last.
 
-## 5. Prepare a compact source pack
+## 5. Browse and copy atomic scene recipes
+
+Project templates determine the overall argument. Atomic recipes solve one
+local communication problem without deciding the rest of the video:
+
+```bash
+uv run econ-manim scenes
+uv run econ-manim scenes --category empirical
+uv run econ-manim preview-scene empirical.coefficient-intervals \
+  --theme ivory \
+  --overlay
+uv run econ-manim add-scene projects/my-paper \
+  empirical.coefficient-intervals
+```
+
+`add-scene` copies the recipe below `projects/my-paper/recipes/`, including its
+illustrative data and a manifest fragment. It prints the import and build
+function to use. It deliberately does not rewrite `scenes.py` or silently merge
+provenance entries.
+
+Use the recipe's README as a checklist:
+
+- confirm the visual matches the paper's economic problem;
+- replace illustrative inputs with released or documented digitized values;
+- merge and verify the manifest entry;
+- keep the persistent object and semantic colors from the project storyboard;
+- render and inspect both settled and transition frames.
+
+The [scene catalog](scene-catalog.md) groups recipes and components by opening,
+mechanism, identification, evidence, method, welfare, and conclusion.
+
+## 6. Prepare a compact source pack
 
 Do not ask the animation code to discover the paper’s argument. Assemble a
 small set of authoritative inputs:
@@ -197,7 +229,7 @@ Restricted data do not belong in the repository. Export only
 disclosure-cleared moments or construct a synthetic fixture with the same
 schema.
 
-## 6. Complete the paper brief
+## 7. Complete the paper brief
 
 `paper_brief.md` is the editorial contract. It should answer:
 
@@ -213,7 +245,7 @@ schema.
 Keep notation out of the first explanation. If the mechanism cannot be stated
 in ordinary economic language, the animation is not ready.
 
-## 7. Put displayed values in local files
+## 8. Put displayed values in local files
 
 Classify every visual input:
 
@@ -365,6 +397,13 @@ result’s native form. Replacing the generated `scenes.py` with the following
 produces one complete empirical scene while preserving the starter’s
 `PaperExplainer` class name:
 
+Before writing the component call manually, preview the closest recipe:
+
+```bash
+uv run econ-manim preview-scene empirical.impulse-response --overlay
+uv run econ-manim add-scene projects/my-paper empirical.impulse-response
+```
+
 ```python
 from pathlib import Path
 
@@ -447,7 +486,7 @@ uv run econ-manim frames examples/economic_diversity
 uv run econ-manim qa examples/economic_diversity
 ```
 
-## 8. Write the storyboard as a sequence of handoffs
+## 9. Write the storyboard as a sequence of handoffs
 
 Each beat needs:
 
@@ -491,7 +530,7 @@ kind = "transition"
 Transitions deserve explicit inspection because temporary overlaps often occur
 between otherwise clean settled frames.
 
-## 9. Establish the visual system with one technical beat
+## 10. Establish the visual system with one technical beat
 
 Implement the opening and one representative technical beat first. This is the
 cheapest point to change typography, spacing, color roles, and the recurring
@@ -525,7 +564,7 @@ class MyExplainer(ResearchScene):
 Do not copy a case-study object merely because it already exists. A worker,
 network, or shock distribution belongs only when it matches the paper.
 
-## 10. Use a cheap render loop
+## 11. Use a cheap render loop
 
 Render the representative scene:
 
@@ -551,7 +590,7 @@ Check:
 Fix density by reducing simultaneous content or splitting a beat. Shrinking
 every object is rarely the right correction.
 
-## 11. Complete the scenes
+## 12. Complete the scenes
 
 Once the representative beat is approved:
 
@@ -565,7 +604,7 @@ Once the representative beat is approved:
 Do not wait for the complete video before checking timing. A two-second hold
 that feels adequate in code may be unreadable in the rendered sequence.
 
-## 12. Run conceptual QA
+## 13. Run conceptual QA
 
 Review the completed preview against the paper, not against the storyboard
 alone.
@@ -593,7 +632,7 @@ For every verbal result ask:
 Update the brief, storyboard, manifest, and scene together when a claim
 changes.
 
-## 13. Work effectively with Codex
+## 14. Work effectively with Codex
 
 Give Codex one checkpoint at a time. Use four explicit fields:
 
@@ -623,7 +662,7 @@ not evidence of visual review.
 
 The complete staged prompts are in [Use Codex](codex-workflow.md).
 
-## 14. Produce the master
+## 15. Produce the master
 
 Run:
 
@@ -649,7 +688,7 @@ Confirm:
 Add narration or music only after the silent master is stable and the rights
 are documented.
 
-## 15. Publish the evidence with the video
+## 16. Publish the evidence with the video
 
 Keep the public project understandable without private context. Include:
 
