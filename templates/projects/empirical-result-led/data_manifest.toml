@@ -1,0 +1,35 @@
+[[dataset]]
+id = "illustrative-identifying-variation"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/variation.csv"
+sha256 = "75a3787062c9839976a4f64295faab85b2baa4da596a9886cb9bfa88edf12627"
+transformation = "Values are plotted directly as a schematic distribution."
+displayed_values = ["Ten illustrative observations from -0.72 to 0.69"]
+note = "Replace with the paper's identifying variation and document its construction."
+
+[[dataset]]
+id = "illustrative-coefficients"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/estimates.csv"
+sha256 = "43ab90b8246085a2b5203a62c427145eee636fa0465d364016557d4db2bb0453"
+transformation = "Point estimates and bounds are plotted directly."
+displayed_values = ["Overall -0.29", "Group A -0.18", "Group B -0.42"]
+note = "These are generic placeholders, not published estimates."
+
+[[dataset]]
+id = "illustrative-dynamic-response"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/response.csv"
+sha256 = "1fc2f34070356adda32893fd4630ecba181d810cce1c4e0aee31c3ebfebd3ddb"
+transformation = "Horizons, estimates, and confidence bounds are plotted directly."
+displayed_values = ["Nine illustrative horizons from -2 to 6"]
+note = "Replace with released dynamic estimates and state the confidence level."

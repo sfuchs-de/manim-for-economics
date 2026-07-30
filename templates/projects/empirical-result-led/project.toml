@@ -1,0 +1,75 @@
+[project]
+title = "My Economics Paper"
+entrypoint = "scenes.py"
+scene = "EmpiricalResultExplainer"
+output_file = "my_economics_paper"
+theme = "midnight"
+
+[render]
+preview_width = 854
+preview_height = 480
+preview_fps = 15
+width = 1920
+height = 1080
+fps = 30
+
+[audio]
+enabled = false
+track = ""
+license = ""
+attribution = ""
+
+[[qa.frame]]
+time = 2.6
+label = "empirical question and persistent estimand"
+kind = "settled"
+
+[[qa.frame]]
+time = 4.5
+label = "question to identifying variation"
+kind = "transition"
+
+[[qa.frame]]
+time = 8.5
+label = "identifying variation on screen"
+kind = "settled"
+
+[[qa.frame]]
+time = 10.5
+label = "variation to central estimate"
+kind = "transition"
+
+[[qa.frame]]
+time = 12.5
+label = "central estimate and uncertainty"
+kind = "settled"
+
+[[qa.frame]]
+time = 14.5
+label = "estimate to dynamic response"
+kind = "transition"
+
+[[qa.frame]]
+time = 16.5
+label = "dynamic response on common horizon"
+kind = "settled"
+
+[[qa.frame]]
+time = 18.5
+label = "response to heterogeneity"
+kind = "transition"
+
+[[qa.frame]]
+time = 20.5
+label = "heterogeneous estimates on one scale"
+kind = "settled"
+
+[[qa.frame]]
+time = 22.5
+label = "evidence to supported interpretation"
+kind = "transition"
+
+[[qa.frame]]
+time = 25.5
+label = "identification-frontier conclusion"
+kind = "settled"

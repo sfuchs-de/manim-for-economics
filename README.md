@@ -94,6 +94,9 @@ uv run econ-manim themes
 uv run econ-manim new my-paper --template general
 uv run econ-manim new network-paper --template mechanism-led
 uv run econ-manim new choice-paper --template agent-choice-welfare
+uv run econ-manim new empirical-paper --template empirical-result-led
+uv run econ-manim new method-paper --template method-theory
+uv run econ-manim scenes
 ```
 
 For an existing paper, a practical first pass is:
@@ -152,6 +155,9 @@ paper and its replication files.
 | `econ-manim doctor` | Diagnose Python, Manim, LaTeX, fonts, and optional FFmpeg |
 | `econ-manim templates` | Explain the available paper-story templates |
 | `econ-manim themes` | List paper-independent visual presets |
+| `econ-manim scenes` | Browse atomic visual recipes by communication problem |
+| `econ-manim preview-scene ID` | Render one recipe independently in either theme |
+| `econ-manim add-scene PROJECT ID` | Copy a recipe, local data, and manifest fragment into a project |
 | `econ-manim checksum FILE` | Generate the SHA-256 value for a manifest input |
 | `econ-manim demo` | Render and inspect the bundled starter end to end |
 | `econ-manim new NAME --template TYPE --theme PRESET` | Select narrative structure and appearance independently |
@@ -204,19 +210,25 @@ paper-independent project starters:
 - `mechanism-led`, which keeps one system alive as a change propagates;
 - `agent-choice-welfare`, which connects one decision menu to evidence and
   value;
+- `empirical-result-led`, which preserves one estimand from identifying
+  variation through estimates and interpretation;
+- `method-theory`, which transforms one mathematical or economic object into a
+  usable result;
 - `general`, which makes no assumption about the paper's subject or method.
 
-Storyboard-only templates cover empirical-result-led and method-or-theory
-papers without pretending that one generic chart fits every design or theorem.
-The general starter does not require a decision maker, shock, identification
-strategy, or welfare result.
+The corresponding storyboard-only files remain available for researchers who
+want the narrative grammar without a complete scene skeleton. The general
+starter does not require a decision maker, shock, identification strategy, or
+welfare result.
 
 Visual appearance is a separate choice. The included `midnight` and `ivory`
 themes distill the diversity and multimodal production palettes without tying
 either palette to a paper type. See [themes](docs/themes.md).
 
 The [format gallery](examples/format_gallery/) is a short, paper-independent
-example with explicitly illustrative values:
+example covering the reusable component library with explicitly illustrative
+values. The [scene catalog](docs/scene-catalog.md) organizes those components by
+the job they perform in a paper:
 
 ```bash
 uv run econ-manim preview examples/format_gallery --overlay
@@ -246,6 +258,7 @@ Continue with the checkpoint prompts in
 - [Follow the practitioner’s guide](docs/practitioners-guide.md)
 - [From paper to storyboard](docs/storyboarding.md)
 - [Choose visual and narrative formats](docs/visual-formats.md)
+- [Browse the scene catalog](docs/scene-catalog.md)
 - [Choose a visual theme](docs/themes.md)
 - [Use Codex](docs/codex-workflow.md)
 - [Protect data integrity](docs/data-integrity.md)

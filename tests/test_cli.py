@@ -45,6 +45,8 @@ def test_new_copies_a_renderable_project(tmp_path):
         ("general", "PaperExplainer", "midnight"),
         ("mechanism-led", "MechanismExplainer", "ivory"),
         ("agent-choice-welfare", "ChoiceWelfareExplainer", "midnight"),
+        ("empirical-result-led", "EmpiricalResultExplainer", "midnight"),
+        ("method-theory", "MethodTheoryExplainer", "ivory"),
     ),
 )
 def test_new_supports_each_project_template(tmp_path, template, scene, default_theme):

@@ -10,6 +10,8 @@ PROJECTS = (
     ROOT / "starter",
     ROOT / "templates" / "projects" / "mechanism-led",
     ROOT / "templates" / "projects" / "agent-choice-welfare",
+    ROOT / "templates" / "projects" / "empirical-result-led",
+    ROOT / "templates" / "projects" / "method-theory",
     ROOT / "examples" / "format_gallery",
     ROOT / "examples" / "economic_diversity",
     ROOT / "templates" / "scenes" / "mechanism" / "path_flow",

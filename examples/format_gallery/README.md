@@ -1,14 +1,17 @@
 # Visual format gallery
 
-This short scene isolates three patterns that proved useful across the
-multimodal-transport and economic-diversity explainers:
+This scene exercises the paper-independent component library:
 
-1. **Causal chain:** build the argument as a stable sequence instead of changing
-   visual grammar every few seconds.
-2. **Linked views:** show one economic state in two representations and reveal
-   corresponding elements at the same time.
-3. **Benchmark comparison:** grow each restricted result from a fixed reference
-   and label values directly.
+1. agents and choices;
+2. optional labor-market extensions;
+3. straight and multi-segment path flows;
+4. causal chains;
+5. channel decompositions;
+6. synchronized economic and analytical views;
+7. coefficient intervals and dynamic responses;
+8. realized variation;
+9. benchmark comparisons; and
+10. compact result tables.
 
 Render and inspect it with:
 
@@ -18,8 +21,7 @@ uv run econ-manim frames examples/format_gallery
 uv run econ-manim qa examples/format_gallery
 ```
 
-The numeric values in the final format are illustrative. See
-`data_manifest.toml`.
+Every numeric value is illustrative and recorded in `data_manifest.toml`.
 
 Repository preview:
 [silent 480p video](preview/economics_format_gallery_preview.mp4) ·

@@ -8,13 +8,13 @@ Economists choosing a visual and narrative format before writing scene code.
 
 ## Contribution
 
-Demonstrate three reusable formats: a causal chain, two synchronized views of
-one economic state, and a benchmark-centered comparison.
+Demonstrate the reusable visual components without prescribing a paper's
+subject or narrative.
 
 ## Evidence
 
-No empirical evidence is presented. The comparison values are illustrative and
-exist only to demonstrate geometry.
+No empirical evidence is presented. All values exist only to demonstrate
+geometry, scale, uncertainty, and incremental reveals.
 
 ## Claims to exclude
 

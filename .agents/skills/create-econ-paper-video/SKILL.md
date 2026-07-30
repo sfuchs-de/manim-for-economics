@@ -23,6 +23,8 @@ Codex review gates.
   README and result-producing scripts before reconstructing notation or values.
 - Compare the project templates with `uv run econ-manim templates` and choose a
   narrative grammar because it matches the paper's contribution.
+- Browse `uv run econ-manim scenes` for local visual problems. Preview a recipe
+  before copying or reimplementing it.
 - Compare the visual presets with `uv run econ-manim themes`. Choose appearance
   separately from narrative structure and viewing context.
 - Read the selected project's `project.toml`, `paper_brief.md`,
@@ -51,6 +53,8 @@ Do not write scene code while material interpretations remain unresolved.
 
 - Compare the narrative formats in `docs/visual-formats.md` and select one
   because it fits the contribution.
+- Use `docs/scene-catalog.md` to map each beat to the smallest relevant
+  component or atomic recipe.
 - Start from a complete project in `templates/projects/` or a copyable
   storyboard in `templates/storyboards/`.
 - Use six or seven beats with one learning goal each.
@@ -66,6 +70,11 @@ the storyboard as approved.
 ### 4. Establish one representative scene
 
 - Reuse `ResearchScene`, `VideoTheme`, and the smallest relevant components.
+- When an atomic recipe fits, run
+  `uv run econ-manim preview-scene <id> --overlay`, then copy it with
+  `uv run econ-manim add-scene <project> <id>`.
+- Treat the copied recipe's data and manifest as illustrative until they are
+  explicitly replaced and reclassified.
 - Use `self.theme` and pass it into components; do not bind paper content to a
   preset palette.
 - Keep title, stage, and caption regions stable.

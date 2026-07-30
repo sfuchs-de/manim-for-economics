@@ -20,36 +20,96 @@ license = ""
 attribution = ""
 
 [[qa.frame]]
-time = 2.2
-label = "causal chain building"
+time = 2.5
+label = "generic agent and choice map"
+kind = "settled"
+
+[[qa.frame]]
+time = 4.3
+label = "agent to domain extension"
 kind = "transition"
 
 [[qa.frame]]
-time = 4.5
+time = 6.8
+label = "optional labor-market extension"
+kind = "settled"
+
+[[qa.frame]]
+time = 8.5
+label = "domain extension to path flow"
+kind = "transition"
+
+[[qa.frame]]
+time = 11.5
+label = "straight and multi-segment paths"
+kind = "settled"
+
+[[qa.frame]]
+time = 14.5
+label = "path flow to causal chain"
+kind = "transition"
+
+[[qa.frame]]
+time = 17.3
 label = "complete causal chain"
 kind = "settled"
 
 [[qa.frame]]
-time = 6.3
-label = "chain to linked views"
+time = 18.8
+label = "causal chain to channels"
 kind = "transition"
 
 [[qa.frame]]
-time = 9.0
-label = "synchronized system and equation"
+time = 22.0
+label = "complete channel decomposition"
 kind = "settled"
 
 [[qa.frame]]
-time = 11.4
-label = "linked views to benchmark chart"
+time = 23.5
+label = "channels to linked views"
 kind = "transition"
 
 [[qa.frame]]
-time = 14.2
-label = "benchmark comparison building"
+time = 25.5
+label = "synchronized economic and analytical views"
+kind = "settled"
+
+[[qa.frame]]
+time = 27.0
+label = "linked views to empirical evidence"
 kind = "transition"
 
 [[qa.frame]]
-time = 16.5
+time = 29.5
+label = "coefficient and dynamic response views"
+kind = "settled"
+
+[[qa.frame]]
+time = 31.0
+label = "empirical views to realized variation"
+kind = "transition"
+
+[[qa.frame]]
+time = 33.5
+label = "realized variation distribution"
+kind = "settled"
+
+[[qa.frame]]
+time = 35.5
+label = "variation to benchmark comparison"
+kind = "transition"
+
+[[qa.frame]]
+time = 38.5
 label = "complete benchmark comparison"
+kind = "settled"
+
+[[qa.frame]]
+time = 40.0
+label = "benchmark to result table"
+kind = "transition"
+
+[[qa.frame]]
+time = 43.2
+label = "complete result decomposition"
 kind = "settled"

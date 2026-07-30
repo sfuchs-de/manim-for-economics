@@ -14,12 +14,16 @@ reference videos.
 | `general` | Papers without one dominant grammar | question → object → argument → result → interpretation | Shared continuity and QA conventions |
 | `mechanism-led` | Networks, equilibrium propagation, policy transmission, model channels | question → build → perturb → trace → compare → synthesize | The multimodal explainer keeps one system alive across the video |
 | `agent-choice-welfare` | Choice, adjustment, treatment responses, insurance, welfare, policy value | agent → change → choices → evidence → decomposition → welfare | The diversity explainer connects one menu to evidence and welfare |
+| `empirical-result-led` | Measured effects, event studies, descriptive facts, and heterogeneity | question → variation → estimate → dynamics → heterogeneity → interpretation | The diversity explainer preserves one estimand from design to evidence |
+| `method-theory` | Theorems, estimators, sufficient statistics, algorithms, and identification results | problem → object → operation → result → comparative static → application | Both explainers introduce formal terms only after their economic meaning |
 
 ```bash
 uv run econ-manim templates
 uv run econ-manim themes
 uv run econ-manim new my-paper --template mechanism-led
 uv run econ-manim new my-other-paper --template agent-choice-welfare
+uv run econ-manim new empirical-paper --template empirical-result-led
+uv run econ-manim new method-paper --template method-theory
 uv run econ-manim new light-choice-paper \
   --template agent-choice-welfare \
   --theme ivory
@@ -46,18 +50,34 @@ manifest, scene skeleton, and named QA frames.
 
 [Watch the silent preview](projects/agent-choice-welfare/preview/agent_choice_welfare_preview.mp4).
 
-## Storyboard-only templates
+### Empirical-result-led preview
 
-The `storyboards/` folder also includes:
+![Empirical-result-led contact sheet](projects/empirical-result-led/preview/contact_sheet.png)
 
-- `empirical-result-led.md` for estimates, event studies, descriptive facts,
-  and decompositions;
-- `method-theory.md` for theorems, estimators, algorithms, sufficient
-  statistics, and identification results.
+[Watch the silent preview](projects/empirical-result-led/preview/empirical_result_led_preview.mp4).
 
-Start those projects with `--template general`, then replace its storyboard with
-the relevant file. They remain storyboard-only because empirical and
-methodological papers vary too much for one honest visual skeleton.
+### Method- or theory-led preview
+
+![Method-theory contact sheet](projects/method-theory/preview/contact_sheet.png)
+
+[Watch the silent preview](projects/method-theory/preview/method_theory_preview.mp4).
+
+The shorter files under `storyboards/` remain useful when a researcher wants
+the narrative grammar without copying a full scene skeleton.
+
+## Atomic recipes
+
+Complete projects choose the argument's overall sequence. Atomic recipes solve
+one local visual problem:
+
+```bash
+uv run econ-manim scenes
+uv run econ-manim preview-scene empirical.coefficient-intervals --theme ivory
+uv run econ-manim add-scene projects/my-paper empirical.coefficient-intervals
+```
+
+Browse the [atomic scene recipes](scenes/README.md) before building a custom
+chart or route from scratch.
 
 ## What to preserve
 
