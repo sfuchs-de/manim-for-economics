@@ -32,6 +32,21 @@ Illustrative entries use both `status = "illustrative"` and
 classified as actual. This apparent redundancy makes accidental relabeling
 harder.
 
+Keep displayed values in project-local files when practical. The included
+templates use `econ_manim.read_csv_rows` so replacing a CSV updates the scene
+without copying the same number into Python:
+
+```python
+from pathlib import Path
+
+from econ_manim import read_csv_rows
+
+rows = read_csv_rows(
+    Path(__file__).with_name("data") / "results.csv",
+    required_columns=("label", "value"),
+)
+```
+
 Run:
 
 ```bash

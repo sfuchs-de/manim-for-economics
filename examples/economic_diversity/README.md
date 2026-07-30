@@ -22,11 +22,12 @@ Companion article and full production video:
 Repository preview:
 [silent 480p video](preview/economic_diversity_preview.mp4) ·
 [full contact sheet](preview/contact_sheet.png) ·
-[verification record](QA.md)
+[verification record](QA.md) ·
+[bundled source crosswalk](SOURCES.md)
 
 The format is generalized in
 [`docs/visual-formats.md`](../../docs/visual-formats.md) and
-[`templates/storyboards/adjustment-welfare.md`](../../templates/storyboards/adjustment-welfare.md).
+[`templates/storyboards/agent-choice-welfare.md`](../../templates/storyboards/agent-choice-welfare.md).
 
 Render from the repository root:
 

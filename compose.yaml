@@ -1,0 +1,12 @@
+services:
+  econ-manim:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: manim-for-economics:0.1.0
+    working_dir: /workspace
+    entrypoint: ["econ-manim"]
+    environment:
+      UV_PROJECT_ENVIRONMENT: /opt/econ-manim-venv
+    volumes:
+      - .:/workspace

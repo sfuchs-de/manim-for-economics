@@ -1,5 +1,7 @@
 """A domain-neutral scene to replace after the storyboard is approved."""
 
+from pathlib import Path
+
 from manim import UP, FadeIn, Text, VGroup
 
 from econ_manim import (
@@ -7,6 +9,12 @@ from econ_manim import (
     DivergingBarChart,
     EquationBuild,
     ResearchScene,
+    read_csv_rows,
+)
+
+RESULT_ROWS = read_csv_rows(
+    Path(__file__).with_name("data") / "example.csv",
+    required_columns=("label", "value", "kind"),
 )
 
 
@@ -45,9 +53,13 @@ class PaperExplainer(ResearchScene):
         self.show_title("Show the result in its native form")
         self.set_caption("Illustrative values only · replace them and update the data manifest.")
         result = DivergingBarChart(
-            (
-                ("scenario A", 35, theme.green),
-                ("scenario B", -20, theme.orange),
+            tuple(
+                (
+                    row["label"],
+                    float(row["value"]) * 100,
+                    theme.green if float(row["value"]) >= 0 else theme.orange,
+                )
+                for row in RESULT_ROWS
             ),
             benchmark_label="reference case",
             left_label="lower",

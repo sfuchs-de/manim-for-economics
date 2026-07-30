@@ -1,5 +1,7 @@
 """Small gallery of visual formats distilled from two production explainers."""
 
+from pathlib import Path
+
 from manim import (
     LEFT,
     RIGHT,
@@ -18,6 +20,12 @@ from econ_manim import (
     EquationBuild,
     LinkedViews,
     ResearchScene,
+    read_csv_rows,
+)
+
+COMPARISON_ROWS = read_csv_rows(
+    Path(__file__).with_name("data") / "comparison.csv",
+    required_columns=("label", "value", "color_role"),
 )
 
 
@@ -124,10 +132,13 @@ class FormatGallery(ResearchScene):
             "Illustrative values: the zero line is the full model; each row changes one assumption."
         )
         chart = DivergingBarChart(
-            (
-                ("restriction A", 40, theme.orange),
-                ("restriction B", 12, theme.orange),
-                ("restriction C", -25, theme.blue),
+            tuple(
+                (
+                    row["label"],
+                    float(row["value"]),
+                    getattr(theme, row["color_role"]),
+                )
+                for row in COMPARISON_ROWS
             ),
             benchmark_label="full model",
             left_label="smaller implied gain",
@@ -140,8 +151,9 @@ class FormatGallery(ResearchScene):
             FadeIn(chart.side_labels),
             run_time=0.6,
         )
-        for row, value in zip(chart.rows, (40, 12, -25), strict=True):
+        for row, source in zip(chart.rows, COMPARISON_ROWS, strict=True):
             label, bar, amount = row
+            value = float(source["value"])
             self.play(
                 FadeIn(label),
                 GrowFromEdge(bar, LEFT if value >= 0 else RIGHT),

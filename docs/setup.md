@@ -3,6 +3,9 @@
 Manim for Economics uses Manim Community 0.20.1 and Python 3.11 or newer. The
 repository selects Python 3.12 for a stable common environment.
 
+For the route that bundles Python, Manim, TeX, native libraries, and fonts in
+one image, use [the Docker and Dev Container guide](self-contained.md).
+
 ## 1. Install uv
 
 Follow the current [uv installation guide](https://docs.astral.sh/uv/getting-started/installation/).
@@ -49,7 +52,7 @@ Other Linux distributions should follow the
 ```bash
 git clone https://github.com/sfuchs-de/manim-for-economics.git
 cd manim-for-economics
-uv sync
+uv sync --frozen
 ```
 
 The committed `uv.lock` makes the Python environment reproducible across
@@ -69,9 +72,7 @@ normal video output.
 
 ```bash
 uv run econ-manim themes
-uv run econ-manim preview starter --overlay
-uv run econ-manim frames starter
-uv run econ-manim qa starter
+uv run econ-manim demo
 ```
 
 Preview the same project in the light preset:

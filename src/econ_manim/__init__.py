@@ -2,6 +2,7 @@
 
 from .charts import EquationBuild, ImpulseResponsePlot, ResultTable, ShockDistribution
 from .components import AgentToken, ChoiceMap, CityLaborMarket, WorkerToken, adjustment_route
+from .data import read_csv_rows
 from .formats import CausalChain, DivergingBarChart, LinkedViews
 from .layout import LayoutError, assert_no_overlap, assert_within_frame
 from .scene import ResearchScene
@@ -44,6 +45,7 @@ __all__ = [
     "assert_within_frame",
     "get_template",
     "get_theme",
+    "read_csv_rows",
     "template_names",
     "theme_names",
 ]

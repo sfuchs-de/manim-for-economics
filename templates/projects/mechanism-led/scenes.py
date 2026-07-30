@@ -1,5 +1,7 @@
 """Paper-independent skeleton for a mechanism-led research explainer."""
 
+from pathlib import Path
+
 from manim import (
     DOWN,
     LEFT,
@@ -22,6 +24,12 @@ from econ_manim import (
     DivergingBarChart,
     EquationBuild,
     ResearchScene,
+    read_csv_rows,
+)
+
+COMPARISON_ROWS = read_csv_rows(
+    Path(__file__).with_name("data") / "comparison.csv",
+    required_columns=("label", "value"),
 )
 
 
@@ -116,9 +124,13 @@ class MechanismExplainer(ResearchScene):
         self.show_title("Compare every case with one benchmark")
         self.set_caption("Illustrative values only · replace them and document the source.")
         comparison = DivergingBarChart(
-            (
-                ("restricted case A", 30, theme.blue),
-                ("restricted case B", -20, theme.green),
+            tuple(
+                (
+                    row["label"],
+                    float(row["value"]),
+                    theme.blue if float(row["value"]) >= 0 else theme.green,
+                )
+                for row in COMPARISON_ROWS
             ),
             benchmark_label="preferred case",
             left_label="smaller",

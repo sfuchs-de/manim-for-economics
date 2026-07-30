@@ -1,0 +1,15 @@
+.git
+.github
+.idea
+.pytest_cache
+.ruff_cache
+.venv
+**/__pycache__
+**/*.pyc
+**/build
+media
+projects
+*.egg-info
+*.m4a
+*.mp3
+*.wav

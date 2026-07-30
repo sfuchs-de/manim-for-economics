@@ -1,0 +1,12 @@
+{
+  "name": "Manim for Economics",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "remoteUser": "root",
+  "overrideCommand": true,
+  "postCreateCommand": "uv run --frozen econ-manim doctor --strict"
+}

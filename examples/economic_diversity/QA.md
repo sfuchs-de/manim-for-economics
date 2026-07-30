@@ -10,10 +10,10 @@ substitute for the paper or replication documentation.
   [September 2025 paper](https://sfuchs-de.github.io/research/economic_resilience_v2.pdf).
 - All 18 city-year rows in `data/bartik_selected.csv` match the selected rows
   in the released 2005, 2009, and 2019 Bartik-shock extracts, field for field.
-- The response paths are the central estimates digitized from published Figure
-  3 for horizons 0–20. The signs, HHI ordering, horizons, and verbal claim were
-  checked against the figure. Confidence bands are intentionally omitted and
-  the animation says so.
+- The response paths in `data/figure3_point_estimates.csv` are the central
+  estimates digitized from published Figure 3 for horizons 0–20. The signs,
+  HHI ordering, horizons, and verbal claim were checked against the figure.
+  Confidence bands are intentionally omitted and the animation says so.
 - The four displayed welfare rows reproduce Table 2 exactly:
 
 | Realization | HHI decile | First order | Second order | Total |
@@ -23,9 +23,14 @@ substitute for the paper or replication documentation.
 | Positive | 1 | 7.10 | -3.25 | 3.85 |
 | Positive | 10 | 12.75 | -6.94 | 5.81 |
 
-The video identifies these as percentage changes relative to baseline for
-realized French shocks averaged by HHI bin, accumulated over 2006Q1–2019Q4
-through horizon 20 with a discount factor of 0.99.
+These rows live in `data/table2_welfare.csv`. The video identifies them as
+percentage changes relative to baseline for realized French shocks averaged by
+HHI bin, accumulated over 2006Q1–2019Q4 through horizon 20 with a discount
+factor of 0.99.
+
+All three local data files have checksums in `data_manifest.toml`, so the
+curated example can be validated without downloading the paper or replication
+package.
 
 ## Visual and timing checks
 

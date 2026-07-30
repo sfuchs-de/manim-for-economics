@@ -1,3 +1,3 @@
 label,value,kind
-Scenario A,0.35,illustrative
-Scenario B,-0.20,illustrative
+scenario A,0.35,illustrative
+scenario B,-0.20,illustrative

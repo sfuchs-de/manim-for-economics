@@ -1,5 +1,7 @@
 """Paper-independent skeleton for an agent-choice-welfare explainer."""
 
+from pathlib import Path
+
 from manim import UP, Arrow, Circle, Create, FadeIn, FadeOut, Indicate, Text, VGroup
 
 from econ_manim import (
@@ -7,6 +9,12 @@ from econ_manim import (
     EquationBuild,
     ImpulseResponsePlot,
     ResearchScene,
+    read_csv_rows,
+)
+
+RESPONSE_ROWS = read_csv_rows(
+    Path(__file__).with_name("data") / "response_paths.csv",
+    required_columns=("horizon", "more_options", "fewer_options"),
 )
 
 
@@ -62,8 +70,14 @@ class ChoiceWelfareExplainer(ResearchScene):
         self.set_caption("Illustrative paths only · replace them and document the source.")
         responses = ImpulseResponsePlot(
             {
-                "more options": ([0.00, 0.15, 0.22, 0.25], theme.green),
-                "fewer options": ([0.00, 0.07, 0.10, 0.12], theme.orange),
+                "more options": (
+                    [float(row["more_options"]) for row in RESPONSE_ROWS],
+                    theme.green,
+                ),
+                "fewer options": (
+                    [float(row["fewer_options"]) for row in RESPONSE_ROWS],
+                    theme.orange,
+                ),
             },
             title="response after the change",
             x_label="time after change",

@@ -189,6 +189,41 @@ def command_themes(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_demo(args: argparse.Namespace) -> int:
+    """Render and inspect the bundled starter as an end-to-end installation check."""
+
+    if command_doctor(argparse.Namespace(strict=True)):
+        return 1
+    repo_root = Path(__file__).resolve().parents[2]
+    project = repo_root / "starter"
+    if not project.is_dir():
+        raise ConfigError(
+            "the bundled demo requires a repository checkout containing starter/"
+        )
+    video = _render(
+        project,
+        preview=True,
+        scene=None,
+        overlay=not args.no_overlay,
+        theme=args.theme,
+    )
+    config = load_project(project)
+    frames = config.render.inspection_frames
+    sheet = extract_contact_sheet(
+        video,
+        tuple(frame.time for frame in frames),
+        config.root / "build" / "qa",
+        labels=tuple(frame.label for frame in frames),
+        kinds=tuple(frame.kind for frame in frames),
+    )
+    for message in validate_data_manifest(config.root):
+        print(f"[OK] data: {message}")
+    print(f"[OK] preview: {video}")
+    print(f"[OK] contact sheet: {sheet}")
+    print(json.dumps(asdict(probe_video(video)), indent=2))
+    return 0
+
+
 def command_preview(args: argparse.Namespace) -> int:
     video = _render(
         Path(args.project),
@@ -338,6 +373,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="list the available visual theme presets",
     )
     themes.set_defaults(handler=command_themes)
+
+    demo = subparsers.add_parser(
+        "demo",
+        help="render and inspect the bundled starter end to end",
+    )
+    demo.add_argument("--theme", choices=theme_names())
+    demo.add_argument(
+        "--no-overlay",
+        action="store_true",
+        help="hide safe-area guides in the demo preview",
+    )
+    demo.set_defaults(handler=command_demo)
 
     new = subparsers.add_parser("new", help="create a paper project from a template")
     new.add_argument("name")

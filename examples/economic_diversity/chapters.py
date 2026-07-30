@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 from data import (
-    NEGATIVE_WELFARE,
-    POSITIVE_WELFARE,
     SPATIAL_NEG_CONCENTRATED,
     SPATIAL_NEG_DIVERSE,
     WITHIN_NEG_CONCENTRATED,
     WITHIN_NEG_DIVERSE,
     released_shocks,
+    welfare_rows,
 )
 from manim import (
     DOWN,
@@ -457,7 +456,11 @@ def welfare(scene):
         ("second order", theme.green),
         ("total", theme.foreground),
     )
-    negative = ResultTable(headers, NEGATIVE_WELFARE, theme=theme).move_to([0, 0.35, 0])
+    negative = ResultTable(
+        headers,
+        welfare_rows(theme, "negative"),
+        theme=theme,
+    ).move_to([0, 0.35, 0])
     detail = Text(
         "discounted cumulative change · 2006Q1–2019Q4 · beta=.99 · horizons 0–20 · Table 2",
         font_size=17,
@@ -469,7 +472,11 @@ def welfare(scene):
     scene.play(FadeIn(sign_label), FadeIn(negative), FadeIn(detail), run_time=0.70)
     scene.wait(2.6)
 
-    positive = ResultTable(headers, POSITIVE_WELFARE, theme=theme).move_to(negative)
+    positive = ResultTable(
+        headers,
+        welfare_rows(theme, "positive"),
+        theme=theme,
+    ).move_to(negative)
     positive_label = Text("positive realizations", font_size=25, color=theme.green).move_to(
         sign_label
     )

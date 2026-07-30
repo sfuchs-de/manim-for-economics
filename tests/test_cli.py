@@ -11,6 +11,7 @@ def test_cli_exposes_planned_commands():
         "doctor",
         "templates",
         "themes",
+        "demo",
         "new",
         "preview",
         "render",

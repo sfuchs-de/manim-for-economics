@@ -31,13 +31,24 @@ intended check explicit.
 
 ## Quick start
 
-Install [uv](https://docs.astral.sh/uv/), clone the repository, then run:
+Clone the repository. If Docker is available, the most self-contained first run
+is:
 
 ```bash
-uv sync
-uv run econ-manim doctor --strict
-uv run econ-manim preview starter --overlay
-uv run econ-manim frames starter
+docker compose build
+docker compose run --rm econ-manim demo
+```
+
+This includes Python, Manim, LaTeX, dvisvgm, FFmpeg, Cairo, Pango, and a known
+font inside the image. It renders the starter, extracts its QA frames, builds a
+contact sheet, validates the local data, and probes the video.
+
+For a smaller native installation, install [uv](https://docs.astral.sh/uv/) and
+run:
+
+```bash
+uv sync --frozen
+uv run econ-manim demo
 ```
 
 Create your own project:
@@ -74,6 +85,7 @@ See [setup](docs/setup.md) for macOS, Windows, Linux, and `pip` instructions.
 | `econ-manim doctor` | Diagnose Python, Manim, LaTeX, fonts, and optional FFmpeg |
 | `econ-manim templates` | Explain the available paper-story templates |
 | `econ-manim themes` | List paper-independent visual presets |
+| `econ-manim demo` | Render and inspect the bundled starter end to end |
 | `econ-manim new NAME --template TYPE --theme PRESET` | Select narrative structure and appearance independently |
 | `econ-manim preview PROJECT` | Render an 854×480, 15 fps draft |
 | `econ-manim preview PROJECT --overlay` | Add title-safe and content-region guides |
@@ -162,6 +174,7 @@ Continue with the checkpoint prompts in
 ## Documentation
 
 - [Install and verify](docs/setup.md)
+- [Use the self-contained environment](docs/self-contained.md)
 - [From paper to storyboard](docs/storyboarding.md)
 - [Choose visual and narrative formats](docs/visual-formats.md)
 - [Choose a visual theme](docs/themes.md)

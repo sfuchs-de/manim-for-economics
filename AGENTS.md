@@ -55,6 +55,7 @@ two readings would materially change the story.
 ```bash
 uv sync
 uv run econ-manim doctor --strict
+uv run econ-manim demo
 uv run ruff check .
 uv run pytest
 uv run econ-manim preview <project> --overlay
@@ -85,3 +86,7 @@ uv run econ-manim render <project>
   `.agents/skills/create-econ-paper-video/`.
 - Do not add the original case-study version history, confidential data, or
   unlicensed audio.
+- Keep included examples runnable without network access. External paper and
+  replication links are provenance references, never hidden runtime inputs.
+- Keep Docker, native, and Dev Container instructions synchronized when the
+  environment changes.
