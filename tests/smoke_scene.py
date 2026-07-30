@@ -7,9 +7,9 @@ class SmokeScene(ResearchScene):
     def construct(self):
         self.show_title("Smoke render")
         group = VGroup(
-            Text("worker welfare", font_size=28, color=ECON_DARK.foreground),
+            Text("research outcome", font_size=28, color=ECON_DARK.foreground),
             MathTex(r"=", font_size=34, color=ECON_DARK.muted),
-            Text("first order", font_size=28, color=ECON_DARK.blue),
+            Text("direct channel", font_size=28, color=ECON_DARK.blue),
         ).arrange()
         shocks = ShockDistribution(
             [(-0.2, ECON_DARK.orange), (0.3, ECON_DARK.green)],

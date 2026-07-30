@@ -3,10 +3,14 @@
 ## Brief approved
 
 - One-sentence contribution is accurate and non-promotional.
-- Agent, choices, shock, outcome, identification, and interpretation are named.
-- Welfare results state baseline, horizon, sample, units, and whether shock
-  signs are combined or evaluated separately.
+- The persistent object, central change or comparison, result, and
+  interpretation are named.
+- Empirical results state estimand, sample, units, and identifying comparison.
+- Welfare results, when present, state baseline, horizon, sample, units, and
+  whether shock signs are combined or evaluated separately.
 - Claims to exclude are explicit.
+- The selected project template matches the contribution rather than merely
+  reusing familiar subject matter.
 
 ## Storyboard approved
 

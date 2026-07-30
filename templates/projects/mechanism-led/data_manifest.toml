@@ -1,0 +1,11 @@
+[[dataset]]
+id = "illustrative-restriction-comparison"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = ""
+sha256 = ""
+transformation = "None; the synthetic percentages are specified directly in scenes.py."
+displayed_values = ["restricted case A: +30%", "restricted case B: -20%"]
+note = "Template-only values. Replace them with sourced results or remove the chart."

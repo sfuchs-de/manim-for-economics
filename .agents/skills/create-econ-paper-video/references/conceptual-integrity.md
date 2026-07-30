@@ -14,14 +14,17 @@ For each displayed coefficient or moment, verify:
 
 Describe digitized estimates as digitized and avoid false precision.
 
-## Dynamic worker problems
+## Dynamic choice problems
 
-Make the worker's state and choice menu concrete before introducing value
-functions. Distinguish current payoffs, continuation values, and realized
-shocks. Do not call a dynamic choice probability a static employment share
-unless the paper does.
+Make the decision maker's state and choice menu concrete before introducing
+value functions. Distinguish current payoffs, continuation values, and realized
+shocks. Do not relabel a dynamic choice probability as a static share unless
+the paper does.
 
 ## Sufficient statistics
+
+Use this checkpoint only when the paper actually derives or implements a
+sufficient statistic.
 
 Explain what each input does:
 

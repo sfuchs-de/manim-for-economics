@@ -8,7 +8,7 @@ render speed.
 
 ## Read before editing a project
 
-For the selected project, read:
+For the selected project and template, read:
 
 1. `paper_brief.md`
 2. `storyboard.md`
@@ -16,9 +16,9 @@ For the selected project, read:
 4. `project.toml`
 5. Its scene and data modules
 
-If the storyboard is not yet approved, compare `docs/visual-formats.md` and the
-copyable templates under `templates/storyboards/` before proposing a custom
-structure.
+If the storyboard is not yet approved, run `econ-manim templates`, compare
+`docs/visual-formats.md`, and inspect the complete projects under
+`templates/projects/` before proposing a custom structure.
 
 Do not implement unresolved economic interpretations. Ask for a decision when
 two readings would materially change the story.
@@ -43,8 +43,8 @@ two readings would materially change the story.
   margin.
 - Use semantic colors consistently; do not add decorative gradients, icons, or
   motion.
-- Prefer symmetric city and worker layouts with arrows terminating cleanly
-  outside nodes.
+- Prefer symmetric layouts for agents, systems, and alternatives, with arrows
+  terminating cleanly outside nodes.
 
 ## Commands
 

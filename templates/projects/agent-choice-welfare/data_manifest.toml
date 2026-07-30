@@ -1,0 +1,11 @@
+[[dataset]]
+id = "illustrative-response-paths"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = ""
+sha256 = ""
+transformation = "None; synthetic paths are specified directly in scenes.py."
+displayed_values = ["more options: [0.00, 0.15, 0.22, 0.25]", "fewer options: [0.00, 0.07, 0.10, 0.12]"]
+note = "Template-only paths. Replace them with sourced estimates or remove the chart."

@@ -14,6 +14,7 @@ from pathlib import Path
 
 from .config import ConfigError, load_project, validate_data_manifest
 from .media import extract_contact_sheet, probe_video
+from .templates import PROJECT_TEMPLATES, template_names, template_source
 
 
 def _run(command: list[str], *, cwd: Path, env: dict | None = None) -> None:
@@ -106,7 +107,7 @@ def command_doctor(args: argparse.Namespace) -> int:
 
 def command_new(args: argparse.Namespace) -> int:
     repo_root = Path(__file__).resolve().parents[2]
-    starter = repo_root / "starter"
+    starter = template_source(args.template, repo_root)
     destination_root = Path(args.destination).expanduser().resolve()
     target = destination_root / args.name
     if target.exists():
@@ -114,15 +115,31 @@ def command_new(args: argparse.Namespace) -> int:
     shutil.copytree(
         starter,
         target,
-        ignore=shutil.ignore_patterns("build", "media", "__pycache__", "*.pyc"),
+        ignore=shutil.ignore_patterns(
+            "build",
+            "media",
+            "preview",
+            "__pycache__",
+            "*.pyc",
+        ),
     )
     project_file = target / "project.toml"
     project_text = project_file.read_text(encoding="utf-8")
     project_text = project_text.replace("My Economics Paper", args.name.replace("-", " ").title())
     project_text = project_text.replace("my_economics_paper", args.name.replace("-", "_"))
     project_file.write_text(project_text, encoding="utf-8")
-    print(f"Created {target}")
+    print(f"Created {target} from the {args.template!r} template")
     print(f"Next: edit {target / 'paper_brief.md'}")
+    return 0
+
+
+def command_templates(args: argparse.Namespace) -> int:
+    del args
+    for template in PROJECT_TEMPLATES:
+        print(f"{template.name}\n  {template.title}")
+        print(f"  Use when: {template.use_when}.")
+        print(f"  Sequence: {template.sequence}.")
+        print(f"  Informed by: {template.informed_by}.\n")
     return 0
 
 
@@ -252,9 +269,21 @@ def build_parser() -> argparse.ArgumentParser:
     doctor.add_argument("--strict", action="store_true", help="require LaTeX and dvisvgm")
     doctor.set_defaults(handler=command_doctor)
 
-    new = subparsers.add_parser("new", help="copy the starter into a new paper project")
+    templates = subparsers.add_parser(
+        "templates",
+        help="list the available paper-story templates",
+    )
+    templates.set_defaults(handler=command_templates)
+
+    new = subparsers.add_parser("new", help="create a paper project from a template")
     new.add_argument("name")
     new.add_argument("--destination", default="projects")
+    new.add_argument(
+        "--template",
+        choices=template_names(),
+        default="general",
+        help="narrative grammar to copy (default: general)",
+    )
     new.set_defaults(handler=command_new)
 
     for name, handler, help_text in (

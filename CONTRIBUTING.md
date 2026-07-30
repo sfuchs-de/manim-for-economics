@@ -16,9 +16,11 @@ Keep reusable components small and composable. Add a component only when it
 solves a repeated economics-communication problem; avoid turning the starter
 into a general charting framework.
 
-New visual formats should include a minimal gallery scene, named settled and
-transition inspection frames, and an explicit statement about whether any
-displayed values are released, digitized, or illustrative.
+New visual formats should include a minimal gallery scene or complete project
+template, named settled and transition inspection frames, and an explicit
+statement about whether any displayed values are released, digitized, or
+illustrative. Explain which class of paper needs the format and which persistent
+research object carries its narrative.
 
 ## Pull requests
 

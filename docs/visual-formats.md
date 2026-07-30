@@ -3,29 +3,51 @@
 The format should follow the paper's economic logic. It is not a skin applied
 after the storyboard.
 
-Two production explainers informed the formats in this repository:
+Two production explainers informed the specialized project templates:
 
 - The *Multimodal Transport Networks* video is strongest when one network
   persists across construction, intervention, propagation, model comparison,
   and synthesis.
-- The economic-diversity video is strongest when one worker's menu connects
+- The economic-diversity video is strongest when one agent's menu connects
   adjustment margins, empirical responses, and a words-first welfare
   decomposition.
 
 The reusable lesson is continuity. A viewer should see the same economic object
 change state, not decode a new infographic on every beat.
 
+## Generic core versus paper-specific components
+
+The default starter uses only paper-independent objects:
+
+- `ResearchScene` for stable title, stage, and caption regions;
+- `AgentToken` and `ChoiceMap` for a generic decision maker and alternatives;
+- `CausalChain` and `LinkedViews` for mechanisms and synchronized
+  representations;
+- `ImpulseResponsePlot`, `DivergingBarChart`, `ResultTable`,
+  `ShockDistribution`, and `EquationBuild` for common analytical forms.
+
+`WorkerToken`, `CityLaborMarket`, and `adjustment_route` remain available
+because the diversity case study uses them. They are optional extensions, not
+assumptions built into a new project.
+
 ## Pick a narrative format
 
 | If the paper's contribution is mainly… | Start from… | Use this sequence |
 |---|---|---|
 | A mechanism or general-equilibrium propagation | One system and one intervention | question → build → perturb → trace → compare → synthesize |
-| Adjustment and welfare measurement | One agent and its choice menu | agent → shock → margins → responses → sufficient statistic → welfare |
+| Choice, adjustment, or welfare measurement | One agent and its choice menu | agent → change → choices → evidence → decomposition → welfare |
 | An empirical result | One estimand and its identifying variation | question → variation → response → heterogeneity → interpretation |
 | A method or theorem | One object the method transforms | problem → object → operation → result → comparative static → use |
 
-Copyable versions of the first two are in
-[`templates/storyboards/`](../templates/storyboards/).
+The first two are complete, copyable projects under
+[`templates/projects/`](../templates/projects/). All four have storyboard
+templates in [`templates/storyboards/`](../templates/storyboards/).
+
+```bash
+uv run econ-manim templates
+uv run econ-manim new my-paper --template mechanism-led
+uv run econ-manim new my-paper --template agent-choice-welfare
+```
 
 ## Format 1: causal chain
 
@@ -36,7 +58,7 @@ closing expression.
 ```python
 chain = CausalChain(
     (
-        ("local intervention", ECON_DARK.orange),
+        ("intervention", ECON_DARK.orange),
         ("choices adjust", ECON_DARK.blue),
         ("spillovers propagate", ECON_DARK.green),
         ("welfare changes", ECON_DARK.foreground),
@@ -54,7 +76,7 @@ Use linked views when a mechanism has a concrete representation and an
 analytical representation:
 
 - network and generalized cost;
-- worker routes and a welfare term;
+- choice routes and a welfare term;
 - firm choices and an estimating equation;
 - market allocation and a planner's objective.
 
@@ -140,3 +162,17 @@ Render the
 uv run econ-manim preview examples/format_gallery --overlay
 uv run econ-manim frames examples/format_gallery
 ```
+
+Compare the complete template contact sheets before choosing:
+
+### Mechanism-led
+
+![Mechanism-led settled and transition frames](../templates/projects/mechanism-led/preview/contact_sheet.png)
+
+[Watch the silent 480p preview](../templates/projects/mechanism-led/preview/mechanism_led_preview.mp4).
+
+### Agent, choice, and welfare
+
+![Agent-choice-welfare settled and transition frames](../templates/projects/agent-choice-welfare/preview/contact_sheet.png)
+
+[Watch the silent 480p preview](../templates/projects/agent-choice-welfare/preview/agent_choice_welfare_preview.mp4).

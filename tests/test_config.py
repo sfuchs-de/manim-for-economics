@@ -25,6 +25,17 @@ def test_starter_project_loads():
     assert project.audio.enabled is False
 
 
+def test_general_starter_does_not_assume_a_labor_market_paper():
+    starter = ROOT / "starter"
+    text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in starter.rglob("*")
+        if path.is_file() and path.suffix in {".py", ".md", ".toml", ".csv"}
+    ).lower()
+    for labor_specific_term in ("worker", "labor market", "city a", "bartik", "hhi"):
+        assert labor_specific_term not in text
+
+
 def test_case_study_manifest_is_explicit_and_valid():
     entries = load_data_manifest(ROOT / "examples" / "economic_diversity")
     assert {entry.status for entry in entries} == {"released", "digitized"}

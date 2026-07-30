@@ -4,7 +4,9 @@ import pytest
 
 from econ_manim import (
     ECON_DARK,
+    AgentToken,
     CausalChain,
+    ChoiceMap,
     CityLaborMarket,
     DivergingBarChart,
     EquationBuild,
@@ -28,6 +30,28 @@ def test_worker_token_constructs():
     worker = WorkerToken(label="worker")
     assert len(worker) == 2
     assert_within_frame(worker)
+
+
+def test_domain_neutral_agent_and_choice_map_construct():
+    agent = AgentToken(label="firm")
+    menu = ChoiceMap(
+        (
+            ("adopt", ECON_DARK.green),
+            ("wait", ECON_DARK.blue),
+            ("exit", ECON_DARK.orange),
+        ),
+        agent_label="firm",
+    )
+    assert len(menu.routes) == 3
+    assert len(menu.nodes) == 3
+    assert menu.origin.get_center()[0] < menu.nodes.get_center()[0]
+    for mobject in (agent, menu):
+        assert_within_frame(mobject)
+
+
+def test_choice_map_rejects_an_unreadable_number_of_alternatives():
+    with pytest.raises(ValueError, match="between two and four"):
+        ChoiceMap((("only", ECON_DARK.blue),))
 
 
 def test_charts_construct_with_small_inputs():

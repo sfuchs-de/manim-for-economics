@@ -5,9 +5,9 @@ from an empty scene or asking an AI agent to guess what the paper means.
 
 This repository combines:
 
-- A sparse visual system for workers, labor markets, shocks, impulse responses,
-  causal chains, linked analytical views, benchmark comparisons,
-  decompositions, and welfare.
+- A sparse visual system for agents, choices, systems, shocks, impulse
+  responses, causal chains, linked analytical views, benchmark comparisons,
+  decompositions, and optional domain-specific labor-market objects.
 - A paper brief and timed storyboard that separate economic reasoning from
   animation code.
 - Provenance manifests that distinguish released, digitized, and illustrative
@@ -42,7 +42,10 @@ uv run econ-manim frames starter
 Create your own project:
 
 ```bash
-uv run econ-manim new my-paper
+uv run econ-manim templates
+uv run econ-manim new my-paper --template general
+uv run econ-manim new network-paper --template mechanism-led
+uv run econ-manim new choice-paper --template agent-choice-welfare
 ```
 
 Then edit, in this order:
@@ -59,7 +62,8 @@ See [setup](docs/setup.md) for macOS, Windows, Linux, and `pip` instructions.
 | Command | Purpose |
 |---|---|
 | `econ-manim doctor` | Diagnose Python, Manim, LaTeX, fonts, and optional FFmpeg |
-| `econ-manim new NAME` | Copy the starter into `projects/NAME` |
+| `econ-manim templates` | Explain the available paper-story templates |
+| `econ-manim new NAME --template TYPE` | Create a project from a selected narrative grammar |
 | `econ-manim preview PROJECT` | Render an 854×480, 15 fps draft |
 | `econ-manim preview PROJECT --overlay` | Add title-safe and content-region guides |
 | `econ-manim frames PROJECT` | Extract declared inspection frames and a contact sheet |
@@ -102,13 +106,19 @@ Read the [case-study guide](examples/economic_diversity/README.md), the
 ## Choose a format
 
 Read [visual and narrative formats](docs/visual-formats.md) before writing scene
-code. The guide distills patterns from the multimodal-transport and
-economic-diversity production videos into:
+code. The [template catalog](templates/README.md) turns patterns from the
+multimodal-transport and economic-diversity production videos into complete,
+paper-independent project starters:
 
-- a persistent causal chain;
-- linked views of one economic state;
-- a benchmark-centered comparison;
-- a words-first equation build with general operators.
+- `mechanism-led`, which keeps one system alive as a change propagates;
+- `agent-choice-welfare`, which connects one decision menu to evidence and
+  value;
+- `general`, which makes no assumption about the paper's subject or method.
+
+Storyboard-only templates cover empirical-result-led and method-or-theory
+papers without pretending that one generic chart fits every design or theorem.
+The general starter does not require a decision maker, shock, identification
+strategy, or welfare result.
 
 The [format gallery](examples/format_gallery/) is a short, paper-independent
 example with explicitly illustrative values:
@@ -126,9 +136,10 @@ paper-to-video method.
 
 A useful first request is:
 
-> Use `$create-econ-paper-video`. Read my paper and the starter files. Interview
-> me where interpretation is genuinely ambiguous, then produce the paper brief
-> and a claim-to-source crosswalk. Do not write animation code yet.
+> Use `$create-econ-paper-video`. Read my paper, run `econ-manim templates`, and
+> recommend the closest narrative grammar. Interview me where interpretation is
+> genuinely ambiguous, then produce the paper brief and a claim-to-source
+> crosswalk. Do not write animation code yet.
 
 Continue with the checkpoint prompts in
 [Using Codex](docs/codex-workflow.md).

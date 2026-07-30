@@ -13,7 +13,7 @@ media/
 partial_movie_files/
 
 # User-provided inputs and audio are private by default
-projects/
+/projects/
 *.mp3
 *.m4a
 *.wav

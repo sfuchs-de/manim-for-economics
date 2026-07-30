@@ -13,7 +13,8 @@ implementation only after the brief and claim/source crosswalk are coherent.
 > **Goal:** Turn my paper into a paper brief and claim-to-source crosswalk.
 >
 > **Context:** The paper and replication assets are at [paths or URLs]. Read the
-> starter templates and the repository guidance.
+> project templates and the repository guidance. Run `econ-manim templates`
+> before recommending a structure.
 >
 > **Constraints:** Do not write Manim code. Do not invent numbers. Separate
 > released, digitized, and illustrative inputs. Flag ambiguous welfare
@@ -30,9 +31,10 @@ Review the brief as an economics argument, not as marketing copy.
 >
 > **Context:** Use `paper_brief.md` and `data_manifest.toml`.
 >
-> **Constraints:** Compare the formats in `docs/visual-formats.md` and select one
-> explicitly. One learning goal per beat; reuse one economic object; explain
-> equations term by term; connect transitions to the economic logic.
+> **Constraints:** Compare the complete projects in `templates/projects/` and
+> the formats in `docs/visual-formats.md`; select one explicitly or justify the
+> general template. One learning goal per beat; reuse one research object;
+> explain equations term by term; connect transitions to the economic logic.
 >
 > **Done when:** `storyboard.md` specifies time, on-screen words, visual action,
 > conceptual handoff, and evidence for every beat; `project.toml` contains named

@@ -98,7 +98,7 @@ class ImpulseResponsePlot(VGroup):
 
 
 class ShockDistribution(VGroup):
-    """A one-dimensional dot distribution without decorative bars."""
+    """A one-dimensional distribution of shocks or changes without decorative bars."""
 
     def __init__(
         self,
@@ -106,7 +106,7 @@ class ShockDistribution(VGroup):
         *,
         x_range: tuple[float, float, float] = (-1.5, 2.5, 0.5),
         width: float = 8.0,
-        label: str = "realized local labor-demand shock",
+        label: str = "realized shock",
         theme: VideoTheme = ECON_DARK,
     ) -> None:
         from manim import NumberLine
@@ -145,7 +145,7 @@ class EquationBuild(VGroup):
         self,
         terms: Sequence[tuple[str, str]],
         *,
-        lhs: str = "worker welfare",
+        lhs: str = "outcome",
         operators: Sequence[str] | None = None,
         theme: VideoTheme = ECON_DARK,
     ) -> None:

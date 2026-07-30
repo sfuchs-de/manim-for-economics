@@ -1,13 +1,13 @@
-"""A deliberately small scene to replace after the storyboard is approved."""
+"""A domain-neutral scene to replace after the storyboard is approved."""
 
 from manim import UP, FadeIn, Text, VGroup
 
 from econ_manim import (
     ECON_DARK,
-    CityLaborMarket,
+    CausalChain,
+    DivergingBarChart,
     EquationBuild,
     ResearchScene,
-    ShockDistribution,
 )
 
 
@@ -15,7 +15,7 @@ class PaperExplainer(ResearchScene):
     def construct(self):
         self.next_section("question")
         self.show_title("What should the viewer learn?")
-        self.set_caption("Begin with one economic question, not a list of paper sections.")
+        self.set_caption("Begin with one research question, not a list of paper sections.")
         question = Text(
             "Replace this with your paper's central question.",
             font_size=34,
@@ -25,40 +25,49 @@ class PaperExplainer(ResearchScene):
         self.wait(2.0)
         self.clear_stage(question, run_time=0.35)
 
-        self.next_section("agent")
-        self.show_title("Situate the economic agent")
-        self.set_caption("Use one recurring object so choices and shocks remain concrete.")
-        city = CityLaborMarket("example city", (2, 2, 2, 2)).move_to([0, -0.15, 0])
-        self.play(FadeIn(city), run_time=0.8)
+        self.next_section("argument")
+        self.show_title("Build one persistent argument")
+        self.set_caption("Name the objects in words before introducing notation.")
+        chain = CausalChain(
+            (
+                ("research object", ECON_DARK.blue),
+                ("change or comparison", ECON_DARK.orange),
+                ("mechanism", ECON_DARK.green),
+                ("result", ECON_DARK.foreground),
+            )
+        ).scale(1.12).move_to([0, 0.20, 0])
+        self.play(FadeIn(chain, shift=UP * 0.08), run_time=0.8)
         self.wait(2.2)
-        self.clear_stage(city, run_time=0.35)
+        self.clear_stage(chain, run_time=0.35)
 
-        self.next_section("evidence")
-        self.show_title("Show one empirical object")
-        self.set_caption("These dots are illustrative. Replace them and update the data manifest.")
-        distribution = ShockDistribution(
-            [
-                (-0.8, ECON_DARK.orange),
-                (-0.2, ECON_DARK.orange),
-                (0.3, ECON_DARK.green),
-                (0.7, ECON_DARK.green),
-            ]
-        ).move_to([0, -0.25, 0])
-        self.play(FadeIn(distribution), run_time=0.8)
+        self.next_section("result")
+        self.show_title("Show the result in its native form")
+        self.set_caption("Illustrative values only · replace them and update the data manifest.")
+        result = DivergingBarChart(
+            (
+                ("scenario A", 35, ECON_DARK.green),
+                ("scenario B", -20, ECON_DARK.orange),
+            ),
+            benchmark_label="reference case",
+            left_label="lower",
+            right_label="higher",
+        ).scale(1.20).move_to([0, -0.15, 0])
+        self.play(FadeIn(result), run_time=0.8)
         self.wait(2.2)
-        self.clear_stage(distribution, run_time=0.35)
+        self.clear_stage(result, run_time=0.35)
 
         self.next_section("interpretation")
         self.show_title("Build the interpretation")
-        self.set_caption("Introduce terms in words before replacing any of them with notation.")
+        self.set_caption("Add each term only when the matching idea is active on screen.")
         equation = EquationBuild(
-            [
-                ("first-order effect", ECON_DARK.blue),
-                ("second-order correction", ECON_DARK.orange),
-            ]
-        ).move_to([0, 0.10, 0])
+            (
+                ("main channel", ECON_DARK.blue),
+                ("interaction or correction", ECON_DARK.orange),
+            ),
+            lhs="outcome",
+        ).scale(1.06).move_to([0, 0.10, 0])
         self.play(FadeIn(VGroup(equation.lhs, equation.equals)), run_time=0.7)
         self.play(FadeIn(equation.terms[0]), run_time=0.6)
-        self.wait(1.0)
+        self.wait(0.9)
         self.play(FadeIn(equation.operators), FadeIn(equation.terms[1]), run_time=0.6)
         self.wait(2.0)

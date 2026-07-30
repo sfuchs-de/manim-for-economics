@@ -14,10 +14,13 @@ integrity, visual inspection, and timing as required deliverables.
 
 - Locate the paper source or PDF, replication files, existing figures, fonts,
   and media.
+- Compare the project templates with `uv run econ-manim templates` and choose a
+  narrative grammar because it matches the paper's contribution.
 - Read the selected project's `project.toml`, `paper_brief.md`,
   `storyboard.md`, and `data_manifest.toml`.
-- Identify the agent, choice set, shock, outcomes, identification, welfare
-  baseline, and result-bearing tables or figures.
+- Identify the persistent research object, central change or comparison,
+  mechanism or design, result-bearing tables or figures, and—only when
+  relevant—the agent, choice set, shock, or welfare baseline.
 - Classify every proposed input as `released`, `digitized`, or `illustrative`.
 - Do not expose restricted data or infer missing values.
 
@@ -29,7 +32,8 @@ video contains empirical estimates, welfare results, or a sufficient statistic.
 - State the contribution in one sentence.
 - Explain the mechanism without notation.
 - Record the audience and what it can be assumed to know.
-- Define the welfare or policy object, baseline, horizon, and sample.
+- Define the relevant estimand, theorem, welfare object, or policy
+  interpretation, including its baseline, horizon, and sample where applicable.
 - List claims the design does not support.
 
 Do not write scene code while material interpretations remain unresolved.
@@ -38,7 +42,8 @@ Do not write scene code while material interpretations remain unresolved.
 
 - Compare the narrative formats in `docs/visual-formats.md` and select one
   because it fits the contribution.
-- Start from a copyable template in `templates/storyboards/` when applicable.
+- Start from a complete project in `templates/projects/` or a copyable
+  storyboard in `templates/storyboards/`.
 - Use six or seven beats with one learning goal each.
 - Reuse one economic object across beats.
 - Record time, on-screen words, visual action, transition logic, and source.

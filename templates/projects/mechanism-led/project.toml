@@ -1,7 +1,7 @@
 [project]
 title = "My Economics Paper"
 entrypoint = "scenes.py"
-scene = "PaperExplainer"
+scene = "MechanismExplainer"
 output_file = "my_economics_paper"
 
 [render]
@@ -19,51 +19,46 @@ license = ""
 attribution = ""
 
 [[qa.frame]]
-time = 2.3
-label = "opening question"
+time = 2.6
+label = "opening causal question"
 kind = "settled"
 
 [[qa.frame]]
-time = 4.7
-label = "question to argument handoff"
+time = 4.8
+label = "question to system handoff"
 kind = "transition"
 
 [[qa.frame]]
-time = 7.0
-label = "persistent research argument"
+time = 7.4
+label = "baseline system"
 kind = "settled"
 
 [[qa.frame]]
-time = 9.2
-label = "argument to result handoff"
+time = 9.6
+label = "intervention enters"
 kind = "transition"
 
 [[qa.frame]]
-time = 11.5
-label = "illustrative result"
+time = 11.8
+label = "propagation through persistent system"
 kind = "settled"
 
 [[qa.frame]]
-time = 13.7
-label = "result to interpretation handoff"
+time = 14.4
+label = "system to benchmark handoff"
 kind = "transition"
 
 [[qa.frame]]
-time = 15.5
-label = "first interpretation term enters"
-kind = "transition"
-
-[[qa.frame]]
-time = 16.5
-label = "first interpretation term"
+time = 17.0
+label = "illustrative benchmark comparison"
 kind = "settled"
 
 [[qa.frame]]
-time = 17.2
-label = "second interpretation term enters"
+time = 19.5
+label = "comparison to synthesis handoff"
 kind = "transition"
 
 [[qa.frame]]
-time = 18.5
-label = "complete incremental interpretation"
+time = 22.0
+label = "words-first synthesis"
 kind = "settled"

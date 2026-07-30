@@ -7,10 +7,11 @@ after that decision.
 
 Complete five objects:
 
-1. **Question:** the motivating economic uncertainty.
-2. **Agent and menu:** who chooses what, when, and where.
-3. **Identification:** where the empirical variation comes from.
-4. **Result:** the two or three moments that carry the argument.
+1. **Question:** the motivating research uncertainty.
+2. **Persistent object:** the agent, system, estimand, model object, or
+   construction that carries the story.
+3. **Argument:** the mechanism, identifying comparison, or operation.
+4. **Result:** the two or three findings that carry the contribution.
 5. **Interpretation:** the relevant baseline, horizon, approximation, and
    caveats.
 
@@ -22,14 +23,16 @@ Decide what must persist before allocating scenes:
 
 - A mechanism-led paper usually keeps one system on screen while it is built,
   perturbed, and compared with restricted cases.
-- An adjustment-and-welfare paper usually keeps one agent and its choice routes
-  visible as responses become welfare inputs.
+- An agent-choice-welfare paper usually keeps one agent and its alternatives
+  visible as responses become welfare or policy inputs.
 - An empirical-result-led paper usually keeps one estimand and one identifying
   contrast stable.
 - A method or theory paper usually keeps one mathematical or economic object
   stable while successive operations transform it.
 
-See [visual and narrative formats](visual-formats.md) and the copyable
+Run `econ-manim templates`, then see [visual and narrative
+formats](visual-formats.md), the complete
+[`templates/projects`](../templates/projects/), and the copyable
 [`templates/storyboards`](../templates/storyboards/) before creating a custom
 beat structure.
 
@@ -45,14 +48,14 @@ If the source cannot be identified, the claim is not ready for the storyboard.
 
 ## Allocate time by learning goal
 
-A concise video usually needs six or seven beats:
+A concise video usually needs six or seven beats. A general sequence is:
 
 1. Question.
-2. Economic agent and choices.
-3. Mechanism.
-4. Identification.
-5. Evidence.
-6. Welfare or policy interpretation.
+2. Persistent research object.
+3. Mechanism, comparison, or operation.
+4. Design, derivation, or construction.
+5. Result.
+6. Interpretation, welfare, or policy value.
 7. Takeaway.
 
 Give each beat one sentence the viewer should be able to repeat afterward.
@@ -65,18 +68,19 @@ written in one sentence, the order may be wrong or the beats may be unrelated.
 
 ## Reuse visual objects
 
-Use a worker, city, firm, market, or budget constraint repeatedly. Reusing the
-same object lets the animation show changes in economic state rather than
-reintroducing a new visual grammar on every slide.
+Use an agent, network, market, estimand, mathematical object, allocation, or
+constraint repeatedly. Reusing the same object lets the animation show changes
+in research-relevant state rather than reintroducing a new visual grammar on
+every slide.
 
 ## Treat transitions as part of the argument
 
-A transition should explain continuity:
+A transition should explain continuity. Depending on the selected template:
 
-- Shocked labor market → available adjustment margins.
-- Adjustment margins → estimated flow responses.
-- Flow responses → first-order welfare.
-- Interactions among those margins → second order.
+- System change → propagation routes → benchmark comparison.
+- Choice menu → response margins → welfare or policy value.
+- Identifying variation → estimate → magnitude.
+- Mathematical object → operation → result → application.
 
 If two adjacent beats have no conceptual handoff, reconsider their order.
 

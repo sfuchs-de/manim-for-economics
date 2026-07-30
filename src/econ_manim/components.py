@@ -1,4 +1,4 @@
-"""Minimal, symmetric objects for workers, cities, and adjustment margins."""
+"""Minimal, symmetric objects for economic agents, choices, and markets."""
 
 from __future__ import annotations
 
@@ -52,6 +52,95 @@ class WorkerToken(VGroup):
             parts.append(label_mobject)
         super().__init__(*parts)
         self.scale(scale)
+
+
+class AgentToken(VGroup):
+    """A domain-neutral token for a household, firm, person, or institution."""
+
+    def __init__(
+        self,
+        *,
+        color: str | None = None,
+        label: str | None = None,
+        scale: float = 1.0,
+        theme: VideoTheme = ECON_DARK,
+    ) -> None:
+        token_color = color or theme.foreground
+        boundary = Circle(
+            radius=0.22,
+            stroke_color=token_color,
+            stroke_width=1.8,
+            fill_color=theme.card,
+            fill_opacity=1,
+        )
+        core = Dot(radius=0.065, color=token_color)
+        symbol = VGroup(boundary, core)
+        parts = [symbol]
+        if label:
+            label_mobject = Text(label, font_size=18, color=token_color)
+            label_mobject.next_to(symbol, DOWN, buff=0.12)
+            parts.append(label_mobject)
+        super().__init__(*parts)
+        self.symbol = symbol
+        self.scale(scale)
+
+
+class ChoiceMap(VGroup):
+    """A compact fan from one economic agent to two-to-four named alternatives."""
+
+    def __init__(
+        self,
+        choices: Sequence[tuple[str, str]],
+        *,
+        agent_label: str = "agent",
+        theme: VideoTheme = ECON_DARK,
+    ) -> None:
+        if not 2 <= len(choices) <= 4:
+            raise ValueError("a choice map requires between two and four alternatives")
+
+        origin = AgentToken(label=agent_label, color=theme.foreground, theme=theme)
+        origin.move_to(LEFT * 3.15)
+        nodes = VGroup()
+        labels = VGroup()
+        for label, color in choices:
+            node = RoundedRectangle(
+                width=2.30,
+                height=0.62,
+                corner_radius=0.12,
+                stroke_color=color,
+                stroke_width=1.6,
+                fill_color=theme.card,
+                fill_opacity=0.96,
+            )
+            text = Text(label, font_size=20, color=color)
+            if text.width > 1.92:
+                text.scale_to_fit_width(1.92)
+            text.move_to(node)
+            nodes.add(node)
+            labels.add(text)
+        node_rows = VGroup(
+            *[VGroup(node, label) for node, label in zip(nodes, labels, strict=True)]
+        )
+        node_rows.arrange(DOWN, buff=0.24).move_to(RIGHT * 1.55)
+
+        routes = VGroup()
+        for node in nodes:
+            routes.add(
+                Arrow(
+                    origin.symbol.get_right(),
+                    node.get_left(),
+                    buff=0.12,
+                    color=node.get_stroke_color(),
+                    stroke_width=2.0,
+                    tip_length=0.13,
+                )
+            )
+
+        super().__init__(origin, routes, node_rows)
+        self.origin = origin
+        self.routes = routes
+        self.nodes = nodes
+        self.labels = labels
 
 
 class CityLaborMarket(VGroup):
