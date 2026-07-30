@@ -1,3 +1,7 @@
+import shutil
+
+import pytest
+
 from econ_manim import (
     ECON_DARK,
     CityLaborMarket,
@@ -31,12 +35,6 @@ def test_charts_construct_with_small_inputs():
         }
     )
     shocks = ShockDistribution([(-0.2, ECON_DARK.orange), (0.3, ECON_DARK.green)])
-    equation = EquationBuild(
-        [
-            ("first order", ECON_DARK.blue),
-            ("second order", ECON_DARK.green),
-        ]
-    )
     table = ResultTable(
         (
             ("direct", ECON_DARK.blue),
@@ -45,6 +43,18 @@ def test_charts_construct_with_small_inputs():
         ),
         (("diversified", ECON_DARK.green, (-1.0, -0.1, -1.1)),),
     )
-    for mobject in (irf, shocks, equation, table):
+    for mobject in (irf, shocks, table):
         assert mobject.width > 0
         assert mobject.height > 0
+
+
+@pytest.mark.skipif(shutil.which("latex") is None, reason="MathTex requires LaTeX")
+def test_equation_build_constructs_with_latex():
+    equation = EquationBuild(
+        [
+            ("first order", ECON_DARK.blue),
+            ("second order", ECON_DARK.green),
+        ]
+    )
+    assert equation.width > 0
+    assert equation.height > 0

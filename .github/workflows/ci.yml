@@ -18,6 +18,12 @@ jobs:
         with:
           version: "0.10.2"
           enable-cache: true
+      - name: Install Linux build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential python3-dev pkg-config libcairo2-dev libpango1.0-dev
       - run: uv python install 3.12
       - run: uv sync --frozen
       - run: uv run ruff check .
