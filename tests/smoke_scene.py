@@ -1,6 +1,6 @@
-from manim import FadeIn, MathTex, Text, VGroup
+from manim import DOWN, FadeIn, MathTex, Text, VGroup
 
-from econ_manim import ECON_DARK, ResearchScene
+from econ_manim import ECON_DARK, ResearchScene, ShockDistribution
 
 
 class SmokeScene(ResearchScene):
@@ -11,5 +11,9 @@ class SmokeScene(ResearchScene):
             MathTex(r"=", font_size=34, color=ECON_DARK.muted),
             Text("first order", font_size=28, color=ECON_DARK.blue),
         ).arrange()
-        self.play(FadeIn(group), run_time=0.5)
+        shocks = ShockDistribution(
+            [(-0.2, ECON_DARK.orange), (0.3, ECON_DARK.green)],
+            width=3.5,
+        ).scale(0.65).next_to(group, direction=DOWN, buff=0.45)
+        self.play(FadeIn(group), FadeIn(shocks), run_time=0.5)
         self.wait(0.5)

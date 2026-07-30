@@ -34,7 +34,6 @@ def test_charts_construct_with_small_inputs():
             "high HHI": ([0.0, -0.4, -0.7], ECON_DARK.orange),
         }
     )
-    shocks = ShockDistribution([(-0.2, ECON_DARK.orange), (0.3, ECON_DARK.green)])
     table = ResultTable(
         (
             ("direct", ECON_DARK.blue),
@@ -43,7 +42,7 @@ def test_charts_construct_with_small_inputs():
         ),
         (("diversified", ECON_DARK.green, (-1.0, -0.1, -1.1)),),
     )
-    for mobject in (irf, shocks, table):
+    for mobject in (irf, table):
         assert mobject.width > 0
         assert mobject.height > 0
 
@@ -58,3 +57,6 @@ def test_equation_build_constructs_with_latex():
     )
     assert equation.width > 0
     assert equation.height > 0
+    shocks = ShockDistribution([(-0.2, ECON_DARK.orange), (0.3, ECON_DARK.green)])
+    assert shocks.width > 0
+    assert shocks.height > 0
