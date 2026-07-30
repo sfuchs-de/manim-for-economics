@@ -10,9 +10,12 @@ from manim import (
     RIGHT,
     UP,
     Axes,
+    DashedLine,
     Dot,
     Line,
     MathTex,
+    NumberLine,
+    Polygon,
     RoundedRectangle,
     Text,
     VGroup,
@@ -22,9 +25,18 @@ from manim import (
 from .theme import ECON_DARK, VideoTheme
 
 
-def _line(axes: Axes, values: Sequence[float], color: str, width: float = 3.2) -> VMobject:
+def _line(
+    axes: Axes,
+    x_values: Sequence[float],
+    values: Sequence[float],
+    color: str,
+    width: float = 3.2,
+) -> VMobject:
     path = VMobject(color=color, stroke_width=width)
-    points = [axes.c2p(index, float(value)) for index, value in enumerate(values)]
+    points = [
+        axes.c2p(float(x_value), float(value))
+        for x_value, value in zip(x_values, values, strict=True)
+    ]
     path.set_points_as_corners(points)
     return path
 
@@ -41,6 +53,13 @@ class ImpulseResponsePlot(VGroup):
         width: float = 5.5,
         height: float = 2.7,
         y_range: tuple[float, float, float] | None = None,
+        horizons: Sequence[float] | None = None,
+        confidence_intervals: Mapping[
+            str,
+            tuple[Sequence[float], Sequence[float]],
+        ]
+        | None = None,
+        event_time: float | None = None,
         theme: VideoTheme = ECON_DARK,
     ) -> None:
         if not series:
@@ -49,7 +68,38 @@ class ImpulseResponsePlot(VGroup):
         if len(lengths) != 1 or next(iter(lengths)) < 2:
             raise ValueError("all series must have the same length of at least two")
         length = next(iter(lengths))
+        horizon_values = tuple(
+            float(value) for value in (horizons if horizons is not None else range(length))
+        )
+        if len(horizon_values) != length:
+            raise ValueError("horizons must match the length of every series")
+        if any(
+            right <= left
+            for left, right in zip(horizon_values, horizon_values[1:], strict=False)
+        ):
+            raise ValueError("horizons must be strictly increasing")
+
+        interval_values = confidence_intervals or {}
+        unknown_intervals = set(interval_values) - set(series)
+        if unknown_intervals:
+            names = ", ".join(sorted(unknown_intervals))
+            raise ValueError(f"confidence intervals have no matching series: {names}")
+        for name, (lower, upper) in interval_values.items():
+            values = series[name][0]
+            if len(lower) != length or len(upper) != length:
+                raise ValueError(f"confidence interval for {name!r} has the wrong length")
+            if any(
+                float(low) > float(value) or float(value) > float(high)
+                for low, value, high in zip(lower, values, upper, strict=True)
+            ):
+                raise ValueError(
+                    f"confidence interval for {name!r} must contain every estimate"
+                )
+
         all_values = [float(value) for values, _ in series.values() for value in values]
+        for lower, upper in interval_values.values():
+            all_values.extend(float(value) for value in lower)
+            all_values.extend(float(value) for value in upper)
         if y_range is None:
             lower = min(min(all_values), 0.0)
             upper = max(max(all_values), 0.0)
@@ -57,8 +107,10 @@ class ImpulseResponsePlot(VGroup):
             step = round(span / 4, 2)
             y_range = (lower - 0.12 * span, upper + 0.12 * span, step)
 
+        horizon_span = horizon_values[-1] - horizon_values[0]
+        x_step = max(horizon_span / 4, 1.0 if horizon_span >= 4 else horizon_span / 4)
         axes = Axes(
-            x_range=[0, length - 1, max(1, (length - 1) // 4)],
+            x_range=[horizon_values[0], horizon_values[-1], x_step],
             y_range=list(y_range),
             x_length=width,
             y_length=height,
@@ -66,16 +118,51 @@ class ImpulseResponsePlot(VGroup):
             axis_config={"color": theme.grid, "stroke_width": 1.2, "include_ticks": True},
         )
         zero = Line(
-            axes.c2p(0, 0),
-            axes.c2p(length - 1, 0),
+            axes.c2p(horizon_values[0], 0),
+            axes.c2p(horizon_values[-1], 0),
             color=theme.muted,
             stroke_width=1.0,
         )
+        bands = VGroup()
+        for name, (lower, upper) in interval_values.items():
+            color = series[name][1]
+            vertices = [
+                axes.c2p(horizon, float(value))
+                for horizon, value in zip(horizon_values, upper, strict=True)
+            ]
+            vertices.extend(
+                axes.c2p(horizon, float(value))
+                for horizon, value in reversed(
+                    tuple(zip(horizon_values, lower, strict=True))
+                )
+            )
+            bands.add(
+                Polygon(
+                    *vertices,
+                    stroke_width=0,
+                    fill_color=color,
+                    fill_opacity=0.16,
+                )
+            )
+
+        if event_time is not None:
+            event_value = float(event_time)
+            if not horizon_values[0] <= event_value <= horizon_values[-1]:
+                raise ValueError("event_time must lie within the plotted horizons")
+            event_marker = DashedLine(
+                axes.c2p(event_value, y_range[0]),
+                axes.c2p(event_value, y_range[1]),
+                color=theme.muted,
+                stroke_width=1.0,
+                dash_length=0.08,
+            )
+        else:
+            event_marker = VGroup()
         lines = VGroup()
         labels = VGroup()
         endpoints = []
         for name, (values, color) in series.items():
-            curve = _line(axes, values, color)
+            curve = _line(axes, horizon_values, values, color)
             lines.add(curve)
             endpoints.append((float(values[-1]), curve, name, color))
         endpoints.sort(key=lambda item: item[0])
@@ -90,11 +177,124 @@ class ImpulseResponsePlot(VGroup):
             title_mobject.next_to(axes, UP, buff=0.18)
         x_mobject = Text(x_label, font_size=16, color=theme.muted)
         x_mobject.next_to(axes, DOWN, buff=0.20)
-        super().__init__(axes, zero, lines, labels, title_mobject, x_mobject)
+        super().__init__(
+            axes,
+            bands,
+            zero,
+            event_marker,
+            lines,
+            labels,
+            title_mobject,
+            x_mobject,
+        )
         self.axes = axes
+        self.bands = bands
         self.zero = zero
+        self.event = event_marker
         self.lines = lines
         self.labels = labels
+
+
+class CoefficientPlot(VGroup):
+    """A directly labeled coefficient plot with confidence intervals."""
+
+    def __init__(
+        self,
+        estimates: Sequence[tuple[str, float, float, float, str]],
+        *,
+        reference: float = 0.0,
+        reference_label: str = "0",
+        x_label: str = "estimate and confidence interval",
+        width: float = 6.2,
+        row_gap: float = 0.62,
+        value_format: str = "{:+.2f}",
+        theme: VideoTheme = ECON_DARK,
+    ) -> None:
+        if not estimates:
+            raise ValueError("a coefficient plot requires at least one estimate")
+        for label, estimate, lower, upper, _ in estimates:
+            if float(lower) > float(estimate) or float(estimate) > float(upper):
+                raise ValueError(
+                    f"confidence interval for {label!r} must contain the estimate"
+                )
+
+        values = [float(reference)]
+        for _, estimate, lower, upper, _ in estimates:
+            values.extend((float(estimate), float(lower), float(upper)))
+        lower_bound = min(values)
+        upper_bound = max(values)
+        span = max(upper_bound - lower_bound, 0.5)
+        padding = 0.12 * span
+        axis_min = lower_bound - padding
+        axis_max = upper_bound + padding
+        step = max((axis_max - axis_min) / 4, 0.01)
+
+        axis = NumberLine(
+            x_range=[axis_min, axis_max, step],
+            length=width,
+            color=theme.grid,
+            stroke_width=1.2,
+            include_ticks=True,
+            include_numbers=False,
+        )
+        top_y = row_gap * (len(estimates) - 1) / 2
+        axis.move_to([0.55, top_y + 0.76, 0])
+        reference_line = DashedLine(
+            axis.n2p(reference) + UP * 0.28,
+            axis.n2p(reference) + DOWN * (top_y * 2 + 0.58),
+            color=theme.muted,
+            stroke_width=1.0,
+            dash_length=0.08,
+        )
+        reference_text = Text(reference_label, font_size=15, color=theme.muted)
+        reference_text.next_to(axis.n2p(reference), UP, buff=0.10)
+
+        rows = VGroup()
+        labels = VGroup()
+        intervals = VGroup()
+        dots = VGroup()
+        value_labels = VGroup()
+        for index, (label, estimate, lower, upper, color) in enumerate(estimates):
+            y = top_y - index * row_gap
+            start = axis.n2p(float(lower))
+            end = axis.n2p(float(upper))
+            start[1] = y
+            end[1] = y
+            interval = Line(start, end, color=color, stroke_width=2.6)
+            caps = VGroup(
+                Line(start + DOWN * 0.10, start + UP * 0.10, color=color, stroke_width=2.0),
+                Line(end + DOWN * 0.10, end + UP * 0.10, color=color, stroke_width=2.0),
+            )
+            dot = Dot([axis.n2p(float(estimate))[0], y, 0], radius=0.065, color=color)
+            row_label = Text(label, font_size=18, color=theme.foreground)
+            row_label.move_to([-width / 2 - 0.10, y, 0])
+            row_label.align_to([-width / 2 - 0.10, y, 0], RIGHT)
+            value_label = Text(
+                value_format.format(float(estimate)),
+                font_size=16,
+                color=color,
+            )
+            value_label.next_to([axis.n2p(axis_max)[0], y, 0], RIGHT, buff=0.14)
+            rows.add(VGroup(row_label, interval, caps, dot, value_label))
+            labels.add(row_label)
+            intervals.add(VGroup(interval, caps))
+            dots.add(dot)
+            value_labels.add(value_label)
+
+        axis_label = Text(x_label, font_size=16, color=theme.muted)
+        axis_label.next_to(axis, UP, buff=0.20)
+        chart = VGroup(axis, reference_line, reference_text, rows, axis_label)
+        if chart.width > 12.0:
+            chart.scale_to_fit_width(12.0)
+        super().__init__(chart)
+        self.axis = axis
+        self.reference = reference_line
+        self.reference_label = reference_text
+        self.rows = rows
+        self.labels = labels
+        self.intervals = intervals
+        self.dots = dots
+        self.values = value_labels
 
 
 class ShockDistribution(VGroup):

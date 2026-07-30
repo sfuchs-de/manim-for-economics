@@ -1,0 +1,6 @@
+route,order,x,y,label,color_role,curved
+local,0,-4.2,0.5,within market,blue,false
+local,1,-1.5,0.5,within market,blue,false
+outside,0,-1.1,-0.7,across markets,orange,true
+outside,1,1.2,0.1,across markets,orange,true
+outside,2,4.1,-0.5,across markets,orange,true

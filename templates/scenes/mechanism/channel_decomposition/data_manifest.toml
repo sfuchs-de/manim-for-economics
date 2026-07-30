@@ -1,0 +1,11 @@
+[[dataset]]
+id = "channel-decomposition-recipe"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/channels.csv"
+sha256 = "974b81cd5ff13f47532a322f0768a1918892c7fa504ad1e8c98e88fdaf34601c"
+transformation = "Rows are ordered and displayed as schematic economic channels."
+displayed_values = ["Three illustrative channel labels"]
+note = "The labels describe a generic mechanism, not a result from a paper."

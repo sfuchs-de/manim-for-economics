@@ -13,6 +13,9 @@ def test_cli_exposes_planned_commands():
         "doctor",
         "templates",
         "themes",
+        "scenes",
+        "preview-scene",
+        "add-scene",
         "checksum",
         "demo",
         "new",
@@ -104,6 +107,42 @@ def test_themes_explains_visual_presets(capsys):
     assert "Dark navy field" in output
     assert "ivory" in output
     assert "Warm paper field" in output
+
+
+def test_scenes_lists_and_filters_atomic_recipes(capsys):
+    assert main(["scenes", "--category", "empirical"]) == 0
+    output = capsys.readouterr().out
+    assert "empirical.coefficient-intervals" in output
+    assert "empirical.impulse-response" in output
+    assert "mechanism.path-flow" not in output
+
+
+def test_add_scene_copies_recipe_without_rewriting_project(tmp_path, capsys):
+    assert main(["new", "paper", "--destination", str(tmp_path)]) == 0
+    project = tmp_path / "paper"
+    original_scene = (project / "scenes.py").read_text(encoding="utf-8")
+    assert main(["add-scene", str(project), "mechanism.path-flow"]) == 0
+    destination = project / "recipes" / "mechanism" / "path_flow"
+    assert (destination / "recipe.py").is_file()
+    assert (destination / "data" / "path_flow.csv").is_file()
+    assert (destination / "data_manifest.toml").is_file()
+    copied_manifest = (destination / "data_manifest.toml").read_text(encoding="utf-8")
+    assert 'local_path = "recipes/mechanism/path_flow/data/path_flow.csv"' in (
+        copied_manifest
+    )
+    assert not (destination / "project.toml").exists()
+    assert (project / "scenes.py").read_text(encoding="utf-8") == original_scene
+    assert "Merge" in capsys.readouterr().out
+
+
+def test_add_scene_refuses_to_overwrite_existing_recipe(tmp_path, capsys):
+    assert main(["new", "paper", "--destination", str(tmp_path)]) == 0
+    project = tmp_path / "paper"
+    assert main(["add-scene", str(project), "empirical.impulse-response"]) == 0
+    with pytest.raises(SystemExit) as exit_info:
+        main(["add-scene", str(project), "empirical.impulse-response"])
+    assert exit_info.value.code == 2
+    assert "already exists" in capsys.readouterr().err
 
 
 def test_checksum_prints_a_manifest_ready_hash(tmp_path, capsys):

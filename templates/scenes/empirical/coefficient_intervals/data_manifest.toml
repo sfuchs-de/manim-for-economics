@@ -1,0 +1,11 @@
+[[dataset]]
+id = "coefficient-interval-recipe"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/coefficients.csv"
+sha256 = "a87c146f8beb677966c29f5d7d6e5fd035db52aa97c00214d7d65ab2b2315080"
+transformation = "Rows are ordered and plotted directly with their illustrative bounds."
+displayed_values = ["Three illustrative estimates and confidence intervals"]
+note = "These values are deliberately generic and are not published estimates."

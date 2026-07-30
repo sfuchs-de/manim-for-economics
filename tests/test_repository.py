@@ -12,6 +12,10 @@ PROJECTS = (
     ROOT / "templates" / "projects" / "agent-choice-welfare",
     ROOT / "examples" / "format_gallery",
     ROOT / "examples" / "economic_diversity",
+    ROOT / "templates" / "scenes" / "mechanism" / "path_flow",
+    ROOT / "templates" / "scenes" / "mechanism" / "channel_decomposition",
+    ROOT / "templates" / "scenes" / "empirical" / "coefficient_intervals",
+    ROOT / "templates" / "scenes" / "empirical" / "impulse_response",
 )
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*]\(([^)]+)\)")
 

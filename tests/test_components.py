@@ -6,12 +6,15 @@ from econ_manim import (
     ECON_DARK,
     AgentToken,
     CausalChain,
+    ChannelDecomposition,
     ChoiceMap,
     CityLaborMarket,
+    CoefficientPlot,
     DivergingBarChart,
     EquationBuild,
     ImpulseResponsePlot,
     LinkedViews,
+    PathFlow,
     ResultTable,
     ShockDistribution,
     WorkerToken,
@@ -72,6 +75,66 @@ def test_charts_construct_with_small_inputs():
     for mobject in (irf, table):
         assert mobject.width > 0
         assert mobject.height > 0
+
+
+def test_impulse_response_supports_horizons_bands_and_event_time():
+    irf = ImpulseResponsePlot(
+        {"response": ([0.0, -0.2, -0.1], ECON_DARK.blue)},
+        horizons=(-1, 0, 2),
+        confidence_intervals={
+            "response": ([-0.1, -0.4, -0.3], [0.1, 0.0, 0.1]),
+        },
+        event_time=0,
+    )
+    assert len(irf.bands) == 1
+    assert irf.event.height > 0
+    assert len(irf.lines) == 1
+
+
+def test_impulse_response_rejects_invalid_confidence_intervals():
+    with pytest.raises(ValueError, match="must contain"):
+        ImpulseResponsePlot(
+            {"response": ([0.0, -0.2], ECON_DARK.blue)},
+            confidence_intervals={"response": ([0.1, -0.3], [0.2, -0.1])},
+        )
+
+
+def test_coefficient_plot_constructs_and_validates_bounds():
+    plot = CoefficientPlot(
+        (
+            ("group A", -0.2, -0.3, -0.1, ECON_DARK.blue),
+            ("group B", 0.1, -0.1, 0.3, ECON_DARK.orange),
+        )
+    )
+    assert len(plot.rows) == 2
+    assert len(plot.intervals) == 2
+    assert plot.reference.height > 0
+    with pytest.raises(ValueError, match="must contain"):
+        CoefficientPlot((("invalid", 0.5, 0.6, 0.7, ECON_DARK.blue),))
+
+
+def test_path_flow_supports_straight_curved_and_segmented_routes():
+    straight = PathFlow(((-2, 0, 0), (2, 0, 0)), label="direct")
+    curved = PathFlow(((-2, 0, 0), (2, 0, 0)), curved=True)
+    segmented = PathFlow(((-2, 0, 0), (0, 1, 0), (2, 0, 0)))
+    for flow in (straight, curved, segmented):
+        assert flow.path.width > 0
+        assert flow.token.get_center()[0] == pytest.approx(flow.path.get_start()[0])
+        assert flow.travel_animation(run_time=0.5).run_time == 0.5
+
+
+def test_channel_decomposition_exposes_incremental_parts():
+    decomposition = ChannelDecomposition(
+        (
+            ("direct", ECON_DARK.blue),
+            ("spillover", ECON_DARK.green),
+            ("cost", ECON_DARK.orange),
+        ),
+        outcome="welfare",
+    )
+    assert len(decomposition.channels) == 3
+    assert len(decomposition.arrows) == 3
+    assert decomposition.channels.get_center()[0] < decomposition.outcome.get_center()[0]
 
 
 def test_visual_formats_construct_without_hidden_data():
