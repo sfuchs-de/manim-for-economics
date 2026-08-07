@@ -10,6 +10,7 @@ from manim import (
     RIGHT,
     UP,
     Axes,
+    Brace,
     DashedLine,
     Dot,
     Line,
@@ -17,12 +18,12 @@ from manim import (
     NumberLine,
     Polygon,
     RoundedRectangle,
-    Text,
     VGroup,
     VMobject,
 )
 
 from .theme import ECON_DARK, VideoTheme
+from .typography import ProseText as Text
 
 
 def _line(
@@ -394,6 +395,50 @@ class EquationBuild(VGroup):
         self.terms = term_groups
         self.operators = operator_mobjects
         self.sequence = sequence
+
+    def rhs_brace(
+        self,
+        label: str,
+        *,
+        start: int = 0,
+        stop: int | None = None,
+        color: str | None = None,
+        label_size: float = 18,
+        buff: float = 0.10,
+    ) -> VGroup:
+        """Label a contiguous set of right-hand-side terms with a brace.
+
+        ``start`` is inclusive and ``stop`` is exclusive. The left-hand side
+        and equality sign are deliberately unavailable to this method, which
+        prevents approach labels from accidentally describing the outcome
+        object rather than the terms used to compute it.
+        """
+
+        resolved_stop = len(self.terms) if stop is None else stop
+        if not 0 <= start < resolved_stop <= len(self.terms):
+            raise ValueError("rhs brace range must select one or more terms")
+        if not label:
+            raise ValueError("rhs brace label cannot be empty")
+
+        items = []
+        for index in range(start, resolved_stop):
+            if index > start:
+                items.append(self.operators[index - 1])
+            items.append(self.terms[index])
+        target = VGroup(*items)
+        resolved_color = color or self.terms[start][0].get_stroke_color()
+        brace = Brace(target, DOWN, buff=buff, color=resolved_color)
+        label_mobject = Text(
+            label,
+            font_size=label_size,
+            color=resolved_color,
+            weight="BOLD",
+        ).next_to(brace, DOWN, buff=0.05)
+        result = VGroup(brace, label_mobject)
+        result.target = target
+        result.brace = brace
+        result.label = label_mobject
+        return result
 
 
 class ResultTable(VGroup):

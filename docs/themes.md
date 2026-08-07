@@ -21,6 +21,51 @@ The names describe appearance, not subject matter. The ivory accent colors have
 been darkened slightly from the production palette so small text remains
 readable against the light background.
 
+Both presets use portable font roles: TeX Gyre Pagella for scene titles and
+TeX Gyre Heros for body text, labels, and captions. The package registers the
+font files supplied by the TeX installation that Manim already uses. This keeps
+glyph widths and spacing stable across native and container renders. A minimal
+installation without TeX Gyre falls back to the generic serif and sans-serif
+roles.
+
+Use `ProseText` from `econ_manim` for every nonmathematical label created by a
+scene. It keeps the registered font's native kerning, adds restrained
+size-relative tracking, and normalizes pasted Unicode spaces and manual
+alignment padding. It is used internally by every bundled component and
+template. Use `fit_prose_text` when a line must satisfy a maximum width: it
+chooses the final font size before layout instead of shrinking an already
+rendered Pango object. Continue to use `MathTex` for equations.
+
+```python
+from econ_manim import ProseText, fit_prose_text
+
+label = ProseText("Full Jacobian: labor, routes, modes, and congestion")
+title = fit_prose_text(
+    "A long title rendered once at its final size",
+    max_width=12.8,
+    font_size=42,
+)
+```
+
+Do not call `.scale(...)` on prose or on a parent `VGroup` that contains prose.
+At small video sizes, geometric scaling after Pango layout creates visibly
+uneven character and word spacing. Size charts and maps through their
+constructors, and use `assert_prose_is_unscaled` as a render-time guard.
+
+```python
+from econ_manim import assert_prose_is_unscaled
+
+assert_prose_is_unscaled(title, caption, chart)
+```
+
+Within a `ResearchScene`, `validate_stage(title, chart, caption)` combines this
+typography check with the title-safe frame check. Use it on a representative
+completed state before the reveal.
+
+Use `make_source_note` for citations and data sources. It is smaller and
+left-aligned, while `make_caption` remains available for explanatory prose that
+belongs to the main argument.
+
 ![The same generic result in midnight](assets/themes/midnight.png)
 
 ![The same generic result in ivory](assets/themes/ivory.png)

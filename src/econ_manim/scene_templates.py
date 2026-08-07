@@ -68,6 +68,38 @@ SCENE_TEMPLATES = (
         required_inputs=("horizons", "estimates", "confidence bounds", "event time"),
         source="templates/scenes/empirical/impulse_response",
     ),
+    SceneTemplate(
+        identifier="empirical.evolving-scatter",
+        category="empirical",
+        title="Evolving scatter",
+        use_when="the same observations move through ordered model specifications",
+        avoid_when="states use different samples, units, or horizontal benchmarks",
+        source_inspiration="model-ladder and link-ranking comparisons in network welfare",
+        preview_class="EvolvingScatterRecipe",
+        required_inputs=(
+            "stable identifiers",
+            "fixed benchmark",
+            "state values",
+            "selected labels",
+        ),
+        source="templates/scenes/empirical/evolving_scatter",
+    ),
+    SceneTemplate(
+        identifier="empirical.geographic-network-map",
+        category="empirical",
+        title="Geographic network map",
+        use_when="link-level values need geographic context and selected corridors",
+        avoid_when="coordinates, boundaries, or link identifiers are unverified",
+        source_inspiration="ranked traffic and welfare maps in network appraisal",
+        preview_class="GeographicNetworkMapRecipe",
+        required_inputs=(
+            "GeoJSON boundaries",
+            "stable link identifiers",
+            "endpoint coordinates",
+            "link values and units",
+        ),
+        source="templates/scenes/empirical/geographic_network_map",
+    ),
 )
 
 

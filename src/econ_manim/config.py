@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import math
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path
@@ -39,6 +40,9 @@ class AudioConfig:
     track: str = ""
     license: str = ""
     attribution: str = ""
+    embedded_narration: bool = False
+    music_gain_db: float = -21.0
+    narration_gain_db: float = 0.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -140,6 +144,10 @@ def load_project(project: str | Path) -> ProjectConfig:
         raise ConfigError(
             f"{path} has non-positive render fields: {', '.join(invalid)}"
         )
+    music_gain_db = float(audio.get("music_gain_db", -21.0))
+    narration_gain_db = float(audio.get("narration_gain_db", 0.0))
+    if not math.isfinite(music_gain_db) or not math.isfinite(narration_gain_db):
+        raise ConfigError("audio gains must be finite decibel values")
     return ProjectConfig(
         root=root,
         title=str(section["title"]),
@@ -153,6 +161,9 @@ def load_project(project: str | Path) -> ProjectConfig:
             track=str(audio.get("track", "")),
             license=str(audio.get("license", "")),
             attribution=str(audio.get("attribution", "")),
+            embedded_narration=bool(audio.get("embedded_narration", False)),
+            music_gain_db=music_gain_db,
+            narration_gain_db=narration_gain_db,
         ),
     )
 

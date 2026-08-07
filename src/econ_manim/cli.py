@@ -25,6 +25,7 @@ from .media import (
     VideoInfo,
     extract_contact_sheet,
     frame_at,
+    interval_sweep_frames,
     probe_video,
     transition_sweep_frames,
 )
@@ -74,6 +75,7 @@ def _render(
     scene: str | None,
     overlay: bool,
     theme: str | None,
+    no_cache: bool = False,
 ) -> Path:
     config = load_project(project)
     selected_scene = scene or config.scene
@@ -103,6 +105,8 @@ def _render(
         str(config.entrypoint),
         selected_scene,
     ]
+    if no_cache:
+        command.insert(4, "--disable_caching")
     _run(
         command,
         cwd=config.root,
@@ -234,6 +238,7 @@ def command_preview_scene(args: argparse.Namespace) -> int:
         scene=get_scene_template(args.identifier).preview_class,
         overlay=args.overlay,
         theme=args.theme,
+        no_cache=args.no_cache,
     )
     print(json.dumps(asdict(probe_video(video)), indent=2))
     return 0
@@ -316,6 +321,7 @@ def command_demo(args: argparse.Namespace) -> int:
         scene=None,
         overlay=not args.no_overlay,
         theme=args.theme,
+        no_cache=args.no_cache,
     )
     config = load_project(project)
     frames = config.render.inspection_frames
@@ -341,6 +347,7 @@ def command_preview(args: argparse.Namespace) -> int:
         scene=args.scene,
         overlay=args.overlay,
         theme=args.theme,
+        no_cache=args.no_cache,
     )
     print(json.dumps(asdict(probe_video(video)), indent=2))
     return 0
@@ -353,6 +360,7 @@ def command_render(args: argparse.Namespace) -> int:
         scene=args.scene,
         overlay=False,
         theme=args.theme,
+        no_cache=args.no_cache,
     )
     print(json.dumps(asdict(probe_video(video)), indent=2))
     return 0
@@ -361,9 +369,36 @@ def command_render(args: argparse.Namespace) -> int:
 def command_frames(args: argparse.Namespace) -> int:
     config = load_project(args.project)
     video = Path(args.video).resolve() if args.video else _find_video(config)
+    selected_modes = sum(
+        (
+            bool(args.times),
+            bool(args.transition_sweep),
+            args.interval is not None,
+        )
+    )
+    if selected_modes > 1:
+        raise ConfigError(
+            "choose only one of --times, --transition-sweep, or --interval"
+        )
+    if args.interval is not None:
+        info = probe_video(video)
+        try:
+            frames = interval_sweep_frames(info.duration, args.interval)
+        except ValueError as error:
+            raise ConfigError(str(error)) from error
+        sheet = extract_contact_sheet(
+            video,
+            tuple(frame.time for frame in frames),
+            config.root / "build" / "qa",
+            labels=tuple(frame.label for frame in frames),
+            kinds=tuple(frame.kind for frame in frames),
+            columns=4,
+            sheet_name="interval_sweep.png",
+            frames_subdir="frames/interval",
+        )
+        print(sheet)
+        return 0
     if args.transition_sweep:
-        if args.times:
-            raise ConfigError("--times cannot be combined with --transition-sweep")
         info = probe_video(video)
         settled = tuple(
             frame
@@ -510,7 +545,7 @@ def command_qa(args: argparse.Namespace) -> int:
     )
     if is_final_audio and not info.has_audio:
         raise ConfigError("configured final audio render has no audio stream")
-    if not is_final_audio and info.has_audio:
+    if not is_final_audio and info.has_audio and not config.audio.embedded_narration:
         raise ConfigError("silent preview/master unexpectedly contains an audio stream")
     out_of_range = [
         frame
@@ -543,12 +578,30 @@ def command_audio(args: argparse.Namespace) -> int:
     track = (config.root / config.audio.track).resolve()
     if not track.is_file():
         raise ConfigError(f"audio track does not exist: {track}")
-    video = _find_video(config, prefer_master=True)
+    if args.video:
+        video = Path(args.video).expanduser().resolve()
+        if not video.is_file():
+            raise ConfigError(f"video does not exist: {video}")
+    else:
+        video = _find_video(config, prefer_master=True)
     info = probe_video(video)
     output_dir = config.root / "build" / "final"
     output_dir.mkdir(parents=True, exist_ok=True)
     output = output_dir / f"{config.output_file}_audio.mp4"
     fade_start = max(0.0, info.duration - 3.0)
+    music_filter = (
+        f"[1:a]atrim=0:{info.duration:.3f},"
+        f"afade=t=out:st={fade_start:.3f}:d=3,"
+        f"volume={config.audio.music_gain_db:.2f}dB[music]"
+    )
+    if info.has_audio:
+        audio_filter = (
+            f"{music_filter};"
+            f"[0:a]volume={config.audio.narration_gain_db:.2f}dB[narration];"
+            "[narration][music]amix=inputs=2:duration=first:normalize=0[a]"
+        )
+    else:
+        audio_filter = f"{music_filter};[music]anull[a]"
     command = [
         "ffmpeg",
         "-y",
@@ -559,7 +612,7 @@ def command_audio(args: argparse.Namespace) -> int:
         "-i",
         str(track),
         "-filter_complex",
-        f"[1:a]atrim=0:{info.duration:.3f},afade=t=out:st={fade_start:.3f}:d=3[a]",
+        audio_filter,
         "-map",
         "0:v:0",
         "-map",
@@ -615,6 +668,11 @@ def build_parser() -> argparse.ArgumentParser:
     preview_scene.add_argument("identifier", choices=scene_template_ids())
     preview_scene.add_argument("--theme", choices=theme_names())
     preview_scene.add_argument("--overlay", action="store_true")
+    preview_scene.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="disable Manim's animation cache for this render",
+    )
     preview_scene.set_defaults(handler=command_preview_scene)
 
     add_scene = subparsers.add_parser(
@@ -642,6 +700,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="hide safe-area guides in the demo preview",
     )
+    demo.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="disable Manim's animation cache for this render",
+    )
     demo.set_defaults(handler=command_demo)
 
     new = subparsers.add_parser("new", help="create a paper project from a template")
@@ -668,6 +731,11 @@ def build_parser() -> argparse.ArgumentParser:
         render_parser.add_argument("project")
         render_parser.add_argument("--scene")
         render_parser.add_argument("--theme", choices=theme_names())
+        render_parser.add_argument(
+            "--no-cache",
+            action="store_true",
+            help="disable Manim's animation cache for this render",
+        )
         if name == "preview":
             render_parser.add_argument("--overlay", action="store_true")
         render_parser.set_defaults(handler=handler)
@@ -681,6 +749,12 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="sample each declared transition at ±0.50s and ±0.25s",
     )
+    frames.add_argument(
+        "--interval",
+        type=float,
+        metavar="SECONDS",
+        help="sample the full video regularly and include the final frame",
+    )
     frames.set_defaults(handler=command_frames)
 
     qa = subparsers.add_parser("qa", help="validate source, provenance, and rendered media")
@@ -690,6 +764,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     audio = subparsers.add_parser("audio", help="mix documented music into a rendered master")
     audio.add_argument("project")
+    audio.add_argument(
+        "--video",
+        help="silent video to mix; defaults to the newest rendered master",
+    )
     audio.set_defaults(handler=command_audio)
     return parser
 

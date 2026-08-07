@@ -18,6 +18,8 @@ class VideoTheme:
     orange: str
     rose: str
     card: str
+    title_font: str = "serif"
+    text_font: str = "sans-serif"
     title_size: int = 42
     body_size: int = 27
     small_size: int = 20

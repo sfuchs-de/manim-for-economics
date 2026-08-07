@@ -70,6 +70,18 @@ Add a **conceptual handoff** column. It should state why the last visual state o
 one beat becomes the first visual state of the next. If the handoff cannot be
 written in one sentence, the order may be wrong or the beats may be unrelated.
 
+For narrated work, add a cue-to-visual crosswalk before recording audio:
+
+| Cue | Spoken claim | Visual introduced | Prior object retained | Minimum hold |
+|---|---|---|---|---|
+| Example | A local shock reaches neighboring markets. | First propagation round | Shocked link | 2.5 seconds |
+
+Each row should contain one complete spoken claim and one focal reveal. A cue
+may retain earlier context, but it should not introduce a second independent
+equation, chart, or mechanism. This table is also the timing specification:
+the reveal begins with the sentence that names it, and the completed state
+remains visible until that cue ends.
+
 ## Reuse visual objects
 
 Use an agent, network, market, estimand, mathematical object, allocation, or
@@ -87,6 +99,29 @@ A transition should explain continuity. Depending on the selected template:
 - Mathematical object → operation → result → application.
 
 If two adjacent beats have no conceptual handoff, reconsider their order.
+
+## Reveal an argument before naming it
+
+For an unfamiliar mechanism or equation, keep one visual object on screen and
+change it one step at a time. Show the economic object first, animate the change
+the viewer must understand, and introduce notation only after the change is
+visible. A recursive response, for example, should begin with the local shock,
+then show successive propagation rounds, and only then replace those rounds by
+an inverse operator. The completed equation is the summary of an argument the
+viewer has already seen, not the first exposure to it.
+
+Do not introduce a new diagram, a new equation, and an explanatory paragraph in
+the same beat. When the next abstraction arrives, dim or remove objects whose
+role is complete. If two methods are being compared, build the first method and
+then transform it into the second in the same visual space. This makes the
+difference itself visible and avoids asking the viewer to scan two completed
+pipelines at once.
+
+The same rule applies to empirical results. Reveal the distribution in a small
+number of ordered groups. Locate a selected observation in the chart and map
+before adding its rank or mechanism values. When a model state changes, move the
+observations first, update the map second, and reveal the revised ranking last.
+Each beat should answer one question before the next question appears.
 
 ## Approve before coding
 

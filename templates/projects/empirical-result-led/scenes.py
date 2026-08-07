@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from manim import UP, Create, FadeIn, RoundedRectangle, Text, VGroup
+from manim import UP, Create, FadeIn, RoundedRectangle, VGroup
 
 from econ_manim import (
     CausalChain,
@@ -11,6 +11,9 @@ from econ_manim import (
     ResearchScene,
     ShockDistribution,
     read_csv_rows,
+)
+from econ_manim import (
+    ProseText as Text,
 )
 
 ROOT = Path(__file__).parent

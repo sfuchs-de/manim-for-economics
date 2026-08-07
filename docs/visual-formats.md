@@ -189,8 +189,9 @@ separately identified unless the paper supports that claim.
 Use `CoefficientPlot` for a small set of estimates sharing one scale and
 reference. Use `ImpulseResponsePlot` for common horizons, with optional
 confidence bands and an event marker. The atomic recipes
-`empirical.coefficient-intervals` and `empirical.impulse-response` include local
-illustrative data, manifests, and both-theme QA stills.
+`empirical.coefficient-intervals`, `empirical.impulse-response`, and
+`empirical.evolving-scatter` include local illustrative data, manifests, and
+both-theme QA stills.
 
 State the estimand, units, baseline, sample, and confidence level near the
 visual. Preserve pre-event horizons when they diagnose the design.

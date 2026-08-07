@@ -41,6 +41,8 @@ def test_custom_theme_keeps_the_original_constructor_shape():
         card="#222222",
     )
     assert custom.name == "custom"
+    assert custom.title_font == "serif"
+    assert custom.text_font == "sans-serif"
 
 
 def test_unknown_theme_has_a_concise_error():

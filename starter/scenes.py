@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from manim import UP, FadeIn, Text, VGroup
+from manim import UP, FadeIn, VGroup
 
 from econ_manim import (
     CausalChain,
@@ -10,6 +10,9 @@ from econ_manim import (
     EquationBuild,
     ResearchScene,
     read_csv_rows,
+)
+from econ_manim import (
+    ProseText as Text,
 )
 
 RESULT_ROWS = read_csv_rows(

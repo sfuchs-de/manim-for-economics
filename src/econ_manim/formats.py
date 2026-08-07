@@ -13,11 +13,12 @@ from manim import (
     Line,
     Rectangle,
     RoundedRectangle,
-    Text,
     VGroup,
 )
 
 from .theme import ECON_DARK, VideoTheme
+from .typography import ProseText as Text
+from .typography import fit_prose_text
 
 
 class CausalChain(VGroup):
@@ -247,9 +248,13 @@ class ChannelDecomposition(VGroup):
 
         channel_groups = VGroup()
         for label, color in channels:
-            text = Text(label, font_size=20, color=color)
-            if text.width > 2.45:
-                text.scale_to_fit_width(2.45)
+            text = fit_prose_text(
+                label,
+                max_width=2.45,
+                font_size=20,
+                min_font_size=12,
+                color=color,
+            )
             box = RoundedRectangle(
                 width=2.85,
                 height=0.62,
@@ -264,9 +269,13 @@ class ChannelDecomposition(VGroup):
         channel_groups.arrange(DOWN, buff=0.28).move_to(LEFT * 2.45)
 
         resolved_outcome_color = outcome_color or theme.foreground
-        outcome_text = Text(outcome, font_size=23, color=resolved_outcome_color)
-        if outcome_text.width > 2.55:
-            outcome_text.scale_to_fit_width(2.55)
+        outcome_text = fit_prose_text(
+            outcome,
+            max_width=2.55,
+            font_size=23,
+            min_font_size=12,
+            color=resolved_outcome_color,
+        )
         outcome_box = RoundedRectangle(
             width=3.05,
             height=0.86,

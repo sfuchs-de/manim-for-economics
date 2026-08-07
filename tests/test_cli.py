@@ -1,4 +1,5 @@
 import hashlib
+import shutil
 from pathlib import Path
 
 import pytest
@@ -119,6 +120,8 @@ def test_scenes_lists_and_filters_atomic_recipes(capsys):
     output = capsys.readouterr().out
     assert "empirical.coefficient-intervals" in output
     assert "empirical.impulse-response" in output
+    assert "empirical.evolving-scatter" in output
+    assert "empirical.geographic-network-map" in output
     assert "mechanism.path-flow" not in output
 
 
@@ -157,6 +160,61 @@ def test_checksum_prints_a_manifest_ready_hash(tmp_path, capsys):
     digest, path = capsys.readouterr().out.strip().split("  ", maxsplit=1)
     assert digest == hashlib.sha256(source.read_bytes()).hexdigest()
     assert path == str(source.resolve())
+
+
+def test_render_can_disable_manim_cache(tmp_path, monkeypatch):
+    project = tmp_path / "starter"
+    shutil.copytree("starter", project)
+    calls = []
+
+    def fake_run(command, *, cwd, env=None):
+        calls.append((command, cwd, env))
+        output_name = command[command.index("--output_file") + 1]
+        output = Path(cwd) / "build" / f"{output_name}.mp4"
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.touch()
+
+    monkeypatch.setattr(cli, "_run", fake_run)
+
+    cli._render(
+        project,
+        preview=True,
+        scene=None,
+        overlay=False,
+        theme=None,
+        no_cache=True,
+    )
+
+    command = calls[0][0]
+    assert "--disable_caching" in command
+    assert command.index("--disable_caching") < command.index("--fps")
+
+
+def test_preview_forwards_no_cache_flag(monkeypatch, capsys):
+    calls = []
+
+    def fake_render(*args, **kwargs):
+        calls.append((args, kwargs))
+        return Path("preview.mp4")
+
+    monkeypatch.setattr(cli, "_render", fake_render)
+    monkeypatch.setattr(
+        cli,
+        "probe_video",
+        lambda _video: VideoInfo(
+            path="preview.mp4",
+            width=854,
+            height=480,
+            fps=15.0,
+            duration=10.0,
+            frames=150,
+            has_audio=False,
+        ),
+    )
+
+    assert main(["preview", "starter", "--no-cache"]) == 0
+    assert calls[0][1]["no_cache"] is True
+    capsys.readouterr()
 
 
 def test_frames_transition_sweep_writes_three_labeled_sheets(
@@ -213,6 +271,51 @@ def test_frames_transition_sweep_writes_three_labeled_sheets(
     assert "settled states:" in output
     assert "transition sweep:" in output
     assert "combined:" in output
+
+
+def test_frames_interval_sweep_covers_the_full_video(tmp_path, monkeypatch, capsys):
+    calls = []
+
+    def fake_contact_sheet(_video, times, output_dir, **kwargs):
+        calls.append((times, kwargs))
+        return Path(output_dir) / kwargs["sheet_name"]
+
+    monkeypatch.setattr(
+        cli,
+        "probe_video",
+        lambda _video: VideoInfo(
+            path="preview.mp4",
+            width=854,
+            height=480,
+            fps=15.0,
+            duration=60.0,
+            frames=900,
+            has_audio=False,
+        ),
+    )
+    monkeypatch.setattr(cli, "extract_contact_sheet", fake_contact_sheet)
+
+    assert (
+        main(
+            [
+                "frames",
+                "starter",
+                "--video",
+                str(tmp_path / "preview.mp4"),
+                "--interval",
+                "5",
+            ]
+        )
+        == 0
+    )
+
+    times, options = calls[0]
+    assert times[:3] == (0.0, 5.0, 10.0)
+    assert times[-1] == pytest.approx(59.9)
+    assert options["sheet_name"] == "interval_sweep.png"
+    assert options["frames_subdir"] == "frames/interval"
+    assert set(options["kinds"]) == {"interval"}
+    assert "interval_sweep.png" in capsys.readouterr().out
 
 
 def test_qa_rejects_media_outside_configured_profiles(tmp_path, monkeypatch, capsys):
@@ -322,3 +425,11 @@ def test_audio_requires_an_explicit_configuration(capsys):
         main(["audio", "starter"])
     assert exit_info.value.code == 2
     assert "audio.enabled is false" in capsys.readouterr().err
+
+
+def test_audio_parser_accepts_an_explicit_video():
+    args = build_parser().parse_args(
+        ["audio", "project", "--video", "build/silent.mp4"]
+    )
+    assert args.project == "project"
+    assert args.video == "build/silent.mp4"

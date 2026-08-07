@@ -35,7 +35,12 @@ does not rewrite the project's scene or silently merge provenance records.
   a small set of estimates on one honest scale.
 - [`empirical.impulse-response`](empirical/impulse_response/): show a dynamic
   response with uncertainty and an event marker.
+- [`empirical.evolving-scatter`](empirical/evolving_scatter/): follow a fixed
+  sample through ordered model states while recomputing selected ranks.
+- [`empirical.geographic-network-map`](empirical/geographic_network_map/):
+  construct a vector basemap and reveal value-encoded links in ranked groups.
 
-Every bundled value is illustrative. A copied recipe becomes factual only after
-the user replaces its inputs and records released or digitized provenance in
-the project manifest.
+Bundled numerical examples are illustrative unless a recipe says otherwise.
+The geographic-network-map recipe is the exception: it ships with public-safe
+derived U.S. highway artifacts and a source manifest. Any replacement data must
+likewise record released or digitized provenance before the recipe is factual.

@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from manim import RIGHT, UP, Create, FadeIn, RoundedRectangle, Text, VGroup
+from manim import RIGHT, UP, Create, FadeIn, RoundedRectangle, VGroup
 
 from econ_manim import (
     CausalChain,
@@ -12,6 +12,9 @@ from econ_manim import (
     LinkedViews,
     ResearchScene,
     read_csv_rows,
+)
+from econ_manim import (
+    ProseText as Text,
 )
 
 ROWS = read_csv_rows(

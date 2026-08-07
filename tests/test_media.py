@@ -1,3 +1,4 @@
+import pytest
 from PIL import Image
 
 from econ_manim import media
@@ -69,3 +70,16 @@ def test_transition_sweep_samples_and_clamps_each_declared_transition():
     assert tuple(frame.time for frame in sweep[-5:]) == (9.3, 9.55, 9.8, 10.0, 10.0)
     assert all(frame.kind == "transition" for frame in sweep)
     assert sweep[0].label == "opening handoff (-0.50s)"
+
+
+def test_interval_sweep_samples_regularly_and_includes_the_final_frame():
+    sweep = media.interval_sweep_frames(duration=12.0, interval=5.0)
+
+    assert tuple(frame.time for frame in sweep) == (0.0, 5.0, 10.0, 11.9)
+    assert all(frame.kind == "interval" for frame in sweep)
+    assert sweep[-1].label == "final frame"
+
+
+def test_interval_sweep_rejects_unmanageably_large_contact_sheets():
+    with pytest.raises(ValueError, match="use an interval of at least"):
+        media.interval_sweep_frames(duration=120.0, interval=1.0)

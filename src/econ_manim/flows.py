@@ -11,13 +11,13 @@ from manim import (
     Arrow,
     Dot,
     MoveAlongPath,
-    Text,
     TipableVMobject,
     VGroup,
     linear,
 )
 
 from .theme import ECON_DARK, VideoTheme
+from .typography import ProseText as Text
 
 
 class PathFlow(VGroup):

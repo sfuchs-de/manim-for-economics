@@ -13,6 +13,9 @@ enabled = true
 track = "assets/my-track.wav"
 license = "CC BY 4.0"
 attribution = "Title — Artist — source URL"
+embedded_narration = true
+music_gain_db = -21.0
+narration_gain_db = 0.0
 ```
 
 Do not commit audio merely because it can be downloaded or generated. Confirm
@@ -41,10 +44,35 @@ uv run econ-manim render <project>
 uv run econ-manim audio <project>
 ```
 
+When a project contains several themes or render variants, select the silent
+video explicitly:
+
+```bash
+uv run econ-manim audio <project> --video path/to/silent-master.mp4
+```
+
 The command loops or trims the documented track, applies a three-second ending
 fade, preserves the video stream, and writes an AAC audio master below
-`build/final/`.
+`build/final/`. If the Manim render already contains narration, the command
+preserves that stream and mixes the music beneath it at `music_gain_db`.
 
-For narration-led work, establish the narration script and timestamps before
-animation. This repository documents that extension but does not automate
-speech generation or alignment in v0.2.0.
+## Let narration set the pace
+
+For narration-led work, write one cue per scene section. Start the cue before
+the section's first reveal and call `finish_voiceover` before the next section.
+The final state then remains on screen until the cue ends. Visual sections that
+run longer than their narration fail explicitly.
+
+```python
+self.next_section("mechanism")
+self.start_voiceover(
+    "assets/narration/mechanism.wav",
+    text="A local cost change first reaches the link endpoints.",
+)
+# Animate the direct effect and later propagation rounds.
+self.finish_voiceover()
+```
+
+During script development, pass an explicit `duration` without an audio file.
+This creates narration-paced holds and subtitle timing before a final voice is
+recorded. Replace estimated timing with the finished WAV files before release.

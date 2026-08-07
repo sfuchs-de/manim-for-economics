@@ -2,9 +2,9 @@
 
 ## Purpose
 
-This repository turns economics papers into short, non-narrated Manim
-explainers. Correct interpretation and visual verification matter more than
-render speed.
+This repository turns economics papers into short Manim explainers, with or
+without narration. Correct interpretation, audiovisual alignment, and visual
+verification matter more than render speed.
 
 ## Read before editing a project
 
@@ -47,6 +47,8 @@ two readings would materially change the story.
 ## Visual conventions
 
 - One learning goal per beat.
+- In narrated work, one cue should normally carry one claim and one reveal.
+- Keep the completed visual visible until its narration cue ends.
 - Use direct labels instead of legends when space allows.
 - Keep title, stage, and caption regions stable.
 - Introduce equations term by term and connect each term to the active economic
@@ -79,6 +81,10 @@ uv run econ-manim render <project>
   frame and each major handoff needs a transition frame.
 - Check clipping, overlaps, label placement, arrow geometry, text hold times,
   and blank or duplicated frames.
+- Read narrated work at normal speed and verify that every reveal begins with
+  the sentence that names it; do not rely only on silent frame inspection.
+- Use `ProseText` for prose, `MathTex` for mathematics, and
+  `validate_stage(...)` on representative completed states.
 - Do not claim completion from successful Python compilation alone.
 - Render 1080p only after the preview and contact sheet pass.
 - Exclude generated `build/` and `media/` directories unless a curated preview

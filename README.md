@@ -163,8 +163,10 @@ paper and its replication files.
 | `econ-manim new NAME --template TYPE --theme PRESET` | Select narrative structure and appearance independently |
 | `econ-manim preview PROJECT` | Render an 854×480, 15 fps draft |
 | `econ-manim preview PROJECT --overlay` | Add title-safe and content-region guides |
+| `econ-manim preview PROJECT --no-cache` | Rebuild every animation fragment after shared code, font, or helper changes |
 | `econ-manim frames PROJECT` | Extract declared inspection frames and a contact sheet |
 | `econ-manim frames PROJECT --transition-sweep` | Build separate settled, five-point transition, and combined contact sheets |
+| `econ-manim frames PROJECT --interval 5` | Sample the complete video every five seconds and include the final frame |
 | `econ-manim qa PROJECT` | Check source, provenance, checksums, inspection coverage, media profile, decoding, and audio expectations |
 | `econ-manim render PROJECT` | Render the silent 1920×1080, 30 fps master |
 | `econ-manim audio PROJECT` | Mix documented music or narration into the master |
@@ -177,12 +179,24 @@ is ignored by Git.
 ```text
 paper → brief → claim/source crosswalk → storyboard
       → one representative scene → low-quality render
-      → settled + transition frames → conceptual check
+      → settled + transition + interval frames → conceptual check
       → full scene → silent master → optional licensed audio
 ```
 
 The expensive render is deliberately last. A full video should not be the first
 time anyone sees the typography, timing, or transitions.
+
+Use `ProseText` for prose and `MathTex` for mathematics. `ProseText` is the
+package-wide Pango wrapper used by the bundled scenes; it uses the registered
+project font, preserves native kerning, adds restrained size-relative tracking,
+and normalizes pasted or padded spaces. When text must fit a fixed width, use
+`fit_prose_text` rather than `scale_to_fit_width` on an already rendered line.
+Call `validate_stage(...)` on representative completed states to check both
+frame containment and post-layout prose scaling.
+
+Manim's animation cache speeds up repeated scene edits, but it may retain stale
+fragments after imported package code, fonts, or external helpers change. Use
+`--no-cache` for the final preview and master after those changes.
 
 ## Economic-diversity example
 
@@ -264,6 +278,8 @@ Continue with the checkpoint prompts in
 - [Use Codex](docs/codex-workflow.md)
 - [Protect data integrity](docs/data-integrity.md)
 - [Run visual and timing QA](docs/visual-qa.md)
+- [Link observations across model states, ranks, and maps](docs/linked-empirical-views.md)
+- [Reuse the patterns developed for the RSUE explainer](docs/rsue-explainer-patterns.md)
 - [Add narration or music](docs/audio.md)
 - [Publish responsibly](docs/publishing.md)
 - [Troubleshoot](docs/troubleshooting.md)
