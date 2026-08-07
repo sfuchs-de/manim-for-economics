@@ -1,0 +1,11 @@
+[[dataset]]
+id = "evolving-scatter-recipe"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/observations.csv"
+sha256 = "0d519ec58d09d370faf65ad57e465477a7214a23bfd814a3018c359bd01748b0"
+transformation = "Rows are plotted directly; ranks are recomputed in descending order for each state."
+displayed_values = ["Twelve illustrative observations across three model states"]
+note = "These values are generic and are not estimates from a paper."

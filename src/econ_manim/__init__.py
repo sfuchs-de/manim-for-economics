@@ -7,11 +7,30 @@ from .charts import (
     ResultTable,
     ShockDistribution,
 )
-from .components import AgentToken, ChoiceMap, CityLaborMarket, WorkerToken, adjustment_route
+from .components import (
+    AgentToken,
+    ChoiceMap,
+    CityLaborMarket,
+    PaperCodeEndSlate,
+    WorkerToken,
+    adjustment_route,
+)
 from .data import read_csv_rows
 from .flows import PathFlow
 from .formats import CausalChain, ChannelDecomposition, DivergingBarChart, LinkedViews
 from .layout import LayoutError, assert_no_overlap, assert_within_frame
+from .linked_empirics import (
+    EvolvingScatterPlot,
+    GeographicNetworkMap,
+    GeographicRegion,
+    NetworkInset,
+    NetworkLink,
+    ScatterObservation,
+    SelectedRankPanel,
+    SelectedRankProjections,
+    ranked_value_groups,
+    read_geojson_regions,
+)
 from .scene import ResearchScene
 from .scene_templates import (
     SCENE_TEMPLATES,
@@ -31,6 +50,13 @@ from .theme import (
     get_theme,
     theme_names,
 )
+from .typography import (
+    ProseText,
+    assert_prose_is_unscaled,
+    fit_prose_text,
+    geometrically_scaled_prose,
+    normalize_prose_spacing,
+)
 
 __all__ = [
     "AgentToken",
@@ -43,29 +69,45 @@ __all__ = [
     "CoefficientPlot",
     "DivergingBarChart",
     "EquationBuild",
+    "EvolvingScatterPlot",
+    "GeographicNetworkMap",
+    "GeographicRegion",
     "ImpulseResponsePlot",
     "IVORY",
     "LayoutError",
     "LinkedViews",
     "MIDNIGHT",
+    "NetworkInset",
+    "NetworkLink",
+    "PaperCodeEndSlate",
     "PROJECT_TEMPLATES",
     "PathFlow",
+    "ProseText",
     "ProjectTemplate",
     "ResearchScene",
     "ResultTable",
     "SCENE_TEMPLATES",
+    "ScatterObservation",
     "SceneTemplate",
     "ShockDistribution",
+    "SelectedRankPanel",
+    "SelectedRankProjections",
     "THEMES",
     "VideoTheme",
     "WorkerToken",
     "adjustment_route",
     "assert_no_overlap",
+    "assert_prose_is_unscaled",
     "assert_within_frame",
     "get_template",
     "get_scene_template",
     "get_theme",
+    "fit_prose_text",
+    "geometrically_scaled_prose",
+    "normalize_prose_spacing",
+    "ranked_value_groups",
     "read_csv_rows",
+    "read_geojson_regions",
     "scene_categories",
     "scene_template_ids",
     "template_names",

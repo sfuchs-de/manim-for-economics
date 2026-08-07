@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from manim import UP, Arrow, Circle, Create, FadeIn, FadeOut, Indicate, Text, VGroup
+from manim import UP, Arrow, Circle, Create, FadeIn, FadeOut, Indicate, VGroup
 
 from econ_manim import (
     ChoiceMap,
@@ -10,6 +10,9 @@ from econ_manim import (
     ImpulseResponsePlot,
     ResearchScene,
     read_csv_rows,
+)
+from econ_manim import (
+    ProseText as Text,
 )
 
 RESPONSE_ROWS = read_csv_rows(

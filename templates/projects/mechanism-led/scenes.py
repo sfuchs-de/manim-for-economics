@@ -15,7 +15,6 @@ from manim import (
     Indicate,
     Line,
     RoundedRectangle,
-    Text,
     VGroup,
 )
 
@@ -24,6 +23,7 @@ from econ_manim import (
     DivergingBarChart,
     EquationBuild,
     ResearchScene,
+    fit_prose_text,
     read_csv_rows,
 )
 
@@ -49,9 +49,13 @@ def system_diagram(theme):
             fill_color=theme.card,
             fill_opacity=1,
         ).move_to(position)
-        text = Text(label, font_size=20, color=color)
-        if text.width > 1.25:
-            text.scale_to_fit_width(1.25)
+        text = fit_prose_text(
+            label,
+            max_width=1.25,
+            font_size=20,
+            min_font_size=11,
+            color=color,
+        )
         text.move_to(node)
         nodes.add(node)
         node_labels.add(text)

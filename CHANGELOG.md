@@ -2,6 +2,37 @@
 
 All notable changes to this repository are recorded here.
 
+## Unreleased
+
+### Added
+
+- Location-first markers and neutral network skeletons for staged
+  `GeographicNetworkMap` reveals.
+- Right-hand-side-only labeled braces through `EquationBuild.rhs_brace`.
+- `PaperCodeEndSlate` for paper and reproducible-package resource cards.
+- A case-study guide to the staged-map, nested-formula, recursive-propagation,
+  adjoint, linked-view, and end-slate patterns developed for the RSUE explainer.
+- `EvolvingScatterPlot`, `SelectedRankPanel`, `SelectedRankProjections`,
+  `NetworkInset`, and `GeographicNetworkMap` components that retain stable
+  observation identifiers across model states, rankings, and spatial views.
+- Deterministic `ranked_value_groups`, scatter `dot_layers`, and network
+  `link_layers` for synchronized, staged reveals.
+- The `empirical.evolving-scatter` recipe, with illustrative data, provenance,
+  both-theme previews, and guidance for linked empirical views.
+- The `empirical.geographic-network-map` recipe, with synthetic GeoJSON and
+  link data, staged value-group reveals, selected-link overlays, and both-theme
+  previews.
+- `frames --interval SECONDS` for regular full-video inspection plus the final
+  frame.
+- `--no-cache` for previews, masters, recipe previews, and the bundled demo when
+  imported package code or typography changes would otherwise leave stale clips.
+- Portable TeX Gyre font registration and multiline captions rendered at their
+  final font size.
+- `ProseText`, `fit_prose_text`, and `assert_prose_is_unscaled` to preserve
+  native word and character spacing and reject geometric scaling of prose.
+- Narration-led section timing, subtitle generation, compact source notes, and
+  configurable mixing of embedded narration with background music.
+
 ## 0.2.0 — 2026-07-30
 
 ### Added

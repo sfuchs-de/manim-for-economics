@@ -25,7 +25,6 @@ from manim import (
     GrowArrow,
     Indicate,
     MathTex,
-    Text,
     VGroup,
 )
 
@@ -37,6 +36,9 @@ from econ_manim import (
     ShockDistribution,
     WorkerToken,
     adjustment_route,
+)
+from econ_manim import (
+    ProseText as Text,
 )
 
 

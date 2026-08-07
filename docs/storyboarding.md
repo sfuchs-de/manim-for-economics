@@ -88,6 +88,29 @@ A transition should explain continuity. Depending on the selected template:
 
 If two adjacent beats have no conceptual handoff, reconsider their order.
 
+## Reveal an argument before naming it
+
+For an unfamiliar mechanism or equation, keep one visual object on screen and
+change it one step at a time. Show the economic object first, animate the change
+the viewer must understand, and introduce notation only after the change is
+visible. A recursive response, for example, should begin with the local shock,
+then show successive propagation rounds, and only then replace those rounds by
+an inverse operator. The completed equation is the summary of an argument the
+viewer has already seen, not the first exposure to it.
+
+Do not introduce a new diagram, a new equation, and an explanatory paragraph in
+the same beat. When the next abstraction arrives, dim or remove objects whose
+role is complete. If two methods are being compared, build the first method and
+then transform it into the second in the same visual space. This makes the
+difference itself visible and avoids asking the viewer to scan two completed
+pipelines at once.
+
+The same rule applies to empirical results. Reveal the distribution in a small
+number of ordered groups. Locate a selected observation in the chart and map
+before adding its rank or mechanism values. When a model state changes, move the
+observations first, update the map second, and reveal the revised ranking last.
+Each beat should answer one question before the next question appears.
+
 ## Approve before coding
 
 Before implementing:

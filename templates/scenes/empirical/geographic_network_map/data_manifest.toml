@@ -1,0 +1,23 @@
+[[dataset]]
+id = "geographic-map-regions"
+status = "released"
+classification = "actual"
+source_url = "https://www2.census.gov/geo/tiger/GENZ2018/shp/cb_2018_us_state_20m.zip"
+license = "U.S. Census Bureau cartographic boundary files are public domain"
+local_path = "data/regions.geojson"
+sha256 = "9071b6ec241c0b4d5aeeb848a6fa997f7e8db300be6c9e475d5e2304134bed7d"
+transformation = "Transform to EPSG:4326, retain the contiguous states, and simplify boundaries at 0.015 degrees."
+displayed_values = ["Contiguous U.S. state polygons and boundaries"]
+note = "The scene projects this vector layer with the link coordinates; no pre-rendered map is inserted."
+
+[[dataset]]
+id = "geographic-map-links"
+status = "released"
+classification = "actual"
+source_url = "https://github.com/sfuchs-de/TransportNetworkWelfare.jl"
+license = "Derived research artifact; raw restricted inputs are not redistributed"
+local_path = "data/network_links.csv"
+sha256 = "87acd7b2f126222f9a6658fdde274b694eb7eece608fdf764eacfcf54a1866f8"
+transformation = "Multiply bidirectional Hulten traffic shares by 10,000 to report basis points of domestic income; reveal five deterministic traffic quintiles."
+displayed_values = ["352 physical-link segments", "bidirectional traffic shares", "three verified corridor labels"]
+note = "The CSV is a public-safe derived artifact tied to the accepted paper result vintage."

@@ -12,6 +12,7 @@ from PIL import Image, ImageDraw
 from .config import InspectionFrame
 
 TRANSITION_SWEEP_OFFSETS = (-0.50, -0.25, 0.0, 0.25, 0.50)
+MAX_INTERVAL_SWEEP_FRAMES = 72
 
 
 @dataclass(frozen=True, slots=True)
@@ -49,6 +50,26 @@ def probe_video(path: str | Path) -> VideoInfo:
 
 def video_info_dict(path: str | Path) -> dict:
     return asdict(probe_video(path))
+
+
+def probe_audio_duration(path: str | Path) -> float:
+    """Return an audio file's duration in seconds using PyAV."""
+
+    source = Path(path).resolve()
+    with av.open(str(source)) as container:
+        streams = tuple(container.streams.audio)
+        if not streams:
+            raise ValueError(f"audio file has no audio stream: {source}")
+        stream = streams[0]
+        if stream.duration is not None:
+            duration = float(stream.duration * stream.time_base)
+        elif container.duration is not None:
+            duration = float(container.duration / av.time_base)
+        else:
+            raise ValueError(f"audio duration is unavailable: {source}")
+    if not math.isfinite(duration) or duration <= 0:
+        raise ValueError(f"audio duration must be positive: {source}")
+    return duration
 
 
 def frame_at(path: str | Path, time_seconds: float) -> Image.Image:
@@ -92,6 +113,53 @@ def transition_sweep_frames(
                 )
             )
     return tuple(sweep)
+
+
+def interval_sweep_frames(
+    duration: float,
+    interval: float,
+    *,
+    include_final: bool = True,
+    max_frames: int = MAX_INTERVAL_SWEEP_FRAMES,
+) -> tuple[InspectionFrame, ...]:
+    """Sample a video regularly and include its final settled frame.
+
+    Regular sampling complements declared transition frames: it catches scenes
+    that are dense, blank, or visually unstable between the named checkpoints.
+    The final sample sits just inside the media duration so compressed videos do
+    not require a frame exactly at end-of-stream.
+    """
+
+    if duration <= 0:
+        raise ValueError("video duration must be positive")
+    if interval <= 0:
+        raise ValueError("frame interval must be positive")
+    if max_frames <= 0:
+        raise ValueError("max_frames must be positive")
+
+    times = [index * interval for index in range(math.ceil(duration / interval))]
+    times = [time for time in times if time < duration]
+    final_time = max(0.0, duration - 0.10)
+    if include_final and (not times or final_time - times[-1] > 0.25):
+        times.append(final_time)
+    if len(times) > max_frames:
+        minimum = duration / max_frames
+        raise ValueError(
+            f"interval sweep would create {len(times)} frames; "
+            f"use an interval of at least {minimum:.2f} seconds"
+        )
+
+    frames = []
+    for index, time in enumerate(times):
+        is_final = include_final and index == len(times) - 1 and time == final_time
+        frames.append(
+            InspectionFrame(
+                time=time,
+                label="final frame" if is_final else f"regular sample {index + 1}",
+                kind="interval",
+            )
+        )
+    return tuple(frames)
 
 
 def extract_contact_sheet(

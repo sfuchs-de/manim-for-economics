@@ -18,6 +18,8 @@ PROJECTS = (
     ROOT / "templates" / "scenes" / "mechanism" / "channel_decomposition",
     ROOT / "templates" / "scenes" / "empirical" / "coefficient_intervals",
     ROOT / "templates" / "scenes" / "empirical" / "impulse_response",
+    ROOT / "templates" / "scenes" / "empirical" / "evolving_scatter",
+    ROOT / "templates" / "scenes" / "empirical" / "geographic_network_map",
 )
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*]\(([^)]+)\)")
 

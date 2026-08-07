@@ -1,3 +1,4 @@
+import json
 import shutil
 
 import pytest
@@ -14,13 +15,23 @@ from econ_manim import (
     CoefficientPlot,
     DivergingBarChart,
     EquationBuild,
+    EvolvingScatterPlot,
+    GeographicNetworkMap,
     ImpulseResponsePlot,
     LinkedViews,
+    NetworkInset,
+    NetworkLink,
+    PaperCodeEndSlate,
     PathFlow,
     ResultTable,
+    ScatterObservation,
+    SelectedRankPanel,
+    SelectedRankProjections,
     ShockDistribution,
     WorkerToken,
     assert_within_frame,
+    ranked_value_groups,
+    read_geojson_regions,
 )
 
 
@@ -52,6 +63,37 @@ def test_domain_neutral_agent_and_choice_map_construct():
     assert menu.origin.get_center()[0] < menu.nodes.get_center()[0]
     for mobject in (agent, menu):
         assert_within_frame(mobject)
+
+
+@pytest.mark.parametrize("theme", (MIDNIGHT, IVORY))
+def test_paper_code_end_slate_constructs_in_both_themes(theme):
+    slate = PaperCodeEndSlate(
+        paper_title="A Paper\nwith a Short Title",
+        paper_authors="Author One · Author Two",
+        paper_status="Working paper\nforthcoming",
+        package_name="ResearchPackage.jl",
+        package_summary="Reusable code, documentation,\nand examples",
+        package_url="github.com/example/ResearchPackage.jl",
+        invitation="Apply the method to your own setting.",
+        theme=theme,
+    )
+    assert slate.paper_resource.get_center()[0] < 0
+    assert slate.code_resource.get_center()[0] > 0
+    assert slate.divider.get_start()[0] == pytest.approx(0)
+    assert slate.divider.get_end()[0] == pytest.approx(0)
+    assert_within_frame(slate)
+
+
+def test_paper_code_end_slate_rejects_empty_required_fields():
+    with pytest.raises(ValueError, match="cannot be empty"):
+        PaperCodeEndSlate(
+            paper_title="",
+            paper_authors="Author",
+            paper_status="forthcoming",
+            package_name="Package.jl",
+            package_summary="summary",
+            package_url="example.com/package",
+        )
 
 
 def test_choice_map_rejects_an_unreadable_number_of_alternatives():
@@ -139,6 +181,186 @@ def test_channel_decomposition_exposes_incremental_parts():
     assert decomposition.channels.get_center()[0] < decomposition.outcome.get_center()[0]
 
 
+def test_evolving_scatter_links_states_ranks_and_network_geometry():
+    observations = (
+        ScatterObservation(
+            "a",
+            0.2,
+            {"traditional": 0.2, "spatial": 0.3, "extended": 0.12},
+            "A--B",
+        ),
+        ScatterObservation(
+            "b",
+            0.4,
+            {"traditional": 0.4, "spatial": 0.25, "extended": 0.18},
+            "C--D",
+        ),
+    )
+    scatter = EvolvingScatterPlot(
+        observations,
+        ("traditional", "spatial", "extended"),
+        selected_colors={"a": ECON_DARK.orange, "b": ECON_DARK.green},
+        state_colors={
+            "traditional": {"a": "#111111", "b": "#222222"},
+            "spatial": {"a": "#333333", "b": "#444444"},
+            "extended": {"a": "#555555", "b": "#666666"},
+        },
+        x_range=(0, 0.5, 0.1),
+    )
+    ranks = SelectedRankPanel(scatter, {"a": "A--B", "b": "C--D"})
+    projections = SelectedRankProjections(scatter, ("a", "b"))
+    network = NetworkInset(
+        (
+            NetworkLink("a", (-100, 35), (-98, 36)),
+            NetworkLink("b", (-98, 36), (-95, 34)),
+        ),
+        selected_colors={"a": ECON_DARK.orange, "b": ECON_DARK.green},
+        values={"a": 0.1, "b": 0.8},
+        value_range=(0.0, 1.0),
+    )
+
+    assert scatter.ranks("traditional") == {"b": 1, "a": 2}
+    assert scatter.ranks("spatial") == {"a": 1, "b": 2}
+    assert scatter.dot_layers(("b", "a"))[0] is scatter.dots_by_id["b"]
+    assert len(scatter.transition_lines("spatial")) == 2
+    assert scatter.animate_to("spatial").run_time == pytest.approx(1.6)
+    assert ranks.animate_to("spatial").run_time == pytest.approx(0.7)
+    assert len(projections) == 2
+    assert projections[0][2].text == "#2"
+    assert projections.animate_to("spatial").run_time == pytest.approx(1.6)
+    assert projections.current_state == "spatial"
+    assert network.isolate("a")[1][0].get_stroke_opacity() == pytest.approx(1.0)
+    assert network.base_by_id["b"].get_stroke_width() > network.base_by_id["a"].get_stroke_width()
+
+
+def test_ranked_value_groups_are_balanced_and_deterministic():
+    groups = ranked_value_groups(
+        {"d": 1.0, "b": 3.0, "a": 3.0, "c": 2.0, "e": 0.0},
+        groups=2,
+    )
+
+    assert groups == (("a", "b", "c"), ("d", "e"))
+    assert ranked_value_groups(
+        {"a": 1.0, "b": 2.0, "c": 3.0},
+        groups=3,
+        descending=False,
+    ) == (("a",), ("b",), ("c",))
+
+
+def test_geographic_network_map_reads_geojson_and_encodes_links(tmp_path):
+    geojson = tmp_path / "regions.geojson"
+    geojson.write_text(
+        json.dumps(
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "properties": {"code": "west"},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]],
+                        },
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {"code": "east"},
+                        "geometry": {
+                            "type": "MultiPolygon",
+                            "coordinates": [
+                                [[[1, 0], [2, 0], [2, 1], [1, 1], [1, 0]]]
+                            ],
+                        },
+                    },
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    regions = read_geojson_regions(geojson, identifier_property="code")
+    links = (
+        NetworkLink("low", (0.2, 0.3), (0.8, 0.7)),
+        NetworkLink("high", (1.2, 0.3), (1.8, 0.7)),
+    )
+    map_view = GeographicNetworkMap(
+        regions,
+        links,
+        values={"low": 1.0, "high": 8.0},
+        color_values={"low": 1.0, "high": 2.0},
+        extent=(0.0, 2.0, 0.0, 1.0),
+        value_range=(0.0, 10.0),
+        color_range=(1.0, 2.0),
+        selected_colors={"high": ECON_DARK.orange},
+        legend_ticks=(0.0, 5.0, 10.0),
+    )
+
+    assert len(regions) == 2
+    assert len(map_view.base_links) == 2
+    projected = map_view.project_point((1.0, 0.5))
+    assert tuple(projected) == pytest.approx((0.0, 0.0, 0.0))
+    with pytest.raises(ValueError, match="finite"):
+        map_view.project_point((float("nan"), 0.5))
+    assert map_view.base_by_id["high"].get_stroke_width() > map_view.base_by_id[
+        "low"
+    ].get_stroke_width()
+    underlays, encoded = map_view.link_layers(("high", "low"))
+    assert underlays[0] is map_view.underlay_by_id["high"]
+    assert encoded[1] is map_view.base_by_id["low"]
+    with pytest.raises(ValueError, match="unique"):
+        map_view.link_layers(("high", "high"))
+    with pytest.raises(ValueError, match="unknown"):
+        map_view.link_layers(("missing",))
+    markers = map_view.location_markers(
+        {"origin": (0.2, 0.3), "destination": (1.8, 0.7)},
+        color=ECON_DARK.green,
+    )
+    assert len(markers) == 2
+    assert markers.marker_by_id["origin"].get_center() == pytest.approx(
+        map_view.project_point((0.2, 0.3))
+    )
+    skeleton = map_view.network_skeleton(opacity=0.35)
+    assert len(skeleton) == 2
+    assert skeleton.skeleton_by_id["low"] is not map_view.base_by_id["low"]
+    assert skeleton.skeleton_by_id["low"].get_stroke_opacity() == pytest.approx(0.35)
+    with pytest.raises(ValueError, match="radius"):
+        map_view.location_markers({"origin": (0.2, 0.3)}, radius=0)
+    with pytest.raises(ValueError, match="opacity"):
+        map_view.network_skeleton(opacity=1.1)
+    assert map_view.animate_values({"low": 9.0, "high": 2.0}).run_time == pytest.approx(
+        1.6
+    )
+    assert map_view.color_values == {"low": 1.0, "high": 2.0}
+    assert map_view.animate_values(
+        {"low": 2.0, "high": 9.0},
+        color_values={"low": 2.0, "high": 1.0},
+    ).run_time == pytest.approx(1.6)
+    assert map_view.color_values == {"low": 2.0, "high": 1.0}
+    assert map_view.isolate("high")[5][0].get_stroke_opacity() == pytest.approx(1.0)
+
+
+def test_evolving_scatter_rejects_inconsistent_inputs():
+    with pytest.raises(ValueError, match="missing states"):
+        EvolvingScatterPlot(
+            (ScatterObservation("a", 0.2, {"traditional": 0.2}),),
+            ("traditional", "extended"),
+        )
+    with pytest.raises(ValueError, match="must be unique"):
+        NetworkInset(
+            (
+                NetworkLink("a", (0, 0), (1, 1)),
+                NetworkLink("a", (1, 1), (2, 2)),
+            )
+        )
+    with pytest.raises(ValueError, match="cover exactly"):
+        NetworkInset(
+            (
+                NetworkLink("a", (0, 0), (1, 1)),
+                NetworkLink("b", (1, 1), (2, 2)),
+            ),
+            values={"a": 0.2},
+        )
+
+
 @pytest.mark.parametrize("theme", (MIDNIGHT, IVORY))
 def test_v020_components_construct_in_both_themes(theme):
     components = (
@@ -215,6 +437,22 @@ def test_equation_build_constructs_with_latex():
         operators=("+", "-"),
     )
     assert len(equation.operators) == 2
+    traditional_brace = equation.rhs_brace(
+        "traditional",
+        start=0,
+        stop=1,
+        color=ECON_DARK.blue,
+    )
+    extended_brace = equation.rhs_brace(
+        "extended",
+        color=ECON_DARK.green,
+    )
+    assert len(traditional_brace.target) == 1
+    assert len(extended_brace.target) == 5
+    assert traditional_brace.brace.get_left()[0] > equation.equals.get_right()[0]
+    assert extended_brace.brace.get_left()[0] > equation.equals.get_right()[0]
+    with pytest.raises(ValueError, match="range"):
+        equation.rhs_brace("invalid", start=1, stop=1)
     assert equation.width > 0
     assert equation.height > 0
     shocks = ShockDistribution([(-0.2, ECON_DARK.orange), (0.3, ECON_DARK.green)])

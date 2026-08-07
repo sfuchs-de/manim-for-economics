@@ -15,12 +15,14 @@ from manim import (
     CurvedArrow,
     Dot,
     Line,
+    Rectangle,
     RoundedRectangle,
-    Text,
     VGroup,
 )
 
 from .theme import ECON_DARK, VideoTheme
+from .typography import ProseText as Text
+from .typography import fit_prose_text
 
 
 class WorkerToken(VGroup):
@@ -112,9 +114,13 @@ class ChoiceMap(VGroup):
                 fill_color=theme.card,
                 fill_opacity=0.96,
             )
-            text = Text(label, font_size=20, color=color)
-            if text.width > 1.92:
-                text.scale_to_fit_width(1.92)
+            text = fit_prose_text(
+                label,
+                max_width=1.92,
+                font_size=20,
+                min_font_size=12,
+                color=color,
+            )
             text.move_to(node)
             nodes.add(node)
             labels.add(text)
@@ -226,6 +232,152 @@ class CityLaborMarket(VGroup):
         target.set_fill(color or self.theme.orange, opacity=0.95)
         target.set_stroke(color or self.theme.orange, width=2.4)
         return target
+
+
+class PaperCodeEndSlate(VGroup):
+    """A restrained final card linking a paper and its reusable code package."""
+
+    def __init__(
+        self,
+        *,
+        paper_title: str,
+        paper_authors: str,
+        paper_status: str,
+        package_name: str,
+        package_summary: str,
+        package_url: str,
+        package_status: str = "Package available now",
+        invitation: str = "Apply the method to your own setting.",
+        paper_heading: str = "Paper",
+        package_heading: str = "Code and practitioner guide",
+        theme: VideoTheme = ECON_DARK,
+    ) -> None:
+        required = {
+            "paper_title": paper_title,
+            "paper_authors": paper_authors,
+            "paper_status": paper_status,
+            "package_name": package_name,
+            "package_summary": package_summary,
+            "package_url": package_url,
+        }
+        if any(not value.strip() for value in required.values()):
+            raise ValueError("paper and package resource fields cannot be empty")
+
+        paper_outline = Rectangle(
+            width=0.95,
+            height=1.20,
+            color=theme.blue,
+            stroke_width=2.2,
+        ).set_fill(theme.background, opacity=1.0)
+        paper_lines = VGroup(
+            *[
+                Line(
+                    [-0.30, y_position, 0],
+                    [0.30, y_position, 0],
+                    color=theme.blue,
+                    stroke_width=1.4,
+                ).set_stroke(opacity=0.70)
+                for y_position in (0.25, 0.02, -0.21)
+            ]
+        )
+        paper_icon = VGroup(paper_outline, paper_lines)
+        paper_title_mobject = fit_prose_text(
+            paper_title,
+            max_width=5.10,
+            font_size=21,
+            min_font_size=14,
+            color=theme.foreground,
+            weight="BOLD",
+            line_spacing=1.05,
+        )
+        paper_resource = VGroup(
+            paper_icon,
+            Text(
+                paper_heading,
+                font_size=22,
+                color=theme.blue,
+                weight="BOLD",
+            ),
+            paper_title_mobject,
+            Text(paper_authors, font_size=17, color=theme.muted),
+            Text(
+                paper_status,
+                font_size=18,
+                color=theme.blue,
+                weight="BOLD",
+                line_spacing=1.05,
+            ),
+        ).arrange(DOWN, buff=0.20).move_to([-3.25, 0.18, 0])
+
+        code_outline = Rectangle(
+            width=1.35,
+            height=1.00,
+            color=theme.green,
+            stroke_width=2.2,
+        ).set_fill(theme.background, opacity=1.0)
+        code_symbol = Text(
+            "{  }",
+            font_size=30,
+            color=theme.green,
+            weight="BOLD",
+        ).move_to(code_outline)
+        display_url = package_url
+        if "\n" not in display_url and len(display_url) > 34 and "/" in display_url:
+            prefix, suffix = display_url.rsplit("/", 1)
+            display_url = f"{prefix}/\n{suffix}"
+        code_resource = VGroup(
+            VGroup(code_outline, code_symbol),
+            Text(
+                package_heading,
+                font_size=22,
+                color=theme.green,
+                weight="BOLD",
+            ),
+            fit_prose_text(
+                package_name,
+                max_width=5.10,
+                font_size=21,
+                min_font_size=14,
+                color=theme.foreground,
+                weight="BOLD",
+            ),
+            Text(
+                package_summary,
+                font_size=18,
+                color=theme.foreground,
+                line_spacing=1.05,
+            ),
+            Text(
+                display_url,
+                font_size=15,
+                color=theme.muted,
+                line_spacing=1.05,
+            ),
+            Text(
+                package_status,
+                font_size=18,
+                color=theme.green,
+                weight="BOLD",
+            ),
+        ).arrange(DOWN, buff=0.18).move_to([3.25, 0.18, 0])
+
+        divider = Line(
+            [0, -2.15, 0],
+            [0, 2.15, 0],
+            color=theme.grid,
+            stroke_width=1.2,
+        )
+        invitation_mobject = Text(
+            invitation,
+            font_size=20,
+            color=theme.foreground,
+        ).move_to([0, -2.62, 0])
+
+        super().__init__(paper_resource, divider, code_resource, invitation_mobject)
+        self.paper_resource = paper_resource
+        self.divider = divider
+        self.code_resource = code_resource
+        self.invitation = invitation_mobject
 
 
 def adjustment_route(

@@ -1,0 +1,42 @@
+[project]
+title = "Evolving Scatter Recipe"
+entrypoint = "recipe.py"
+scene = "EvolvingScatterRecipe"
+output_file = "evolving_scatter_recipe"
+theme = "midnight"
+
+[render]
+preview_width = 854
+preview_height = 480
+preview_fps = 15
+width = 1920
+height = 1080
+fps = 30
+
+[[qa.frame]]
+time = 3.8
+label = "benchmark distribution and selected ranks are complete"
+kind = "settled"
+
+[[qa.frame]]
+time = 5.3
+label = "observations move to the adjustment state"
+kind = "transition"
+
+[[qa.frame]]
+time = 6.7
+label = "adjustment values and ranks use the same observations"
+kind = "settled"
+
+[[qa.frame]]
+time = 8.2
+label = "observations move to the reported measure"
+kind = "transition"
+
+[[qa.frame]]
+time = 9.6
+label = "final values and ranks use the same observations"
+kind = "settled"
+
+[audio]
+enabled = false

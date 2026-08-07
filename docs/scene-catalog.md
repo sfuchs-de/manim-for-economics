@@ -48,6 +48,8 @@ applicable—the instrument before showing coefficients.
 |---|---|---|
 | Small set of estimates | `CoefficientPlot` · `empirical.coefficient-intervals` | Estimand, units, reference, confidence level |
 | Dynamic response | `ImpulseResponsePlot` · `empirical.impulse-response` | Horizon, event date, uncertainty, baseline |
+| Same observations across model states | `EvolvingScatterPlot` · `empirical.evolving-scatter` | Stable identifiers, common sample, fixed benchmark and units |
+| Link values in geographic context | `GeographicNetworkMap` · `empirical.geographic-network-map` | Verified boundaries, coordinates, stable link IDs, values and units |
 | Benchmark restrictions | `DivergingBarChart` | Meaning of zero and changed assumption |
 | Compact decomposition | `ResultTable` | Units, row definitions, total construction |
 | Realized cross-section | `ShockDistribution` | Sample, unit, and classification |
@@ -55,9 +57,35 @@ applicable—the instrument before showing coefficients.
 Do not combine incomparable estimands on one axis or present illustrative values
 as estimates.
 
+Use `SelectedRankPanel` and `NetworkInset` with the same identifiers when a
+small number of observations need to be followed from scatter to ranking to
+map. The visual connection should come from the shared data key, not from
+duplicated labels or manually entered ranks.
+
+Use `GeographicNetworkMap` instead of `NetworkInset` when state, regional, or
+country boundaries help the viewer interpret network position. The component
+constructs the geographic layer, graticule, value scale, and link strokes from
+GeoJSON and tabular data, while preserving the same identifier-based highlight
+interface.
+
+For a dense geographic network, reveal
+`GeographicNetworkMap.location_markers` and
+`GeographicNetworkMap.network_skeleton` before the value-encoded links. This
+separates economic locations, network extent, and measured intensity into
+distinct visual claims.
+
+When the complete spatial distribution is itself a result, pass one finite
+value for every displayed link to `NetworkInset`. Use a common value range
+across model states, then retain separate overlays for the few links discussed
+in detail. This makes the map and scatter comparable without hiding the rest of
+the sample.
+
 ## Theory and methods
 
 Use `EquationBuild` to introduce a result term by term in words. Use
+`EquationBuild.rhs_brace` when a benchmark and extension use nested sets of
+right-hand-side terms. The helper cannot include the left-hand side or equality
+sign. Use
 `CausalChain` for an operation whose sequence matters and `LinkedViews` when an
 economic interpretation and formal object must change together. The
 method-theory project supplies the complete problem → object → operation →
@@ -81,3 +109,7 @@ Return to the opening object. Reuse a short `CausalChain`, the persistent
 estimand badge, the solved method object, or the original choice menu. Remove
 technical detail that is no longer needed and stop at the paper's identification
 or theoretical frontier.
+
+After the substantive conclusion, `PaperCodeEndSlate` can link the paper and a
+reproducible package. Keep this resource card separate from the takeaway and
+hold it long enough to read the title and URL.
