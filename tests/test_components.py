@@ -25,6 +25,7 @@ from econ_manim import (
     PathFlow,
     ResultTable,
     ScatterObservation,
+    SelectedRankHistoryPanel,
     SelectedRankPanel,
     SelectedRankProjections,
     ShockDistribution,
@@ -208,6 +209,11 @@ def test_evolving_scatter_links_states_ranks_and_network_geometry():
         x_range=(0, 0.5, 0.1),
     )
     ranks = SelectedRankPanel(scatter, {"a": "A--B", "b": "C--D"})
+    rank_history = SelectedRankHistoryPanel(
+        scatter,
+        {"a": "A--B", "b": "C--D"},
+        state_headers={"traditional": "Traditional", "spatial": "Spatial"},
+    )
     projections = SelectedRankProjections(scatter, ("a", "b"))
     network = NetworkInset(
         (
@@ -225,6 +231,9 @@ def test_evolving_scatter_links_states_ranks_and_network_geometry():
     assert len(scatter.transition_lines("spatial")) == 2
     assert scatter.animate_to("spatial").run_time == pytest.approx(1.6)
     assert ranks.animate_to("spatial").run_time == pytest.approx(0.7)
+    assert rank_history.columns_by_state["traditional"][0].text == "#2"
+    assert rank_history.columns_by_state["spatial"][0].text == "#1"
+    assert rank_history.headers_by_state["traditional"].text == "Traditional"
     assert len(projections) == 2
     assert projections[0][2].text == "#2"
     assert projections.animate_to("spatial").run_time == pytest.approx(1.6)
@@ -317,6 +326,11 @@ def test_geographic_network_map_reads_geojson_and_encodes_links(tmp_path):
     assert len(markers) == 2
     assert markers.marker_by_id["origin"].get_center() == pytest.approx(
         map_view.project_point((0.2, 0.3))
+    )
+    map_view.shift([0.35, -0.20, 0.0])
+    shifted_markers = map_view.location_markers({"origin": (0.2, 0.3)})
+    assert shifted_markers.marker_by_id["origin"].get_center() == pytest.approx(
+        map_view.base_by_id["low"].get_start()
     )
     skeleton = map_view.network_skeleton(opacity=0.35)
     assert len(skeleton) == 2

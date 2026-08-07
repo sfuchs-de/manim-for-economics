@@ -24,11 +24,11 @@ from .layout import assert_within_frame
 from .media import probe_audio_duration
 from .theme import ECON_DARK, VideoTheme, get_theme
 from .typography import ProseText as Text
-from .typography import fit_prose_text, resolve_font
+from .typography import assert_prose_is_unscaled, fit_prose_text, resolve_font
 
 
 class ResearchScene(Scene):
-    """Base scene for non-narrated academic explainers."""
+    """Base scene for narrated or silent academic explainers."""
 
     theme: VideoTheme = ECON_DARK
 
@@ -68,6 +68,29 @@ class ResearchScene(Scene):
         """Remove a group whether Manim registered it or its children on scene."""
 
         self.remove(group, *group.submobjects)
+
+    def validate_stage(self, *mobjects, name: str = "stage") -> None:
+        """Check frame containment and native-size prose for a completed beat.
+
+        Call this after laying out a representative scene state and before its
+        reveal. It catches two defects that are difficult to diagnose from
+        source alone: content outside the title-safe frame and prose that was
+        geometrically scaled after Pango laid out its glyphs.
+        """
+
+        for index, mobject in enumerate(mobjects, start=1):
+            assert_within_frame(mobject, name=f"{name} object {index}")
+        assert_prose_is_unscaled(*mobjects)
+
+    def tear_down(self) -> None:
+        """Reject narration cues that were not closed before the scene ended."""
+
+        if self._voiceover_end is not None:
+            raise RuntimeError(
+                "scene ended with an unfinished narration cue; "
+                "call finish_voiceover before leaving the section"
+            )
+        super().tear_down()
 
     def make_title(self, title: str, kicker: str | None = None) -> VGroup:
         title_mobject = fit_prose_text(

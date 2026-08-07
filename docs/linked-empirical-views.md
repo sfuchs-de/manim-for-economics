@@ -3,8 +3,9 @@
 Many economics videos compare the same units under several assumptions. The
 viewer should be able to follow an observation, not merely see one cloud fade
 into another. The `EvolvingScatterPlot`, `SelectedRankPanel`,
-`SelectedRankProjections`, `NetworkInset`, and `GeographicNetworkMap`
-components use one stable identifier across the chart, ranking, and map.
+`SelectedRankHistoryPanel`, `SelectedRankProjections`, `NetworkInset`, and
+`GeographicNetworkMap` components use one stable identifier across the chart,
+ranking, and map.
 
 The atomic `empirical.evolving-scatter` recipe demonstrates the pattern with
 illustrative data. A paper-specific project should supply one table containing
@@ -37,6 +38,12 @@ the scene can draw the network progressively, transform it between model
 states, and isolate a selected link without inserting a pre-rendered map.
 Pin the boundary file and its hash in the project data manifest; do not depend
 on a live tile service during rendering.
+
+`project_point`, `location_markers`, and `network_skeleton` use the map's
+current coordinate frame. They remain aligned when locations or neutral links
+are created after the map has been shifted, scaled, or rotated. This contract is
+covered by a regression test because construction-time coordinates can
+otherwise create small but visible geographic offsets.
 
 ```python
 regions = read_geojson_regions("data/states.geojson", identifier_property="STUSPS")
@@ -97,6 +104,12 @@ points move and restore them after `animate_to`. This avoids asking Pango to
 morph one line of text into another. The bundled recipe implements that
 sequence.
 
+When the argument depends on remembering several intermediate rankings, use
+`SelectedRankHistoryPanel`. It keeps one column per model state instead of
+replacing the previous ranks. Reveal each new column only after its scatter and
+map transition is complete, so viewers can compare traditional, intermediate,
+and final rankings without scrubbing backward.
+
 ## Current Manim choices
 
 The package targets Manim Community 0.20.1. A moderate cross-section can use
@@ -109,12 +122,13 @@ updaters, and `always_redraw` remain useful when a model parameter changes
 continuously. For discrete model closures, direct transforms are easier to
 audit because each target comes from a named column in the data.
 
-Two maintained extensions are useful but remain optional. Manim Voiceover can
-time animations to narration bookmarks and reuse narration as subtitles.
-Manim Slides can turn sectioned scenes into live presentations or exported web
-and PowerPoint formats. Neither belongs in the core dependency set because the
-silent deterministic render should continue to work without audio services or
-presentation software.
+The core package can time a scene to local narration cues and emit matching
+subtitles without an online service. Manim Voiceover remains an optional
+extension for generated speech and bookmark-driven timing. Manim Slides can
+turn sectioned scenes into live presentations or exported web and PowerPoint
+formats. Neither belongs in the core dependency set because the deterministic
+silent render should continue to work without audio services or presentation
+software.
 
 Official references:
 
@@ -141,6 +155,6 @@ state responses with the single \(n\)-vector welfare adjoint. It should state
 the computational contract precisely: construct and factor the equilibrium
 Jacobian once, solve the transposed system for the welfare adjoint, and then
 evaluate all policy derivatives as inner products with the forcing matrix.
-Finally, a section-to-slides export command and an optional
-voiceover-bookmark adapter would make the same scene usable in a narrated video
-and a seminar without maintaining separate animation code.
+Finally, a section-to-slides export command and an optional generated-speech
+adapter would make the same scene usable in a narrated video and a seminar
+without maintaining separate animation code.

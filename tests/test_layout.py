@@ -1,7 +1,7 @@
 import pytest
 from manim import RIGHT, Circle
 
-from econ_manim import ResearchScene
+from econ_manim import ProseText, ResearchScene
 from econ_manim.layout import LayoutError, assert_no_overlap, assert_within_frame
 
 
@@ -63,3 +63,21 @@ def test_long_title_respects_the_safe_width():
     )
 
     assert title.width <= 12.8
+
+
+def test_stage_validation_rejects_geometrically_scaled_prose():
+    scene = ResearchScene()
+    scene.setup()
+    label = ProseText("Render prose at its final size", font_size=18).scale(0.8)
+
+    with pytest.raises(ValueError, match="geometrically scaled"):
+        scene.validate_stage(label)
+
+
+def test_scene_rejects_unfinished_narration_cue():
+    scene = ResearchScene()
+    scene.setup()
+    scene._voiceover_end = 3.0
+
+    with pytest.raises(RuntimeError, match="unfinished narration cue"):
+        scene.tear_down()

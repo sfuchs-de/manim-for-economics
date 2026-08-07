@@ -128,7 +128,7 @@ def build_geographic_network_map(scene):
         show_legend=False,
         show_graticule=False,
         theme=theme,
-    ).move_to([0, -0.10, 0])
+    )
 
     groups = ranked_value_groups(values, groups=5, descending=False)
     for color, identifiers in zip(TRAFFIC_COLORS, groups, strict=True):
@@ -145,11 +145,16 @@ def build_geographic_network_map(scene):
         color=theme.green,
         radius=0.032,
     )
+    network.add(locations)
+    # Project locations before translating the complete map so every
+    # geographic layer receives the same transform.
+    network.move_to([0, -0.10, 0])
     skeleton = network.network_skeleton(
         color=theme.muted,
         stroke_width=0.90,
         opacity=0.42,
     )
+    scene.validate_stage(network, skeleton, name="geographic network")
 
     scene.play(FadeIn(network[1]), Create(network[2]), run_time=0.65)
     status = _status("Begin with the network's economic locations", color=theme.green)

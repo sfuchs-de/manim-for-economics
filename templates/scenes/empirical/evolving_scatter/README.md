@@ -15,8 +15,10 @@ The bundled values are illustrative.
 
 The recipe first reveals observations in three benchmark-rank groups. This
 lets the viewer read the distribution before the selected cases and their
-ranks appear. Change the number of groups, not the stable identifiers, when
-adapting the cadence to a larger sample.
+ranks appear. It then retains one rank column per model state, so a viewer can
+compare the complete ranking path without remembering an earlier frame. Change
+the number of reveal groups, not the stable identifiers, when adapting the
+cadence to a larger sample.
 
 After `econ-manim add-scene PROJECT empirical.evolving-scatter`, import:
 

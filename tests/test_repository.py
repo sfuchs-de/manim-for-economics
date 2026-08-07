@@ -1,3 +1,4 @@
+import ast
 import csv
 import re
 from pathlib import Path
@@ -108,6 +109,24 @@ def test_repository_contains_no_symlinks():
         and not excluded_parts.intersection(path.relative_to(ROOT).parts)
     ]
     assert not symlinks
+
+
+def test_bundled_scenes_do_not_import_raw_manim_text():
+    """Keep first-party prose on the package's deterministic typography path."""
+
+    source_roots = (ROOT / "src", ROOT / "starter", ROOT / "templates", ROOT / "examples")
+    offenders = []
+    for source_root in source_roots:
+        for path in source_root.rglob("*.py"):
+            if path == ROOT / "src" / "econ_manim" / "typography.py":
+                continue
+            tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+            for node in ast.walk(tree):
+                if not isinstance(node, ast.ImportFrom) or node.module != "manim":
+                    continue
+                if any(alias.name == "Text" for alias in node.names):
+                    offenders.append(path.relative_to(ROOT))
+    assert not offenders, f"use econ_manim.ProseText instead of manim.Text: {offenders}"
 
 
 def test_curated_previews_decode_without_external_assets():

@@ -29,12 +29,12 @@ installation without TeX Gyre falls back to the generic serif and sans-serif
 roles.
 
 Use `ProseText` from `econ_manim` for every nonmathematical label created by a
-scene. It keeps the registered font's native kerning and ligatures while
-normalizing pasted Unicode spaces and manual alignment padding. It is used
-internally by every bundled component and template. Use `fit_prose_text` when a
-line must satisfy a maximum width: it chooses the final font size before layout
-instead of shrinking an already rendered Pango object. Continue to use
-`MathTex` for equations.
+scene. It keeps the registered font's native kerning, adds restrained
+size-relative tracking, and normalizes pasted Unicode spaces and manual
+alignment padding. It is used internally by every bundled component and
+template. Use `fit_prose_text` when a line must satisfy a maximum width: it
+chooses the final font size before layout instead of shrinking an already
+rendered Pango object. Continue to use `MathTex` for equations.
 
 ```python
 from econ_manim import ProseText, fit_prose_text
@@ -57,6 +57,10 @@ from econ_manim import assert_prose_is_unscaled
 
 assert_prose_is_unscaled(title, caption, chart)
 ```
+
+Within a `ResearchScene`, `validate_stage(title, chart, caption)` combines this
+typography check with the title-safe frame check. Use it on a representative
+completed state before the reveal.
 
 Use `make_source_note` for citations and data sources. It is smaller and
 left-aligned, while `make_caption` remains available for explanatory prose that

@@ -25,7 +25,7 @@ kind = "transition"
 
 [[qa.frame]]
 time = 6.7
-label = "adjustment values and ranks use the same observations"
+label = "adjustment values add a second rank-history column"
 kind = "settled"
 
 [[qa.frame]]
@@ -35,7 +35,7 @@ kind = "transition"
 
 [[qa.frame]]
 time = 9.6
-label = "final values and ranks use the same observations"
+label = "final values retain the complete rank history"
 kind = "settled"
 
 [audio]

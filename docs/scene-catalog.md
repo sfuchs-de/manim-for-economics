@@ -59,8 +59,10 @@ as estimates.
 
 Use `SelectedRankPanel` and `NetworkInset` with the same identifiers when a
 small number of observations need to be followed from scatter to ranking to
-map. The visual connection should come from the shared data key, not from
-duplicated labels or manually entered ranks.
+map. Use `SelectedRankHistoryPanel` when viewers must compare several
+successive rankings without recalling an earlier frame. The visual connection
+should come from the shared data key, not from duplicated labels or manually
+entered ranks.
 
 Use `GeographicNetworkMap` instead of `NetworkInset` when state, regional, or
 country boundaries help the viewer interpret network position. The component

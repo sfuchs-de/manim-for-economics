@@ -32,6 +32,12 @@ All notable changes to this repository are recorded here.
   native word and character spacing and reject geometric scaling of prose.
 - Narration-led section timing, subtitle generation, compact source notes, and
   configurable mixing of embedded narration with background music.
+- `SelectedRankHistoryPanel` for retaining benchmark, intermediate, and final
+  ranks in one readable comparison.
+- Transform-safe geographic projection helpers, preventing locations or
+  network skeletons created after layout from drifting away from link geometry.
+- `ResearchScene.validate_stage`, unfinished-narration checks, and repository
+  guards that keep bundled prose on the deterministic typography path.
 
 ## 0.2.0 — 2026-07-30
 

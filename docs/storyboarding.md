@@ -70,6 +70,18 @@ Add a **conceptual handoff** column. It should state why the last visual state o
 one beat becomes the first visual state of the next. If the handoff cannot be
 written in one sentence, the order may be wrong or the beats may be unrelated.
 
+For narrated work, add a cue-to-visual crosswalk before recording audio:
+
+| Cue | Spoken claim | Visual introduced | Prior object retained | Minimum hold |
+|---|---|---|---|---|
+| Example | A local shock reaches neighboring markets. | First propagation round | Shocked link | 2.5 seconds |
+
+Each row should contain one complete spoken claim and one focal reveal. A cue
+may retain earlier context, but it should not introduce a second independent
+equation, chart, or mechanism. This table is also the timing specification:
+the reveal begins with the sentence that names it, and the completed state
+remains visible until that cue ends.
+
 ## Reuse visual objects
 
 Use an agent, network, market, estimand, mathematical object, allocation, or

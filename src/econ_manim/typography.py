@@ -98,13 +98,51 @@ def normalize_prose_spacing(text: str) -> str:
 
 
 class ProseText(Text):
-    """Text with deterministic glyphs and native font spacing."""
+    """Text with deterministic glyphs and restrained, uniform tracking.
+
+    Video rasterization makes the native tracking of TeX Gyre Heros look tight
+    and uneven at small sizes. Pango does not expose letter spacing through
+    :class:`~manim.Text`, so this class adds a small amount of tracking to each
+    laid-out character while preserving Pango's kerning. The increment scales
+    with the requested font size and is centered separately on every line.
+    Mathematical notation continues to use ``MathTex``.
+    """
 
     def __init__(self, text: str, *args, **kwargs) -> None:
-        kwargs.setdefault("disable_ligatures", False)
+        tracking_em = float(kwargs.pop("tracking_em", 0.01))
+        if tracking_em < 0:
+            raise ValueError("tracking_em must be nonnegative")
+        kwargs.setdefault("disable_ligatures", True)
         self.source_text = text
-        super().__init__(normalize_prose_spacing(text), *args, **kwargs)
+        normalized = normalize_prose_spacing(text)
+        super().__init__(normalized, *args, **kwargs)
+        self.tracking_em = tracking_em
+        self._apply_tracking(normalized)
         self._native_radius = self._point_radius()
+
+    def _apply_tracking(self, normalized: str) -> None:
+        if self.tracking_em == 0 or not normalized:
+            return
+        if len(self.submobjects) != len(normalized):
+            raise ValueError(
+                "Pango did not return one glyph slot per character; "
+                "render combining text without custom tracking"
+            )
+
+        # Manim's Pango output is approximately 0.01 scene units per font
+        # point high. One percent of that em gives restrained video tracking.
+        increment = self.tracking_em * float(self.font_size) * 0.01
+        line_lengths = [len(line) for line in normalized.split("\n")]
+        line_index = 0
+        column = 0
+        for character, glyph in zip(normalized, self.submobjects, strict=True):
+            if character == "\n":
+                line_index += 1
+                column = 0
+                continue
+            midpoint = (line_lengths[line_index] - 1) / 2
+            glyph.shift(np.array([(column - midpoint) * increment, 0.0, 0.0]))
+            column += 1
 
     def _point_radius(self) -> float:
         points = self.get_all_points()

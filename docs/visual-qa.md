@@ -86,6 +86,10 @@ rejects named frames that lie beyond the rendered duration.
 
 ## Timing checklist
 
+- Play narrated work at normal speed and verify each reveal against its spoken
+  cue; a silent contact sheet cannot establish audiovisual alignment.
+- The object named by a sentence appears only after that sentence begins.
+- One cue does not introduce two unrelated visual claims.
 - Judge total exposure time, including the reveal animation, rather than the
   final `wait()` alone.
 - A short sentence remains stable for at least about two seconds after it is
@@ -111,6 +115,11 @@ rejects named frames that lie beyond the rendered duration.
 - A method comparison transforms one pipeline into the other when the shared
   structure matters more than side-by-side inspection.
 - At each five-second sample, the intended focal object is unambiguous.
+
+Run `validate_stage(...)` on representative completed states. It checks that
+objects remain inside the title-safe frame and that prose retains the font size
+at which Pango laid it out. The repository test suite also rejects first-party
+scene code that imports raw `manim.Text` instead of `ProseText`.
 
 ## Final media QA
 

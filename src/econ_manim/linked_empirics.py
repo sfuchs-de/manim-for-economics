@@ -23,6 +23,7 @@ from manim import (
     ManimColor,
     Rectangle,
     Transform,
+    VectorizedPoint,
     VGroup,
     VMobject,
     interpolate_color,
@@ -611,6 +612,108 @@ class SelectedRankPanel(VGroup):
         )
 
 
+class SelectedRankHistoryPanel(VGroup):
+    """Persistent rank columns for selected observations across model states.
+
+    Unlike :class:`SelectedRankPanel`, this component does not replace the
+    previous state's ranks. Each column remains visible, making sequential
+    model comparisons readable without asking viewers to remember an earlier
+    frame.
+    """
+
+    def __init__(
+        self,
+        scatter: EvolvingScatterPlot,
+        labels: Mapping[str, str],
+        *,
+        states: Sequence[str] | None = None,
+        state_headers: Mapping[str, str] | None = None,
+        name_width: float = 2.0,
+        name_font_size: float = 15,
+        rank_font_size: float = 16,
+        header_font_size: float = 13,
+        row_spacing: float = 0.17,
+        column_spacing: float = 0.32,
+        theme: VideoTheme = ECON_DARK,
+    ) -> None:
+        if not labels:
+            raise ValueError("a rank-history panel requires selected observations")
+        unknown = set(labels) - set(scatter.dots_by_id)
+        if unknown:
+            names = ", ".join(sorted(unknown))
+            raise ValueError(
+                f"rank-history observations are absent from the scatter: {names}"
+            )
+        chosen_states = tuple(states or scatter.state_order)
+        unknown_states = set(chosen_states) - set(scatter.state_order)
+        if unknown_states:
+            names = ", ".join(sorted(unknown_states))
+            raise ValueError(f"rank-history states are absent from the scatter: {names}")
+
+        name_labels = VGroup(
+            *[
+                fit_prose_text(
+                    label,
+                    max_width=name_width,
+                    font_size=name_font_size,
+                    min_font_size=11,
+                    color=scatter.selected_colors[identifier],
+                )
+                for identifier, label in labels.items()
+            ]
+        ).arrange(DOWN, aligned_edge=LEFT, buff=row_spacing)
+
+        columns_by_state: dict[str, VGroup] = {}
+        headers_by_state: dict[str, Text] = {}
+        column_groups = VGroup()
+        for state in chosen_states:
+            ranks = scatter.ranks(state)
+            column = VGroup(
+                *[
+                    Text(
+                        f"#{ranks[identifier]}",
+                        font_size=rank_font_size,
+                        color=theme.foreground,
+                    )
+                    for identifier in labels
+                ]
+            ).arrange(DOWN, buff=row_spacing)
+            header_text = (state_headers or {}).get(
+                state,
+                scatter.state_labels.get(state, state),
+            )
+            header = fit_prose_text(
+                header_text,
+                max_width=max(0.85, column.width + 0.40),
+                font_size=header_font_size,
+                min_font_size=10,
+                color=theme.muted,
+                weight="BOLD",
+            )
+            column_group = VGroup(header, column).arrange(DOWN, buff=0.16)
+            columns_by_state[state] = column
+            headers_by_state[state] = header
+            column_groups.add(column_group)
+
+        column_groups.arrange(RIGHT, buff=column_spacing, aligned_edge=DOWN)
+        body = VGroup(name_labels, column_groups).arrange(
+            RIGHT,
+            buff=column_spacing,
+            aligned_edge=DOWN,
+        )
+        super().__init__(body)
+        self.scatter = scatter
+        self.identifiers = tuple(labels)
+        self.states = chosen_states
+        self.name_labels = name_labels
+        self.columns_by_state = columns_by_state
+        self.headers_by_state = headers_by_state
+        self.state_groups = {
+            state: VGroup(headers_by_state[state], columns_by_state[state])
+            for state in chosen_states
+        }
+
+
 class NetworkInset(VGroup):
     """A dependency-free spatial network with values and linked highlights."""
 
@@ -719,6 +822,7 @@ class NetworkInset(VGroup):
                     stroke_width=5.2,
                 )
         highlight_group = VGroup(*highlights.values())
+
         super().__init__(base_links, highlight_group)
         self.links = tuple(links)
         self.base_links = base_links
@@ -904,6 +1008,17 @@ class GeographicNetworkMap(VGroup):
                 ).set_stroke(opacity=0.0)
         highlight_group = VGroup(*highlights.values())
 
+        # Keep an invisible local coordinate frame inside the map. Manim
+        # applies every later shift, scale, or rotation to these points along
+        # with the visible layers, allowing newly created markers to use the
+        # map's current transform rather than its construction-time position.
+        frame_step = 1.0e-4
+        projection_frame = VGroup(
+            VectorizedPoint(np.array([0.0, 0.0, 0.0])),
+            VectorizedPoint(np.array([frame_step, 0.0, 0.0])),
+            VectorizedPoint(np.array([0.0, frame_step, 0.0])),
+        )
+
         legend = VGroup()
         if show_legend:
             steps = 32
@@ -955,6 +1070,7 @@ class GeographicNetworkMap(VGroup):
             base_links,
             highlight_group,
             legend,
+            projection_frame,
         )
         self.regions = tuple(regions)
         self.links = tuple(links)
@@ -973,7 +1089,9 @@ class GeographicNetworkMap(VGroup):
         self._independent_color_values = color_values is not None
         self._colors = tuple(colors)
         self._theme = theme
-        self._project_point = point
+        self._project_local_point = point
+        self._projection_frame = projection_frame
+        self._projection_frame_step = frame_step
 
     def project_point(self, coordinates: tuple[float, float]) -> np.ndarray:
         """Project longitude and latitude into the map's local coordinates."""
@@ -981,7 +1099,15 @@ class GeographicNetworkMap(VGroup):
         longitude, latitude = map(float, coordinates)
         if not math.isfinite(longitude) or not math.isfinite(latitude):
             raise ValueError("geographic coordinates must be finite")
-        return self._project_point((longitude, latitude)).copy()
+        local = self._project_local_point((longitude, latitude))
+        origin = self._projection_frame[0].get_center()
+        x_basis = (
+            self._projection_frame[1].get_center() - origin
+        ) / self._projection_frame_step
+        y_basis = (
+            self._projection_frame[2].get_center() - origin
+        ) / self._projection_frame_step
+        return origin + local[0] * x_basis + local[1] * y_basis
 
     def location_markers(
         self,

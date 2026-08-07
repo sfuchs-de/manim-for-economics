@@ -188,9 +188,11 @@ time anyone sees the typography, timing, or transitions.
 
 Use `ProseText` for prose and `MathTex` for mathematics. `ProseText` is the
 package-wide Pango wrapper used by the bundled scenes; it uses the registered
-project font, preserves native kerning and ligatures, and normalizes pasted or
-padded spaces. When text must fit a fixed width, use `fit_prose_text` rather
-than `scale_to_fit_width` on an already rendered line.
+project font, preserves native kerning, adds restrained size-relative tracking,
+and normalizes pasted or padded spaces. When text must fit a fixed width, use
+`fit_prose_text` rather than `scale_to_fit_width` on an already rendered line.
+Call `validate_stage(...)` on representative completed states to check both
+frame containment and post-layout prose scaling.
 
 Manim's animation cache speeds up repeated scene edits, but it may retain stale
 fragments after imported package code, fonts, or external helpers change. Use

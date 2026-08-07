@@ -114,7 +114,8 @@ before displaying its rank or decomposition. During a model transition, move
 the scatter first, recolor the map second, and update ranks last.
 
 The package supports this pattern through `EvolvingScatterPlot`,
-`GeographicNetworkMap`, `SelectedRankProjections`, and `SelectedRankPanel`.
+`GeographicNetworkMap`, `SelectedRankProjections`, `SelectedRankPanel`, and
+`SelectedRankHistoryPanel`.
 
 ## Let speech determine the reveal rate
 
@@ -124,6 +125,12 @@ current sentence, and keep the completed visual on screen until the cue ends.
 `ResearchScene.start_voiceover` and `finish_voiceover` enforce that contract and
 write matching subtitles. A section fails when its animation overruns the cue,
 which exposes informational density before publication.
+
+Split a scene into event-level narration cues when several distinct layers are
+revealed. A map can use separate cues for locations, network extent, traffic
+intensity, and selected examples. A factorized equation can use one cue per
+factor. This produces more natural narration and makes audiovisual alignment
+testable rather than dependent on hand-tuned pauses.
 
 Short citations and data sources belong in a small, left-aligned source note.
 They remain available for scrutiny without competing with the active claim.
