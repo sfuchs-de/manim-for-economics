@@ -38,6 +38,10 @@ All notable changes to this repository are recorded here.
   network skeletons created after layout from drifting away from link geometry.
 - `ResearchScene.validate_stage`, unfinished-narration checks, and repository
   guards that keep bundled prose on the deterministic typography path.
+- Optional scatter coordinate labels, allowing linked-view logic to run in
+  minimal environments while rendered recipes retain labeled axes by default.
+- Platform-stable line endings for manifested text data so exact input hashes
+  remain valid on Linux, macOS, and Windows.
 
 ## 0.2.0 — 2026-07-30
 

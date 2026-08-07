@@ -217,6 +217,7 @@ class EvolvingScatterPlot(VGroup):
         x_label: str = "Traditional approach",
         y_label: str = "Welfare gain",
         show_diagonal: bool = True,
+        show_coordinates: bool = True,
         theme: VideoTheme = ECON_DARK,
     ) -> None:
         _validate_observations(observations, state_order)
@@ -255,7 +256,8 @@ class EvolvingScatterPlot(VGroup):
                 "include_ticks": True,
             },
         )
-        axes.add_coordinates(font_size=14, num_decimal_places=2)
+        if show_coordinates:
+            axes.add_coordinates(font_size=14, num_decimal_places=2)
         diagonal = (
             Line(
                 axes.c2p(x_range[0], x_range[0]),

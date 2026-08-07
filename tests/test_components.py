@@ -207,6 +207,7 @@ def test_evolving_scatter_links_states_ranks_and_network_geometry():
             "extended": {"a": "#555555", "b": "#666666"},
         },
         x_range=(0, 0.5, 0.1),
+        show_coordinates=False,
     )
     ranks = SelectedRankPanel(scatter, {"a": "A--B", "b": "C--D"})
     rank_history = SelectedRankHistoryPanel(
