@@ -34,6 +34,8 @@ def test_long_caption_wraps_without_compressing_into_one_line():
 
     assert len(caption[1]) == 2
     assert caption[1].width <= 12.1
+    assert caption[1].get_bottom()[1] >= -3.61
+    assert len({round(float(line.font_size), 6) for line in caption[1]}) == 1
 
 
 def test_source_note_is_smaller_and_left_aligned():

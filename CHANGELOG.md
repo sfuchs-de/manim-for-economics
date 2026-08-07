@@ -42,6 +42,10 @@ All notable changes to this repository are recorded here.
   minimal environments while rendered recipes retain labeled axes by default.
 - Platform-stable line endings for manifested text data so exact input hashes
   remain valid on Linux, macOS, and Windows.
+- Content-aware rank headers and bottom-anchored captions that tolerate small
+  cross-platform differences in Pango font metrics without scaling prose.
+- Theme-aware scatter coordinates that remain legible in both ivory and
+  midnight renders.
 
 ## 0.2.0 — 2026-07-30
 

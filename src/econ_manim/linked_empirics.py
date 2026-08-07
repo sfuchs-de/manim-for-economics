@@ -257,7 +257,11 @@ class EvolvingScatterPlot(VGroup):
             },
         )
         if show_coordinates:
-            axes.add_coordinates(font_size=14, num_decimal_places=2)
+            axes.add_coordinates(
+                font_size=14,
+                num_decimal_places=2,
+                color=theme.muted,
+            )
         diagonal = (
             Line(
                 axes.c2p(x_range[0], x_range[0]),
@@ -686,7 +690,10 @@ class SelectedRankHistoryPanel(VGroup):
             )
             header = fit_prose_text(
                 header_text,
-                max_width=max(0.85, column.width + 0.40),
+                # Leave enough room for small cross-platform differences in
+                # Pango's font metrics. The visual column width remains set by
+                # the rendered header rather than by geometric scaling.
+                max_width=max(1.00, column.width + 0.40),
                 font_size=header_font_size,
                 min_font_size=10,
                 color=theme.muted,

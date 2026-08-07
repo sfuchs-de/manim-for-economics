@@ -127,29 +127,41 @@ class ResearchScene(Scene):
     def make_caption(self, text: str, *, color: str | None = None) -> VGroup:
         # Render captions at their final font size. Scaling a long Pango line
         # after layout makes small-text spacing visibly uneven in video output.
-        wrap_width = 88
-        while True:
-            lines = textwrap.wrap(
-                text,
-                width=wrap_width,
-                break_long_words=False,
-                break_on_hyphens=False,
-            ) or [""]
-            caption = VGroup(
-                *[
-                    Text(
-                        line,
-                        font=self._text_font,
-                        font_size=self.theme.small_size,
-                        color=color or self.theme.muted,
-                    )
-                    for line in lines
-                ]
-            ).arrange(DOWN, buff=0.08)
-            if caption.width <= 12.1 or wrap_width <= 56:
-                break
-            wrap_width -= 8
-        caption.move_to([0, -3.34 if len(lines) > 1 else -3.42, 0])
+        lines = textwrap.wrap(
+            text,
+            width=88,
+            break_long_words=False,
+            break_on_hyphens=False,
+        ) or [""]
+        drafts = [
+            fit_prose_text(
+                line,
+                max_width=12.1,
+                font=self._text_font,
+                font_size=self.theme.small_size,
+                min_font_size=15,
+                color=color or self.theme.muted,
+            )
+            for line in lines
+        ]
+        # Use one common final font size across all lines. This keeps hierarchy
+        # stable even when Pango reports slightly different glyph metrics on
+        # Linux, macOS, and Windows.
+        caption_font_size = min(float(line.font_size) for line in drafts)
+        caption = VGroup(
+            *[
+                Text(
+                    line,
+                    font=self._text_font,
+                    font_size=caption_font_size,
+                    color=color or self.theme.muted,
+                )
+                for line in lines
+            ]
+        ).arrange(DOWN, buff=0.08)
+        # Anchor the lower edge instead of a fixed baseline. Multiline caption
+        # height varies slightly across font engines.
+        caption.move_to([0, -3.60 + caption.height / 2, 0])
         rule = Line(LEFT * 6.35, RIGHT * 6.35, color=self.theme.grid, stroke_width=1.0)
         rule.next_to(caption, UP, buff=0.16 if len(lines) > 1 else 0.20)
         group = VGroup(rule, caption)
