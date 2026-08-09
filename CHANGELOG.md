@@ -66,6 +66,7 @@ All notable changes to this repository are recorded here.
 
 - Feature-branch pushes no longer duplicate pull-request CI runs; superseded
   runs are cancelled while `main` and pull requests retain the full matrix.
+- GitHub Actions use Node 24-compatible checkout and uv setup releases.
 - The format gallery now includes a staged additive waterfall in common units.
 
 ## 0.2.0 — 2026-07-30
