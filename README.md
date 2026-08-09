@@ -177,6 +177,8 @@ paper and its replication files.
 | `econ-manim frames PROJECT --interval 5` | Sample the complete video every five seconds and include the final frame |
 | `econ-manim qa PROJECT` | Check source, provenance, checksums, inspection coverage, media profile, decoding, and audio expectations |
 | `econ-manim render PROJECT` | Render the silent 1920×1080, 30 fps master |
+| `econ-manim record-narration PROJECT` | Create a private offline recorder from the project's narration cues |
+| `econ-manim prepare-narration PROJECT RECORDINGS` | Normalize returned human recordings for the Manim scene |
 | `econ-manim audio PROJECT` | Mix documented music or narration into the master |
 
 All generated output goes below the selected project's `build/` directory and
