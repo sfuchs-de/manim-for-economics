@@ -99,3 +99,55 @@ phrase.speech   # "subtracts about point zero three basis points"
 This avoids asking a speech engine to infer how `0.03 bp` should be pronounced.
 The formatter preserves trailing zeros intentionally because they determine the
 spoken decimal and the precision communicated by the chart.
+
+## Ask a coauthor to record the script
+
+Keep the approved script in `narration.toml`, with one entry for each visual
+cue:
+
+```toml
+[narration]
+rate = 150
+target_loudness_lufs = -18
+
+[[cue]]
+id = "question"
+text = "How should we value a transportation improvement?"
+```
+
+Generate a single self-contained recording page:
+
+```bash
+uv run econ-manim record-narration projects/my-paper
+```
+
+The command writes `build/narration-recorder.html`. When the build directory
+contains a rendered MP4 and matching SRT file, the page also embeds a reference
+frame from the end of every cue. Supply `--video` and `--subtitles` to select a
+particular cut, or `--no-stills` to generate a text-only recorder. Subtitle text
+must match the narration script, apart from display-number substitutions such
+as `0.04` for the spoken phrase `point zero four`. This prevents frames from an
+older cut being paired with a revised script.
+
+Send the single HTML file to the speaker. It embeds the reference images, cue
+text, target pace, recording controls, playback, retakes, and file names. The
+page has no external dependencies and does not upload audio. In a current
+desktop browser, the speaker allows microphone access, records each cue, and
+chooses **Save all recordings**. Chrome and Edge can write the complete set to
+a selected folder. Other browsers download the cue files and
+`recording-manifest.json` separately.
+
+The speaker returns the folder. Prepare consistent 48 kHz mono WAV files using
+the cue IDs already referenced by the scene:
+
+```bash
+uv run econ-manim prepare-narration \
+  projects/my-paper path/to/returned-recordings \
+  --speaker "Speaker Name"
+```
+
+This command requires FFmpeg. It checks that every scripted cue has exactly one
+recording before writing anything, normalizes loudness, and creates
+`assets/narration/manifest.json`. Rerender the project after import so the human
+recording determines each cue's final duration. Keep raw and prepared voice
+recordings private unless the speaker has explicitly approved redistribution.

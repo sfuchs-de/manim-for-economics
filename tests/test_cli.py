@@ -28,6 +28,8 @@ def test_cli_exposes_planned_commands():
         "render",
         "frames",
         "qa",
+        "record-narration",
+        "prepare-narration",
         "audio",
     }
 

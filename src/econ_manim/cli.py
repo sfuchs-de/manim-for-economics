@@ -30,6 +30,7 @@ from .media import (
     probe_video,
     transition_sweep_frames,
 )
+from .narration import prepare_recorded_narration, write_narration_recorder
 from .scene_templates import (
     SCENE_TEMPLATES,
     get_scene_template,
@@ -643,6 +644,28 @@ def command_audio(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_record_narration(args: argparse.Namespace) -> int:
+    output = write_narration_recorder(
+        args.project,
+        args.output,
+        video=args.video,
+        subtitles=args.subtitles,
+        include_stills=not args.no_stills,
+    )
+    print(f"Created offline narration recorder: {output}")
+    return 0
+
+
+def command_prepare_narration(args: argparse.Namespace) -> int:
+    manifest = prepare_recorded_narration(
+        args.project,
+        args.recordings,
+        speaker=args.speaker or "",
+    )
+    print(f"Prepared recorded narration: {manifest}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="econ-manim",
@@ -779,6 +802,42 @@ def build_parser() -> argparse.ArgumentParser:
     qa.add_argument("project")
     qa.add_argument("--video")
     qa.set_defaults(handler=command_qa)
+
+    record_narration = subparsers.add_parser(
+        "record-narration",
+        help="build an offline browser recorder from narration.toml",
+    )
+    record_narration.add_argument("project")
+    record_narration.add_argument(
+        "--output",
+        help="HTML output path; defaults to PROJECT/build/narration-recorder.html",
+    )
+    record_narration.add_argument(
+        "--video",
+        help="rendered video used for cue reference frames",
+    )
+    record_narration.add_argument(
+        "--subtitles",
+        help="SRT subtitles aligned with the rendered video",
+    )
+    record_narration.add_argument(
+        "--no-stills",
+        action="store_true",
+        help="omit visual reference frames even when aligned media are available",
+    )
+    record_narration.set_defaults(handler=command_record_narration)
+
+    prepare_narration = subparsers.add_parser(
+        "prepare-narration",
+        help="normalize browser recordings for a narrated Manim render",
+    )
+    prepare_narration.add_argument("project")
+    prepare_narration.add_argument("recordings", help="folder returned by the recorder")
+    prepare_narration.add_argument(
+        "--speaker",
+        help="optional speaker name stored in the local narration manifest",
+    )
+    prepare_narration.set_defaults(handler=command_prepare_narration)
 
     audio = subparsers.add_parser("audio", help="mix documented music into a rendered master")
     audio.add_argument("project")
