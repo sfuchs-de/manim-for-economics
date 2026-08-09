@@ -6,6 +6,10 @@ All notable changes to this repository are recorded here.
 
 ### Added
 
+- `AdditiveWaterfallChart` for directly labeled benchmark-to-result mechanism
+  decompositions in common units.
+- Paired display and narration metric formatting, including deterministic
+  spoken decimals such as “point zero four basis points.”
 - Location-first markers and neutral network skeletons for staged
   `GeographicNetworkMap` reveals.
 - Right-hand-side-only labeled braces through `EquationBuild.rhs_brace`.
@@ -30,6 +34,11 @@ All notable changes to this repository are recorded here.
   final font size.
 - `ProseText`, `fit_prose_text`, and `assert_prose_is_unscaled` to preserve
   native word and character spacing and reject geometric scaling of prose.
+- Native Pango shaping for complete prose lines, preserving font kerning,
+  ligatures, punctuation spacing, word spaces, and grapheme clusters without
+  post-layout glyph repositioning.
+- Bundled Inter for stable, screen-readable body text across native and
+  container renders.
 - Narration-led section timing, subtitle generation, compact source notes, and
   configurable mixing of embedded narration with background music.
 - `SelectedRankHistoryPanel` for retaining benchmark, intermediate, and final

@@ -76,3 +76,26 @@ self.finish_voiceover()
 During script development, pass an explicit `duration` without an audio file.
 This creates narration-paced holds and subtitle timing before a final voice is
 recorded. Replace estimated timing with the finished WAV files before release.
+
+## Separate display numbers from spoken numbers
+
+Compact chart labels and natural narration need different formatting. Use
+`format_metric` or `format_metric_change` to derive both from the same exact
+value:
+
+```python
+from econ_manim import format_metric_change
+
+phrase = format_metric_change(
+    -0.0260,
+    display_unit="bp",
+    speech_unit="basis points",
+)
+
+phrase.display  # "subtracts ≈0.03 bp"
+phrase.speech   # "subtracts about point zero three basis points"
+```
+
+This avoids asking a speech engine to infer how `0.03 bp` should be pronounced.
+The formatter preserves trailing zeros intentionally because they determine the
+spoken decimal and the precision communicated by the chart.

@@ -54,7 +54,7 @@ def test_scene_resolves_portable_font_roles():
     scene.setup()
 
     assert scene._title_font in {"TeX Gyre Pagella", "serif"}
-    assert scene._text_font in {"TeX Gyre Heros", "sans-serif"}
+    assert scene._text_font in {"Inter", "sans-serif"}
 
 
 def test_long_title_respects_the_safe_width():

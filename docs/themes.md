@@ -22,19 +22,22 @@ been darkened slightly from the production palette so small text remains
 readable against the light background.
 
 Both presets use portable font roles: TeX Gyre Pagella for scene titles and
-TeX Gyre Heros for body text, labels, and captions. The package registers the
-font files supplied by the TeX installation that Manim already uses. This keeps
-glyph widths and spacing stable across native and container renders. A minimal
-installation without TeX Gyre falls back to the generic serif and sans-serif
-roles.
+the bundled Inter family for body text, labels, and captions. Inter is designed
+for screen text, while bundling it keeps glyph widths
+and spacing stable across native and container renders. A minimal installation
+without TeX Gyre falls back to the generic serif role for titles.
 
 Use `ProseText` from `econ_manim` for every nonmathematical label created by a
-scene. It keeps the registered font's native kerning, adds restrained
-size-relative tracking, and normalizes pasted Unicode spaces and manual
-alignment padding. It is used internally by every bundled component and
-template. Use `fit_prose_text` when a line must satisfy a maximum width: it
+scene. It passes complete lines to Pango, preserving the registered font's
+native kerning, ligatures, punctuation spacing, and grapheme clusters. Do not
+shift individual glyphs to simulate tracking. If explicit tracking is required,
+use Pango's native `letter_spacing` attribute through `MarkupText`. `ProseText`
+is used internally by every bundled component and template. Use
+`fit_prose_text` when a line must satisfy a maximum width: it
 chooses the final font size before layout instead of shrinking an already
-rendered Pango object. Continue to use `MathTex` for equations.
+rendered Pango object. At 1080p, explanatory captions should normally use at
+least 20 points. Smaller sizes are appropriate only for source notes and terse
+chart labels. Continue to use `MathTex` for equations.
 
 ```python
 from econ_manim import ProseText, fit_prose_text

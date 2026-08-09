@@ -7,7 +7,9 @@ This repository combines:
 
 - A sparse visual system for agents, choices, systems, shocks, impulse
   responses, causal chains, linked analytical views, benchmark comparisons,
-  decompositions, and optional domain-specific labor-market objects.
+  additive decompositions, and optional domain-specific labor-market objects.
+- Paired visual and spoken metric formatting so chart labels and narration use
+  the same exact value without relying on speech-engine number parsing.
 - A paper brief and timed storyboard that separate economic reasoning from
   animation code.
 - Provenance manifests that distinguish released, digitized, and illustrative
@@ -187,12 +189,18 @@ The expensive render is deliberately last. A full video should not be the first
 time anyone sees the typography, timing, or transitions.
 
 Use `ProseText` for prose and `MathTex` for mathematics. `ProseText` is the
-package-wide Pango wrapper used by the bundled scenes; it uses the registered
-project font, preserves native kerning, adds restrained size-relative tracking,
-and normalizes pasted or padded spaces. When text must fit a fixed width, use
+package-wide Pango wrapper used by the bundled scenes. It uses the registered
+project font and leaves kerning, ligatures, punctuation spacing, and word-space
+metrics to Pango's native shaping engine. It never repositions individual
+letters. When text must fit a fixed width, use
 `fit_prose_text` rather than `scale_to_fit_width` on an already rendered line.
 Call `validate_stage(...)` on representative completed states to check both
 frame containment and post-layout prose scaling.
+
+The package bundles Inter for body text and captions under the SIL Open
+Font License. Scene titles use TeX Gyre Pagella when it is available through
+the TeX installation. At 1080p, keep explanatory prose at `20` points or
+larger; reserve smaller type for source notes and compact chart labels.
 
 Manim's animation cache speeds up repeated scene edits, but it may retain stale
 fragments after imported package code, fonts, or external helpers change. Use

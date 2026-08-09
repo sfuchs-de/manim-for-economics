@@ -6,6 +6,7 @@ import re
 import shutil
 import subprocess
 from functools import lru_cache
+from pathlib import Path
 
 import manimpango
 import numpy as np
@@ -13,6 +14,21 @@ from manim import Mobject, Text
 
 _NONSTANDARD_SPACE = re.compile(r"[\u00a0\u2000-\u200a\u202f\u205f\u3000]")
 _REPEATED_HORIZONTAL_SPACE = re.compile(r"[ \t]+")
+
+_BUNDLED_FONTS = {
+    "sans-serif": (
+        "Inter",
+        tuple(
+            Path(__file__).parent / "fonts" / "inter" / filename
+            for filename in (
+                "Inter-Regular.otf",
+                "Inter-Bold.otf",
+                "Inter-Italic.otf",
+                "Inter-BoldItalic.otf",
+            )
+        ),
+    ),
+}
 
 _TEX_GYRE_FONTS = {
     "serif": (
@@ -22,15 +38,6 @@ _TEX_GYRE_FONTS = {
             "texgyrepagella-bold.otf",
             "texgyrepagella-italic.otf",
             "texgyrepagella-bolditalic.otf",
-        ),
-    ),
-    "sans-serif": (
-        "TeX Gyre Heros",
-        (
-            "texgyreheros-regular.otf",
-            "texgyreheros-bold.otf",
-            "texgyreheros-italic.otf",
-            "texgyreheros-bolditalic.otf",
         ),
     ),
 }
@@ -52,16 +59,25 @@ def _kpsewhich(filename: str) -> str | None:
 
 @lru_cache(maxsize=1)
 def register_project_fonts() -> dict[str, str]:
-    """Register TeX Gyre faces and return portable font-role mappings.
+    """Register project faces and return portable font-role mappings.
 
-    Manim already requires TeX for mathematical labels, and the native and
-    container environments both install the TeX Gyre collection. Registering
-    those files explicitly avoids platform-dependent Pango defaults. Generic
-    role names remain as a fallback for minimal installations.
+    Inter is bundled for screen-readable prose. Manim already requires
+    TeX for mathematical labels, so the title face comes from TeX Gyre. Generic
+    role names remain as fallbacks for minimal installations.
     """
 
-    resolved = {role: role for role in _TEX_GYRE_FONTS}
+    resolved = {
+        role: role
+        for role in {*_BUNDLED_FONTS, *_TEX_GYRE_FONTS}
+    }
     available = set(manimpango.list_fonts())
+    for role, (family, paths) in _BUNDLED_FONTS.items():
+        if all(path.is_file() for path in paths):
+            for path in paths:
+                manimpango.register_font(str(path))
+            available = set(manimpango.list_fonts())
+        if family in available:
+            resolved[role] = family
     for role, (family, filenames) in _TEX_GYRE_FONTS.items():
         paths = [_kpsewhich(filename) for filename in filenames]
         if all(paths):
@@ -80,12 +96,11 @@ def resolve_font(font: str) -> str:
 
 
 def normalize_prose_spacing(text: str) -> str:
-    """Use one ordinary interword space while preserving explicit line breaks.
+    """Use ordinary spaces while preserving explicit line breaks.
 
-    Pango already applies the selected font's kerning and punctuation metrics.
-    Replacing ordinary spaces with wider Unicode spaces makes prose visibly
-    uneven, especially after commas and colons. Normalize pasted Unicode spaces
-    and alignment padding instead of overriding the font's own spacing.
+    Pango shapes the complete line using the selected font's kerning, ligatures,
+    and word-space metrics. Normalize pasted Unicode spaces and alignment
+    padding without replacing those native metrics.
     """
 
     return "\n".join(
@@ -98,51 +113,26 @@ def normalize_prose_spacing(text: str) -> str:
 
 
 class ProseText(Text):
-    """Text with deterministic glyphs and restrained, uniform tracking.
+    """Text shaped natively by Pango with deterministic project fonts.
 
-    Video rasterization makes the native tracking of TeX Gyre Heros look tight
-    and uneven at small sizes. Pango does not expose letter spacing through
-    :class:`~manim.Text`, so this class adds a small amount of tracking to each
-    laid-out character while preserving Pango's kerning. The increment scales
-    with the requested font size and is centered separately on every line.
+    The complete line is passed to Pango without per-character repositioning,
+    preserving kerning, ligatures, punctuation spacing, and grapheme clusters.
     Mathematical notation continues to use ``MathTex``.
     """
 
     def __init__(self, text: str, *args, **kwargs) -> None:
-        tracking_em = float(kwargs.pop("tracking_em", 0.01))
-        if tracking_em < 0:
-            raise ValueError("tracking_em must be nonnegative")
-        kwargs.setdefault("disable_ligatures", True)
+        tracking_em = float(kwargs.pop("tracking_em", 0.0))
+        if tracking_em != 0:
+            raise ValueError(
+                "manual glyph tracking is not supported; use Pango markup "
+                "letter_spacing when explicit tracking is required"
+            )
+        kwargs.setdefault("disable_ligatures", False)
         self.source_text = text
         normalized = normalize_prose_spacing(text)
         super().__init__(normalized, *args, **kwargs)
-        self.tracking_em = tracking_em
-        self._apply_tracking(normalized)
+        self.tracking_em = 0.0
         self._native_radius = self._point_radius()
-
-    def _apply_tracking(self, normalized: str) -> None:
-        if self.tracking_em == 0 or not normalized:
-            return
-        if len(self.submobjects) != len(normalized):
-            raise ValueError(
-                "Pango did not return one glyph slot per character; "
-                "render combining text without custom tracking"
-            )
-
-        # Manim's Pango output is approximately 0.01 scene units per font
-        # point high. One percent of that em gives restrained video tracking.
-        increment = self.tracking_em * float(self.font_size) * 0.01
-        line_lengths = [len(line) for line in normalized.split("\n")]
-        line_index = 0
-        column = 0
-        for character, glyph in zip(normalized, self.submobjects, strict=True):
-            if character == "\n":
-                line_index += 1
-                column = 0
-                continue
-            midpoint = (line_lengths[line_index] - 1) / 2
-            glyph.shift(np.array([(column - midpoint) * increment, 0.0, 0.0]))
-            column += 1
 
     def _point_radius(self) -> float:
         points = self.get_all_points()

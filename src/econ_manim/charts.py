@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping, Sequence
 
 from manim import (
@@ -17,13 +18,16 @@ from manim import (
     MathTex,
     NumberLine,
     Polygon,
+    Rectangle,
     RoundedRectangle,
     VGroup,
     VMobject,
 )
 
+from .metrics import format_metric, format_metric_change
 from .theme import ECON_DARK, VideoTheme
 from .typography import ProseText as Text
+from .typography import fit_prose_text
 
 
 def _line(
@@ -439,6 +443,187 @@ class EquationBuild(VGroup):
         result.brace = brace
         result.label = label_mobject
         return result
+
+
+class AdditiveWaterfallChart(VGroup):
+    """Show a baseline, additive mechanism changes, and the resulting total."""
+
+    def __init__(
+        self,
+        baseline: tuple[str, float, str],
+        changes: Sequence[tuple[str, float, str]],
+        *,
+        total_label: str = "Total",
+        total_color: str | None = None,
+        display_unit: str = "bp",
+        speech_unit: str | None = None,
+        decimal_places: int = 2,
+        approximate: bool = True,
+        footer: str = "",
+        width: float = 11.2,
+        height: float = 3.2,
+        theme: VideoTheme = ECON_DARK,
+    ) -> None:
+        if not changes:
+            raise ValueError("an additive waterfall requires at least one change")
+        if len(changes) > 4:
+            raise ValueError("an additive waterfall supports at most four changes")
+        if decimal_places < 0:
+            raise ValueError("decimal_places must be nonnegative")
+
+        baseline_label, baseline_value, baseline_color = baseline
+        numeric_baseline = float(baseline_value)
+        numeric_changes = tuple(
+            (label, float(value), color) for label, value, color in changes
+        )
+        values = (numeric_baseline, *(value for _, value, _ in numeric_changes))
+        if any(not math.isfinite(value) for value in values):
+            raise ValueError("waterfall values must be finite")
+
+        cumulative = [numeric_baseline]
+        for _, change, _ in numeric_changes:
+            cumulative.append(cumulative[-1] + change)
+        total_value = cumulative[-1]
+        resolved_total_color = total_color or theme.foreground
+
+        domain_values = (0.0, *cumulative)
+        minimum = min(domain_values)
+        maximum = max(domain_values)
+        span = maximum - minimum
+        if span == 0:
+            span = max(abs(maximum), 1.0)
+        padding = span * 0.12
+        domain_minimum = minimum - padding
+        domain_maximum = maximum + padding
+
+        plot_bottom = -height / 2
+
+        def to_y(value: float) -> float:
+            share = (value - domain_minimum) / (domain_maximum - domain_minimum)
+            return plot_bottom + share * height
+
+        step_count = len(numeric_changes) + 2
+        x_gap = width / step_count
+        x_positions = tuple(
+            -width / 2 + x_gap * (index + 0.5) for index in range(step_count)
+        )
+        bar_width = min(0.78, x_gap * 0.34)
+
+        steps = (
+            (baseline_label, 0.0, numeric_baseline, baseline_color, False),
+            *(
+                (
+                    label,
+                    cumulative[index],
+                    cumulative[index + 1],
+                    color,
+                    True,
+                )
+                for index, (label, _, color) in enumerate(numeric_changes)
+            ),
+            (total_label, 0.0, total_value, resolved_total_color, False),
+        )
+
+        zero = Line(
+            [-width / 2, to_y(0), 0],
+            [width / 2, to_y(0), 0],
+            color=theme.muted,
+            stroke_width=1.2,
+        ).set_stroke(opacity=0.55)
+        bars = VGroup()
+        labels = VGroup()
+        amounts = VGroup()
+        connectors = VGroup()
+        display_phrases = []
+        speech_phrases = []
+
+        for index, ((label, start, end, color, is_change), x_position) in enumerate(
+            zip(steps, x_positions, strict=True)
+        ):
+            y_start = to_y(start)
+            y_end = to_y(end)
+            bar = Rectangle(
+                width=bar_width,
+                height=max(abs(y_end - y_start), 0.045),
+                color=color,
+                stroke_width=1.3,
+            ).set_fill(color, opacity=0.86)
+            bar.move_to([x_position, (y_start + y_end) / 2, 0])
+
+            phrase = (
+                format_metric_change(
+                    end - start,
+                    decimal_places=decimal_places,
+                    display_unit=display_unit,
+                    speech_unit=speech_unit,
+                    approximate=approximate,
+                )
+                if is_change
+                else format_metric(
+                    end,
+                    decimal_places=decimal_places,
+                    display_unit=display_unit,
+                    speech_unit=speech_unit,
+                    approximate=approximate,
+                )
+            )
+            amount = Text(
+                phrase.display,
+                font_size=17,
+                color=color,
+                weight="BOLD",
+            ).move_to([x_position, max(y_start, y_end) + 0.24, 0])
+            label_mobject = fit_prose_text(
+                label,
+                max_width=max(x_gap * 0.86, 1.1),
+                font_size=16,
+                min_font_size=12,
+                line_spacing=0.98,
+                color=theme.foreground if not is_change else theme.muted,
+                weight="BOLD" if not is_change else "NORMAL",
+            ).move_to([x_position, plot_bottom - 0.42, 0])
+
+            bars.add(bar)
+            labels.add(label_mobject)
+            amounts.add(amount)
+            display_phrases.append(phrase.display)
+            speech_phrases.append(phrase.speech)
+
+            if index:
+                previous_end = steps[index - 1][2]
+                connector_y = to_y(previous_end)
+                connectors.add(
+                    Line(
+                        [x_positions[index - 1] + bar_width / 2, connector_y, 0],
+                        [x_position - bar_width / 2, connector_y, 0],
+                        color=theme.muted,
+                        stroke_width=1.0,
+                    ).set_stroke(opacity=0.40)
+                )
+
+        groups = [zero, connectors, bars, amounts, labels]
+        footer_mobject = None
+        if footer:
+            footer_mobject = fit_prose_text(
+                footer,
+                max_width=width,
+                font_size=15,
+                min_font_size=11,
+                color=theme.muted,
+            ).move_to([0, plot_bottom - 0.88, 0])
+            groups.append(footer_mobject)
+
+        super().__init__(*groups)
+        self.zero = zero
+        self.bars = bars
+        self.labels = labels
+        self.amounts = amounts
+        self.connectors = connectors
+        self.footer = footer_mobject
+        self.total = total_value
+        self.levels = tuple(cumulative)
+        self.display_phrases = tuple(display_phrases)
+        self.speech_phrases = tuple(speech_phrases)
 
 
 class ResultTable(VGroup):

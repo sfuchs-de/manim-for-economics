@@ -5,6 +5,12 @@
 Code under `src/`, `tests/`, `starter/`, and `.agents/skills/` is original
 material released under the MIT License.
 
+## Bundled fonts
+
+Inter is Copyright 2016 The Inter Project Authors and is redistributed under the SIL
+Open Font License 1.1. The complete license is stored at
+`src/econ_manim/fonts/inter/LICENSE.txt`.
+
 ## Documentation and original media
 
 Original Markdown documentation, storyboards, diagrams, and curated preview
@@ -51,4 +57,4 @@ artwork is included.
 
 The soundtrack used in the original production video is not included because
 its redistribution rights have not been documented. Users must supply and
-document the rights to their own music, narration, fonts, and images.
+document the rights to their own music, narration, additional fonts, and images.

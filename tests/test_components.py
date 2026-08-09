@@ -7,6 +7,7 @@ from econ_manim import (
     ECON_DARK,
     IVORY,
     MIDNIGHT,
+    AdditiveWaterfallChart,
     AgentToken,
     CausalChain,
     ChannelDecomposition,
@@ -180,6 +181,39 @@ def test_channel_decomposition_exposes_incremental_parts():
     assert len(decomposition.channels) == 3
     assert len(decomposition.arrows) == 3
     assert decomposition.channels.get_center()[0] < decomposition.outcome.get_center()[0]
+
+
+def test_additive_waterfall_preserves_exact_levels_and_direct_labels():
+    chart = AdditiveWaterfallChart(
+        ("Traditional", 0.0387, ECON_DARK.blue),
+        (
+            ("Spatial adjustment", 0.0098, ECON_DARK.green),
+            ("Road congestion", -0.0260, ECON_DARK.orange),
+        ),
+        total_label="Extended",
+        total_color=ECON_DARK.foreground,
+        display_unit="bp",
+        speech_unit="basis points",
+        footer="Average across policy experiments",
+    )
+
+    assert chart.levels == pytest.approx((0.0387, 0.0485, 0.0225))
+    assert chart.total == pytest.approx(0.0225)
+    assert chart.display_phrases == (
+        "≈0.04 bp",
+        "adds ≈0.01 bp",
+        "subtracts ≈0.03 bp",
+        "≈0.02 bp",
+    )
+    assert chart.speech_phrases == (
+        "about point zero four basis points",
+        "adds about point zero one basis points",
+        "subtracts about point zero three basis points",
+        "about point zero two basis points",
+    )
+    assert len(chart.bars) == 4
+    assert len(chart.connectors) == 3
+    assert_within_frame(chart)
 
 
 def test_evolving_scatter_links_states_ranks_and_network_geometry():
