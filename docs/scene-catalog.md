@@ -52,6 +52,7 @@ applicable—the instrument before showing coefficients.
 | Link values in geographic context | `GeographicNetworkMap` · `empirical.geographic-network-map` | Verified boundaries, coordinates, stable link IDs, values and units |
 | Benchmark restrictions | `DivergingBarChart` | Meaning of zero and changed assumption |
 | Compact decomposition | `ResultTable` | Units, row definitions, total construction |
+| Additive path from a benchmark to a final result | `AdditiveWaterfallChart` | Common units, exact starting value, signed contributions |
 | Realized cross-section | `ShockDistribution` | Sample, unit, and classification |
 
 Do not combine incomparable estimands on one axis or present illustrative values
@@ -100,7 +101,10 @@ Equations should follow meaning, not substitute for it.
 Use `ChoiceMap` to establish the available adjustment margins,
 `ChannelDecomposition` to separate economically distinct contributions, and
 `EquationBuild` to assemble the welfare or policy object incrementally.
-`ResultTable` is appropriate only for a compact, sourced decomposition.
+`ResultTable` is appropriate only for a compact, sourced decomposition. Use
+`AdditiveWaterfallChart` when the argument is the signed amount each mechanism
+adds to or subtracts from one benchmark. Keep multiplicative factors in an
+equation rather than forcing them into an additive chart.
 
 State the population, baseline, horizon, units, and treatment of positive and
 negative realizations.

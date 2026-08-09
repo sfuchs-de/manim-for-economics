@@ -549,6 +549,7 @@ Use the smallest component that expresses the economics:
 | Realized shock observations | `ShockDistribution` |
 | Incremental words-first decomposition | `EquationBuild` |
 | Small welfare or accounting decomposition | `ResultTable` |
+| Benchmark-to-result changes in common units | `AdditiveWaterfallChart` |
 | Comparison with one benchmark | `DivergingBarChart` |
 
 Access the selected palette through `self.theme`:

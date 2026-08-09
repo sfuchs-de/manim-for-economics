@@ -184,6 +184,30 @@ channels = ChannelDecomposition(
 Reveal each channel and arrow together. Do not describe a conceptual channel as
 separately identified unless the paper supports that claim.
 
+When the empirical question is how several mechanisms move one common result,
+use `AdditiveWaterfallChart` instead. Keep exact values in the data and round
+only the displayed labels:
+
+```python
+waterfall = AdditiveWaterfallChart(
+    ("Traditional", 0.0387, theme.blue),
+    (
+        ("Spatial adjustment", 0.0098, theme.green),
+        ("Road congestion", -0.0260, theme.orange),
+    ),
+    total_label="Extended",
+    display_unit="bp",
+    speech_unit="basis points",
+    theme=theme,
+)
+```
+
+The chart labels changes as amounts that `add` or `subtract` on a common scale.
+Combine closely related subchannels when the substantive discussion treats them
+as one mechanism, while retaining the disaggregated calculation in the source
+data or appendix. Do not use an additive waterfall for factors that are only
+meaningful multiplicatively.
+
 ## Format 7: estimates and dynamic responses
 
 Use `CoefficientPlot` for a small set of estimates sharing one scale and

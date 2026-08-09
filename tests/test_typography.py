@@ -7,6 +7,7 @@ from econ_manim.typography import (
     fit_prose_text,
     geometrically_scaled_prose,
     normalize_prose_spacing,
+    register_project_fonts,
 )
 
 
@@ -31,27 +32,19 @@ def test_prose_text_preserves_the_unmodified_source():
 
     assert rendered.source_text == source
     assert rendered.original_text == source
-    assert rendered.disable_ligatures is True
-    assert rendered.tracking_em == pytest.approx(0.01)
+    assert rendered.disable_ligatures is False
+    assert rendered.tracking_em == 0
 
 
-def test_prose_text_adds_uniform_size_relative_tracking():
-    source = "Full Jacobian: labor, routes, and congestion."
-    native_small = ProseText(source, font_size=18, tracking_em=0)
-    tracked_small = ProseText(source, font_size=18)
-    native_large = ProseText(source, font_size=36, tracking_em=0)
-    tracked_large = ProseText(source, font_size=36)
+def test_project_registers_screen_oriented_body_font():
+    fonts = register_project_fonts()
 
-    small_increment = tracked_small.width - native_small.width
-    large_increment = tracked_large.width - native_large.width
-
-    assert small_increment > 0
-    assert large_increment == pytest.approx(2 * small_increment, rel=0.02)
+    assert fonts["sans-serif"] in {"Inter", "sans-serif"}
 
 
-def test_prose_text_rejects_negative_tracking():
-    with pytest.raises(ValueError, match="tracking_em must be nonnegative"):
-        ProseText("Invalid tracking", tracking_em=-0.01)
+def test_prose_text_rejects_manual_glyph_tracking():
+    with pytest.raises(ValueError, match="Pango markup"):
+        ProseText("Invalid tracking", tracking_em=0.01)
 
 
 def test_fit_prose_text_uses_final_font_size_instead_of_scaling():

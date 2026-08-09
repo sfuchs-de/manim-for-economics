@@ -1,6 +1,7 @@
 """Reusable building blocks for economics paper explainers."""
 
 from .charts import (
+    AdditiveWaterfallChart,
     CoefficientPlot,
     EquationBuild,
     ImpulseResponsePlot,
@@ -32,6 +33,7 @@ from .linked_empirics import (
     ranked_value_groups,
     read_geojson_regions,
 )
+from .metrics import MetricPhrase, format_metric, format_metric_change, spoken_decimal
 from .scene import ResearchScene
 from .scene_templates import (
     SCENE_TEMPLATES,
@@ -60,6 +62,7 @@ from .typography import (
 )
 
 __all__ = [
+    "AdditiveWaterfallChart",
     "AgentToken",
     "ECON_DARK",
     "ECON_LIGHT",
@@ -78,6 +81,7 @@ __all__ = [
     "LayoutError",
     "LinkedViews",
     "MIDNIGHT",
+    "MetricPhrase",
     "NetworkInset",
     "NetworkLink",
     "PaperCodeEndSlate",
@@ -105,6 +109,8 @@ __all__ = [
     "get_scene_template",
     "get_theme",
     "fit_prose_text",
+    "format_metric",
+    "format_metric_change",
     "geometrically_scaled_prose",
     "normalize_prose_spacing",
     "ranked_value_groups",
@@ -112,6 +118,7 @@ __all__ = [
     "read_geojson_regions",
     "scene_categories",
     "scene_template_ids",
+    "spoken_decimal",
     "template_names",
     "theme_names",
 ]
