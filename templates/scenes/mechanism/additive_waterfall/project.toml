@@ -1,0 +1,32 @@
+[project]
+title = "Additive Waterfall Recipe"
+entrypoint = "recipe.py"
+scene = "AdditiveWaterfallRecipe"
+output_file = "additive_waterfall_recipe"
+theme = "ivory"
+
+[render]
+preview_width = 854
+preview_height = 480
+preview_fps = 15
+width = 1920
+height = 1080
+fps = 30
+
+[[qa.frame]]
+time = 0.9
+label = "baseline before mechanism changes"
+kind = "transition"
+
+[[qa.frame]]
+time = 2.0
+label = "signed mechanism changes"
+kind = "transition"
+
+[[qa.frame]]
+time = 3.5
+label = "complete additive waterfall"
+kind = "settled"
+
+[audio]
+enabled = false

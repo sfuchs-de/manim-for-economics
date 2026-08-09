@@ -1,0 +1,11 @@
+[[dataset]]
+id = "adjoint-sweep-recipe"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/workflow.csv"
+sha256 = "dcdcb9c117d8e4a5b59ffa9704dda99871da36a02e728c520bf2e052179a5363"
+transformation = "Labels are ordered and used to color the schematic direct and adjoint workflows."
+displayed_values = ["K policy shocks", "K direct state solves", "One adjoint solve", "K policy inner products"]
+note = "The workflow is algebraic and uses symbolic dimensions rather than benchmark timings."

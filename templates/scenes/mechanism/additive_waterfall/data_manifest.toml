@@ -1,0 +1,11 @@
+[[dataset]]
+id = "additive-waterfall-recipe"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/waterfall.csv"
+sha256 = "093dac74c7205233232d3369155767769efd8bb782da18252f4d4fc19b24322f"
+transformation = "The baseline and signed changes are plotted exactly; labels are rounded to two decimals."
+displayed_values = ["Traditional 0.0387 bp", "Spatial adjustment +0.0098 bp", "Road congestion -0.0260 bp", "Extended 0.0225 bp"]
+note = "These values demonstrate the visual form and are not estimates."

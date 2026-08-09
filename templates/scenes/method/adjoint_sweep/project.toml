@@ -1,0 +1,27 @@
+[project]
+title = "Adjoint Policy Sweep Recipe"
+entrypoint = "recipe.py"
+scene = "AdjointSweepRecipe"
+output_file = "adjoint_sweep_recipe"
+theme = "ivory"
+
+[render]
+preview_width = 854
+preview_height = 480
+preview_fps = 15
+width = 1920
+height = 1080
+fps = 30
+
+[[qa.frame]]
+time = 1.3
+label = "repeated direct state solves"
+kind = "transition"
+
+[[qa.frame]]
+time = 3.2
+label = "one adjoint and policy inner products"
+kind = "settled"
+
+[audio]
+enabled = false

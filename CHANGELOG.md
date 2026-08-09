@@ -6,6 +6,12 @@ All notable changes to this repository are recorded here.
 
 ### Added
 
+- Atomic recipes for additive mechanism waterfalls, recursive network impulses,
+  and adjoint evaluation of many policy shocks.
+- An `examples` catalog and CLI command that distinguishes the component tour
+  from complete, evidence-backed paper case studies.
+- Registry-completeness tests that discover bundled projects, recipes, and
+  examples from the repository rather than a hard-coded path list.
 - `AdditiveWaterfallChart` for directly labeled benchmark-to-result mechanism
   decompositions in common units.
 - Paired display and narration metric formatting, including deterministic
@@ -55,6 +61,12 @@ All notable changes to this repository are recorded here.
   cross-platform differences in Pango font metrics without scaling prose.
 - Theme-aware scatter coordinates that remain legible in both ivory and
   midnight renders.
+
+### Changed
+
+- Feature-branch pushes no longer duplicate pull-request CI runs; superseded
+  runs are cancelled while `main` and pull requests retain the full matrix.
+- The format gallery now includes a staged additive waterfall in common units.
 
 ## 0.2.0 — 2026-07-30
 

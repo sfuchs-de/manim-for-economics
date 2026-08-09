@@ -1,0 +1,5 @@
+order,kind,label,value,color_role
+1,baseline,Traditional,0.0387,blue
+2,change,Spatial adjustment,0.0098,green
+3,change,Road congestion,-0.0260,rose
+4,total,Extended,,orange

@@ -26,6 +26,8 @@ Avoid an opening montage. Establish one object the viewer can recognize later.
 |---|---|---|
 | Movement through alternatives | `PathFlow` · `mechanism.path-flow` | The route has economic meaning |
 | Several margins affect one outcome | `ChannelDecomposition` · `mechanism.channel-decomposition` | Channels are conceptually distinct |
+| Mechanisms move one benchmark in common units | `AdditiveWaterfallChart` · `mechanism.additive-waterfall` | Contributions are exactly additive |
+| A local shock propagates in recursive rounds | `mechanism.network-impulse` | Each round has a defined linearized operator |
 | A change propagates sequentially | `CausalChain` | Order is part of the mechanism |
 | One state has concrete and analytical views | `LinkedViews` | Both panels represent the same state |
 
@@ -95,6 +97,12 @@ method-theory project supplies the complete problem → object → operation →
 result → comparative static → application grammar.
 
 Equations should follow meaning, not substitute for it.
+
+Use `method.adjoint-sweep` when one scalar outcome must be evaluated for many
+policy shocks. The recipe compares repeated state solves with one transposed
+adjoint solve and policy-specific inner products. It states the computational
+condition explicitly: the advantage is strongest when the number of outcomes
+is much smaller than the number of shocks.
 
 ## Welfare and policy value
 

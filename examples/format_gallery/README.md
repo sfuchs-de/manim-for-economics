@@ -11,7 +11,8 @@ This scene exercises the paper-independent component library:
 7. coefficient intervals and dynamic responses;
 8. realized variation;
 9. benchmark comparisons; and
-10. compact result tables.
+10. additive mechanism waterfalls; and
+11. compact result tables.
 
 Render and inspect it with:
 

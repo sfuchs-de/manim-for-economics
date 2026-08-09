@@ -106,10 +106,20 @@ kind = "settled"
 
 [[qa.frame]]
 time = 40.0
-label = "benchmark to result table"
+label = "benchmark to additive waterfall"
 kind = "transition"
 
 [[qa.frame]]
 time = 43.2
+label = "complete additive waterfall"
+kind = "settled"
+
+[[qa.frame]]
+time = 45.0
+label = "waterfall to result table"
+kind = "transition"
+
+[[qa.frame]]
+time = 48.2
 label = "complete result decomposition"
 kind = "settled"
