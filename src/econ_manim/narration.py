@@ -944,7 +944,7 @@ def prepare_recorded_narration(
             check=True,
         )
         cue_manifest[cue.identifier] = {
-            "file": str(target.relative_to(config.root)),
+            "file": target.relative_to(config.root).as_posix(),
             "duration": probe_audio_duration(target),
             "sha256": sha256_file(target),
             "text": cue.text,
