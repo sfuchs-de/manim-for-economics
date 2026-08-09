@@ -93,6 +93,7 @@ Create your own project:
 ```bash
 uv run econ-manim templates
 uv run econ-manim themes
+uv run econ-manim examples
 uv run econ-manim new my-paper --template general
 uv run econ-manim new network-paper --template mechanism-led
 uv run econ-manim new choice-paper --template agent-choice-welfare
@@ -100,6 +101,10 @@ uv run econ-manim new empirical-paper --template empirical-result-led
 uv run econ-manim new method-paper --template method-theory
 uv run econ-manim scenes
 ```
+
+Complete runnable examples are indexed in [`examples/`](examples/README.md).
+The format gallery is a component tour; the economic-diversity project is the
+end-to-end published-paper case study.
 
 For an existing paper, a practical first pass is:
 
@@ -157,6 +162,7 @@ paper and its replication files.
 | `econ-manim doctor` | Diagnose Python, Manim, LaTeX, fonts, and optional FFmpeg |
 | `econ-manim templates` | Explain the available paper-story templates |
 | `econ-manim themes` | List paper-independent visual presets |
+| `econ-manim examples` | Distinguish component tours from complete paper case studies |
 | `econ-manim scenes` | Browse atomic visual recipes by communication problem |
 | `econ-manim preview-scene ID` | Render one recipe independently in either theme |
 | `econ-manim add-scene PROJECT ID` | Copy a recipe, local data, and manifest fragment into a project |

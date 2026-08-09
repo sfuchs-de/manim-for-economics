@@ -15,6 +15,7 @@ def test_cli_exposes_planned_commands():
     choices = parser._subparsers._group_actions[0].choices
     assert set(choices) == {
         "doctor",
+        "examples",
         "templates",
         "themes",
         "scenes",
@@ -115,6 +116,16 @@ def test_themes_explains_visual_presets(capsys):
     assert "Warm paper field" in output
 
 
+def test_examples_distinguishes_gallery_from_paper_case_study(capsys):
+    assert main(["examples"]) == 0
+    output = capsys.readouterr().out
+    assert "format-gallery" in output
+    assert "component tour" in output
+    assert "economic-diversity" in output
+    assert "published-paper case study" in output
+    assert "released and explicitly digitized" in output
+
+
 def test_scenes_lists_and_filters_atomic_recipes(capsys):
     assert main(["scenes", "--category", "empirical"]) == 0
     output = capsys.readouterr().out
@@ -123,6 +134,17 @@ def test_scenes_lists_and_filters_atomic_recipes(capsys):
     assert "empirical.evolving-scatter" in output
     assert "empirical.geographic-network-map" in output
     assert "mechanism.path-flow" not in output
+
+    assert main(["scenes", "--category", "mechanism"]) == 0
+    mechanism_output = capsys.readouterr().out
+    assert "mechanism.additive-waterfall" in mechanism_output
+    assert "mechanism.network-impulse" in mechanism_output
+    assert "method.adjoint-sweep" not in mechanism_output
+
+    assert main(["scenes", "--category", "method"]) == 0
+    method_output = capsys.readouterr().out
+    assert "method.adjoint-sweep" in method_output
+    assert "mechanism.network-impulse" not in method_output
 
 
 def test_add_scene_copies_recipe_without_rewriting_project(tmp_path, capsys):

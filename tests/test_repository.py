@@ -4,29 +4,33 @@ import re
 from pathlib import Path
 
 from econ_manim.config import load_data_manifest, load_project, validate_data_manifest
+from econ_manim.examples import EXAMPLE_PROJECTS
 from econ_manim.media import probe_video
+from econ_manim.scene_templates import SCENE_TEMPLATES
 
 ROOT = Path(__file__).resolve().parents[1]
-PROJECTS = (
+PROJECT_ROOTS = (
     ROOT / "starter",
-    ROOT / "templates" / "projects" / "mechanism-led",
-    ROOT / "templates" / "projects" / "agent-choice-welfare",
-    ROOT / "templates" / "projects" / "empirical-result-led",
-    ROOT / "templates" / "projects" / "method-theory",
-    ROOT / "examples" / "format_gallery",
-    ROOT / "examples" / "economic_diversity",
-    ROOT / "templates" / "scenes" / "mechanism" / "path_flow",
-    ROOT / "templates" / "scenes" / "mechanism" / "channel_decomposition",
-    ROOT / "templates" / "scenes" / "empirical" / "coefficient_intervals",
-    ROOT / "templates" / "scenes" / "empirical" / "impulse_response",
-    ROOT / "templates" / "scenes" / "empirical" / "evolving_scatter",
-    ROOT / "templates" / "scenes" / "empirical" / "geographic_network_map",
+    ROOT / "templates" / "projects",
+    ROOT / "templates" / "scenes",
+    ROOT / "examples",
 )
+
+
+def bundled_projects() -> tuple[Path, ...]:
+    projects = set()
+    for source in PROJECT_ROOTS:
+        if (source / "project.toml").is_file():
+            projects.add(source)
+        projects.update(path.parent for path in source.rglob("project.toml"))
+    return tuple(sorted(projects))
+
+
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*]\(([^)]+)\)")
 
 
 def test_every_bundled_project_is_locally_complete():
-    for project_root in PROJECTS:
+    for project_root in bundled_projects():
         config = load_project(project_root)
         assert config.entrypoint.is_file()
         assert (project_root / "paper_brief.md").is_file()
@@ -36,6 +40,30 @@ def test_every_bundled_project_is_locally_complete():
         assert validate_data_manifest(project_root)
         entries = load_data_manifest(project_root)
         assert all(entry.local_path and entry.sha256 for entry in entries)
+
+
+def test_scene_registry_covers_every_atomic_recipe():
+    identifiers = [template.identifier for template in SCENE_TEMPLATES]
+    assert len(identifiers) == len(set(identifiers))
+    registered = {template.source for template in SCENE_TEMPLATES}
+    assert len(registered) == len(SCENE_TEMPLATES)
+    discovered = {
+        path.parent.relative_to(ROOT).as_posix()
+        for path in (ROOT / "templates" / "scenes").rglob("project.toml")
+    }
+    assert registered == discovered
+
+
+def test_example_registry_covers_every_complete_example():
+    identifiers = [example.identifier for example in EXAMPLE_PROJECTS]
+    assert len(identifiers) == len(set(identifiers))
+    registered = {example.source for example in EXAMPLE_PROJECTS}
+    assert len(registered) == len(EXAMPLE_PROJECTS)
+    discovered = {
+        path.parent.relative_to(ROOT).as_posix()
+        for path in (ROOT / "examples").glob("*/project.toml")
+    }
+    assert registered == discovered
 
 
 def test_case_study_sources_are_local_and_checksummed():

@@ -91,7 +91,12 @@ Inspect the included choices:
 ```bash
 uv run econ-manim templates
 uv run econ-manim themes
+uv run econ-manim examples
 ```
+
+The examples catalog separates the format gallery, which is a visual-component
+tour with illustrative inputs, from complete paper case studies with explicit
+source and transformation records.
 
 ### Narrative templates
 

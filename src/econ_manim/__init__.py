@@ -17,6 +17,7 @@ from .components import (
     adjustment_route,
 )
 from .data import read_csv_rows
+from .examples import EXAMPLE_PROJECTS, ExampleProject, example_ids
 from .flows import PathFlow
 from .formats import CausalChain, ChannelDecomposition, DivergingBarChart, LinkedViews
 from .layout import LayoutError, assert_no_overlap, assert_within_frame
@@ -66,6 +67,7 @@ __all__ = [
     "AgentToken",
     "ECON_DARK",
     "ECON_LIGHT",
+    "EXAMPLE_PROJECTS",
     "ChoiceMap",
     "CityLaborMarket",
     "CausalChain",
@@ -73,6 +75,7 @@ __all__ = [
     "CoefficientPlot",
     "DivergingBarChart",
     "EquationBuild",
+    "ExampleProject",
     "EvolvingScatterPlot",
     "GeographicNetworkMap",
     "GeographicRegion",
@@ -109,6 +112,7 @@ __all__ = [
     "get_scene_template",
     "get_theme",
     "fit_prose_text",
+    "example_ids",
     "format_metric",
     "format_metric_change",
     "geometrically_scaled_prose",

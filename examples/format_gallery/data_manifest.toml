@@ -33,3 +33,15 @@ sha256 = "f8c8e6ed09c644cdde7447901b09be633deebe7bda7f3f80ea3b35ad4a007377"
 transformation = "Direct and indirect entries are displayed with their row totals."
 displayed_values = ["Case A total -0.90", "Case B total -1.55"]
 note = "These are generic visual examples, not welfare calculations."
+
+[[dataset]]
+id = "format-gallery-waterfall"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/waterfall.csv"
+sha256 = "093dac74c7205233232d3369155767769efd8bb782da18252f4d4fc19b24322f"
+transformation = "The baseline and signed changes are plotted exactly; labels are rounded to two decimals."
+displayed_values = ["Traditional 0.0387 bp", "Spatial adjustment +0.0098 bp", "Road congestion -0.0260 bp", "Extended 0.0225 bp"]
+note = "These values demonstrate the visual form and are not estimates."

@@ -21,6 +21,7 @@ from .config import (
     sha256_file,
     validate_data_manifest,
 )
+from .examples import EXAMPLE_PROJECTS
 from .media import (
     VideoInfo,
     extract_contact_sheet,
@@ -211,6 +212,17 @@ def command_themes(args: argparse.Namespace) -> int:
             f"background {theme.background} · ink {theme.foreground} · "
             f"blue {theme.blue} · green {theme.green} · orange {theme.orange}.\n"
         )
+    return 0
+
+
+def command_examples(args: argparse.Namespace) -> int:
+    del args
+    for example in EXAMPLE_PROJECTS:
+        print(f"{example.identifier}\n  {example.title}")
+        print(f"  Kind: {example.kind}.")
+        print(f"  Evidence: {example.evidence}.")
+        print(f"  Use when: {example.use_when}.")
+        print(f"  Preview: econ-manim preview {example.source}.\n")
     return 0
 
 
@@ -653,6 +665,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="list the available visual theme presets",
     )
     themes.set_defaults(handler=command_themes)
+
+    examples = subparsers.add_parser(
+        "examples",
+        help="list complete examples and their evidence status",
+    )
+    examples.set_defaults(handler=command_examples)
 
     scenes = subparsers.add_parser(
         "scenes",

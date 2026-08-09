@@ -1,0 +1,11 @@
+[[dataset]]
+id = "network-impulse-recipe"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/impulse.csv"
+sha256 = "df07fd1e952db307379b1cae57123739934581a771af42bae667752da622664b"
+transformation = "Round labels and response intensities are plotted directly on a fixed schematic network."
+displayed_values = ["One direct impulse", "Three first-round responses", "Two second-round responses"]
+note = "The network and weights illustrate recursive propagation and are not calibrated estimates."

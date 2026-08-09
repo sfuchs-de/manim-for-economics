@@ -28,6 +28,15 @@ does not rewrite the project's scene or silently merge provenance records.
   movement while one system remains fixed.
 - [`mechanism.channel-decomposition`](mechanism/channel_decomposition/):
   connect distinct margins to one outcome.
+- [`mechanism.additive-waterfall`](mechanism/additive_waterfall/): move from a
+  benchmark to a final result through signed changes in common units.
+- [`mechanism.network-impulse`](mechanism/network_impulse/): trace a local
+  shock through successive rounds of a recursive network response.
+
+## Method
+
+- [`method.adjoint-sweep`](method/adjoint_sweep/): replace one state solve per
+  policy shock with one transposed solve and sparse policy inner products.
 
 ## Empirical evidence
 

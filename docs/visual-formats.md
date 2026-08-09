@@ -208,6 +208,11 @@ as one mechanism, while retaining the disaggregated calculation in the source
 data or appendix. Do not use an additive waterfall for factors that are only
 meaningful multiplicatively.
 
+Preview the complete `mechanism.additive-waterfall` recipe before adapting it.
+Use `mechanism.network-impulse` for the distinct problem of showing repeated
+propagation rounds, and `method.adjoint-sweep` when the argument concerns the
+cost of evaluating many policy derivatives rather than an economic mechanism.
+
 ## Format 7: estimates and dynamic responses
 
 Use `CoefficientPlot` for a small set of estimates sharing one scale and

@@ -15,6 +15,7 @@ from manim import (
 )
 
 from econ_manim import (
+    AdditiveWaterfallChart,
     CausalChain,
     ChannelDecomposition,
     ChoiceMap,
@@ -45,6 +46,10 @@ EVIDENCE_ROWS = read_csv_rows(
 DECOMPOSITION_ROWS = read_csv_rows(
     ROOT / "data" / "decomposition.csv",
     required_columns=("label", "label_color", "direct", "indirect", "total"),
+)
+WATERFALL_ROWS = read_csv_rows(
+    ROOT / "data" / "waterfall.csv",
+    required_columns=("order", "kind", "label", "value", "color_role"),
 )
 
 
@@ -318,6 +323,53 @@ class FormatGallery(ResearchScene):
             )
         self.wait(1.2)
         self.clear_stage(comparison)
+
+        self.next_section("additive-waterfall")
+        self.show_title("Show what each mechanism adds or subtracts")
+        self.set_caption("Illustrative values · use a common unit and preserve signed changes.")
+        ordered_waterfall = sorted(WATERFALL_ROWS, key=lambda row: int(row["order"]))
+        baseline = next(row for row in ordered_waterfall if row["kind"] == "baseline")
+        changes = tuple(row for row in ordered_waterfall if row["kind"] == "change")
+        total = next(row for row in ordered_waterfall if row["kind"] == "total")
+        waterfall = AdditiveWaterfallChart(
+            (
+                baseline["label"],
+                float(baseline["value"]),
+                getattr(theme, baseline["color_role"]),
+            ),
+            tuple(
+                (
+                    row["label"],
+                    float(row["value"]),
+                    getattr(theme, row["color_role"]),
+                )
+                for row in changes
+            ),
+            total_label=total["label"],
+            total_color=getattr(theme, total["color_role"]),
+            display_unit="bp",
+            speech_unit="basis points",
+            footer="Illustrative values · exact inputs, rounded labels",
+            theme=theme,
+        ).move_to([0, 0.05, 0])
+        self.play(
+            Create(waterfall.zero),
+            FadeIn(waterfall.bars[0]),
+            FadeIn(waterfall.labels[0]),
+            FadeIn(waterfall.amounts[0]),
+            run_time=0.50,
+        )
+        for index in range(1, len(waterfall.bars)):
+            self.play(
+                Create(waterfall.connectors[index - 1]),
+                FadeIn(waterfall.bars[index]),
+                FadeIn(waterfall.labels[index]),
+                FadeIn(waterfall.amounts[index]),
+                run_time=0.45,
+            )
+        self.play(FadeIn(waterfall.footer), run_time=0.25)
+        self.wait(1.2)
+        self.clear_stage(waterfall)
 
         self.next_section("result-table")
         self.show_title("Reserve tables for compact decompositions")
