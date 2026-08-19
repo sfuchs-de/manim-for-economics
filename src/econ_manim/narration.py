@@ -36,6 +36,17 @@ class NarrationScript:
     cues: tuple[NarrationCue, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class NarrationCueCheck:
+    """One cue's reading-rate and recording-coverage diagnostics."""
+
+    identifier: str
+    words: int
+    duration: float
+    words_per_minute: float
+    recording: str | None
+
+
 _RECORDER_TEMPLATE = r"""<!doctype html>
 <html lang="en">
 <head>
@@ -659,6 +670,64 @@ def load_narration_script(project: str | Path) -> NarrationScript:
         target_loudness_lufs=target_loudness,
         cues=tuple(cues),
     )
+
+
+def audit_narration_script(
+    project: str | Path,
+    *,
+    max_words_per_minute: float = 170.0,
+    require_recordings: bool = False,
+) -> tuple[NarrationCueCheck, ...]:
+    """Validate cue pacing and optional prepared-recording coverage."""
+
+    if not math.isfinite(max_words_per_minute) or max_words_per_minute <= 0:
+        raise ConfigError("maximum narration rate must be positive and finite")
+    script = load_narration_script(project)
+    config = load_project(project)
+    manifest_path = config.root / "assets" / "narration" / "manifest.json"
+    recorded: dict[str, dict[str, object]] = {}
+    if manifest_path.is_file():
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as error:
+            raise ConfigError(f"invalid narration manifest {manifest_path}: {error}") from error
+        if manifest.get("source_script_sha256") != script.sha256:
+            raise ConfigError("prepared narration does not match the current narration script")
+        recorded = dict(manifest.get("cues", {}))
+        unknown = set(recorded) - {cue.identifier for cue in script.cues}
+        if unknown:
+            raise ConfigError(f"narration manifest contains unknown cues: {sorted(unknown)}")
+    elif require_recordings:
+        raise ConfigError(f"prepared narration manifest does not exist: {manifest_path}")
+
+    checks = []
+    for cue in script.cues:
+        entry = recorded.get(cue.identifier)
+        if require_recordings and entry is None:
+            raise ConfigError(f"prepared recording is missing for cue {cue.identifier!r}")
+        duration = float(entry["duration"]) if entry is not None else cue.target_duration
+        if not math.isfinite(duration) or duration <= 0:
+            raise ConfigError(f"narration cue {cue.identifier!r} has an invalid duration")
+        recording = str(entry["file"]) if entry is not None else None
+        if recording is not None and not (config.root / recording).is_file():
+            raise ConfigError(f"prepared recording does not exist: {recording}")
+        words = len(cue.text.split())
+        words_per_minute = words / duration * 60.0
+        if words_per_minute > max_words_per_minute:
+            raise ConfigError(
+                f"narration cue {cue.identifier!r} requires {words_per_minute:.1f} words "
+                f"per minute; maximum is {max_words_per_minute:.1f}"
+            )
+        checks.append(
+            NarrationCueCheck(
+                cue.identifier,
+                words,
+                duration,
+                words_per_minute,
+                recording,
+            )
+        )
+    return tuple(checks)
 
 
 def _normalize_subtitle_text(value: str) -> str:

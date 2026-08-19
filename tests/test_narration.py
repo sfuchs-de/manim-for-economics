@@ -178,6 +178,24 @@ def test_record_narration_cli_can_omit_reference_stills():
     assert parsed.no_stills is True
 
 
+def test_narration_check_reports_cue_reading_rates(tmp_path, capsys):
+    project = narration_project(tmp_path)
+
+    assert main(["narration-check", str(project)]) == 0
+    output = capsys.readouterr().out
+    assert "[OK] opening" in output
+    assert "120.0 wpm" in output
+    assert "timing estimate" in output
+
+
+def test_narration_check_rejects_reading_rates_above_the_gate(tmp_path):
+    project = narration_project(tmp_path)
+
+    with pytest.raises(SystemExit) as exit_info:
+        main(["narration-check", str(project), "--max-wpm", "100"])
+    assert exit_info.value.code == 2
+
+
 def test_prepare_narration_fails_before_writing_when_a_cue_is_missing(
     tmp_path, monkeypatch
 ):

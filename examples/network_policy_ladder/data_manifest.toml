@@ -1,0 +1,23 @@
+[[dataset]]
+id = "network-policy-ladder-values"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/network_states.csv"
+sha256 = "7796e9d786e9fcf876added77fe77802bf2c58cf55e5b7750508396526a032f9"
+transformation = "Rows are plotted directly; ranks and reveal groups are recomputed deterministically."
+displayed_values = ["Twelve links in three model states"]
+note = "The values are synthetic and selected to illustrate rank changes."
+
+[[dataset]]
+id = "network-policy-ladder-map"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/regions.geojson"
+sha256 = "8c40d2e7405cf642dcb1f2823ed6b8ee635bf64644a3ea2104d9494db7aa7158"
+transformation = "The synthetic polygon is projected by GeographicNetworkMap."
+displayed_values = ["One synthetic study-area polygon"]
+note = "The boundary is schematic."

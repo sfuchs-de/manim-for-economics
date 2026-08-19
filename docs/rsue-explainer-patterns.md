@@ -94,8 +94,11 @@ dense inverse, but it recovers `K` full state responses. An adjoint solves one
 transposed system for the welfare weights, after which each policy requires an
 inner product with its local forcing vector.
 
-Keep this as a scene-level recipe because the appropriate symbols, dimensions,
-and sparsity claims depend on the paper. The reusable visual sequence is:
+The package now provides two reusable levels. `method.linearization-to-adjoint`
+derives the sequence from an implicit equilibrium to the welfare projection.
+`method.adjoint-sweep` compares repeated policy-specific state solves with one
+transposed solve. Their symbols, dimensions, and sparsity claims must still be
+adapted to the paper. The reusable visual sequence is:
 
 ```text
 B -> J DeltaZ = -B -> DeltaZ -> welfare projection -> K outcomes
@@ -115,7 +118,8 @@ the scatter first, recolor the map second, and update ranks last.
 
 The package supports this pattern through `EvolvingScatterPlot`,
 `GeographicNetworkMap`, `SelectedRankProjections`, `SelectedRankPanel`, and
-`SelectedRankHistoryPanel`.
+`SelectedRankHistoryPanel`. `SpatialStateDataset` and `LinkedEmpiricalViews`
+enforce the shared identifiers and state sequence for composite scenes.
 
 ## Let speech determine the reveal rate
 

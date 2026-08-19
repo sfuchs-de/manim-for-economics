@@ -30,16 +30,20 @@ from .media import (
     probe_video,
     transition_sweep_frames,
 )
-from .narration import prepare_recorded_narration, write_narration_recorder
+from .narration import (
+    audit_narration_script,
+    prepare_recorded_narration,
+    write_narration_recorder,
+)
+from .resources import resource_directory
 from .scene_templates import (
     SCENE_TEMPLATES,
     get_scene_template,
     scene_categories,
     scene_template_destination,
     scene_template_ids,
-    scene_template_source,
 )
-from .templates import PROJECT_TEMPLATES, get_template, template_names, template_source
+from .templates import PROJECT_TEMPLATES, get_template, template_names
 from .theme import THEMES, theme_names
 
 
@@ -156,24 +160,23 @@ def command_doctor(args: argparse.Namespace) -> int:
 
 
 def command_new(args: argparse.Namespace) -> int:
-    repo_root = Path(__file__).resolve().parents[2]
-    starter = template_source(args.template, repo_root)
     selected_theme = args.theme or get_template(args.template).default_theme
     destination_root = Path(args.destination).expanduser().resolve()
     target = destination_root / args.name
     if target.exists():
         raise ConfigError(f"destination already exists: {target}")
-    shutil.copytree(
-        starter,
-        target,
-        ignore=shutil.ignore_patterns(
-            "build",
-            "media",
-            "preview",
-            "__pycache__",
-            "*.pyc",
-        ),
-    )
+    with resource_directory(get_template(args.template).source) as starter:
+        shutil.copytree(
+            starter,
+            target,
+            ignore=shutil.ignore_patterns(
+                "build",
+                "media",
+                "preview",
+                "__pycache__",
+                "*.pyc",
+            ),
+        )
     project_file = target / "project.toml"
     project_text = project_file.read_text(encoding="utf-8")
     project_text = project_text.replace("My Economics Paper", args.name.replace("-", " ").title())
@@ -243,42 +246,41 @@ def command_scenes(args: argparse.Namespace) -> int:
 
 
 def command_preview_scene(args: argparse.Namespace) -> int:
-    repo_root = Path(__file__).resolve().parents[2]
-    source = scene_template_source(args.identifier, repo_root)
-    video = _render(
-        source,
-        preview=True,
-        scene=get_scene_template(args.identifier).preview_class,
-        overlay=args.overlay,
-        theme=args.theme,
-        no_cache=args.no_cache,
-    )
+    template = get_scene_template(args.identifier)
+    with resource_directory(template.source) as source:
+        video = _render(
+            source,
+            preview=True,
+            scene=template.preview_class,
+            overlay=args.overlay,
+            theme=args.theme,
+            no_cache=args.no_cache,
+        )
     print(json.dumps(asdict(probe_video(video)), indent=2))
     return 0
 
 
 def command_add_scene(args: argparse.Namespace) -> int:
-    repo_root = Path(__file__).resolve().parents[2]
-    source = scene_template_source(args.identifier, repo_root)
     project_root = Path(args.project).expanduser().resolve()
     load_project(project_root)
     destination = scene_template_destination(args.identifier, project_root)
     if destination.exists():
         raise ConfigError(f"scene recipe already exists: {destination}")
     destination.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copytree(
-        source,
-        destination,
-        ignore=shutil.ignore_patterns(
-            "build",
-            "preview",
-            "__pycache__",
-            "*.pyc",
-            "project.toml",
-            "paper_brief.md",
-            "storyboard.md",
-        ),
-    )
+    with resource_directory(get_scene_template(args.identifier).source) as source:
+        shutil.copytree(
+            source,
+            destination,
+            ignore=shutil.ignore_patterns(
+                "build",
+                "preview",
+                "__pycache__",
+                "*.pyc",
+                "project.toml",
+                "paper_brief.md",
+                "storyboard.md",
+            ),
+        )
     manifest_path = destination / "data_manifest.toml"
     manifest_text = manifest_path.read_text(encoding="utf-8")
     recipe_prefix = destination.relative_to(project_root).as_posix()
@@ -322,34 +324,29 @@ def command_demo(args: argparse.Namespace) -> int:
 
     if command_doctor(argparse.Namespace(strict=True)):
         return 1
-    repo_root = Path(__file__).resolve().parents[2]
-    project = repo_root / "starter"
-    if not project.is_dir():
-        raise ConfigError(
-            "the bundled demo requires a repository checkout containing starter/"
+    with resource_directory("starter") as project:
+        video = _render(
+            project,
+            preview=True,
+            scene=None,
+            overlay=not args.no_overlay,
+            theme=args.theme,
+            no_cache=args.no_cache,
         )
-    video = _render(
-        project,
-        preview=True,
-        scene=None,
-        overlay=not args.no_overlay,
-        theme=args.theme,
-        no_cache=args.no_cache,
-    )
-    config = load_project(project)
-    frames = config.render.inspection_frames
-    sheet = extract_contact_sheet(
-        video,
-        tuple(frame.time for frame in frames),
-        config.root / "build" / "qa",
-        labels=tuple(frame.label for frame in frames),
-        kinds=tuple(frame.kind for frame in frames),
-    )
-    for message in validate_data_manifest(config.root):
-        print(f"[OK] data: {message}")
-    print(f"[OK] preview: {video}")
-    print(f"[OK] contact sheet: {sheet}")
-    print(json.dumps(asdict(probe_video(video)), indent=2))
+        config = load_project(project)
+        frames = config.render.inspection_frames
+        sheet = extract_contact_sheet(
+            video,
+            tuple(frame.time for frame in frames),
+            config.root / "build" / "qa",
+            labels=tuple(frame.label for frame in frames),
+            kinds=tuple(frame.kind for frame in frames),
+        )
+        for message in validate_data_manifest(config.root):
+            print(f"[OK] data: {message}")
+        print(f"[OK] preview: {video}")
+        print(f"[OK] contact sheet: {sheet}")
+        print(json.dumps(asdict(probe_video(video)), indent=2))
     return 0
 
 
@@ -666,6 +663,21 @@ def command_prepare_narration(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_narration_check(args: argparse.Namespace) -> int:
+    checks = audit_narration_script(
+        args.project,
+        max_words_per_minute=args.max_wpm,
+        require_recordings=args.require_recordings,
+    )
+    for cue in checks:
+        source = cue.recording or "timing estimate"
+        print(
+            f"[OK] {cue.identifier}: {cue.words} words in {cue.duration:.2f}s "
+            f"({cue.words_per_minute:.1f} wpm; {source})"
+        )
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="econ-manim",
@@ -838,6 +850,24 @@ def build_parser() -> argparse.ArgumentParser:
         help="optional speaker name stored in the local narration manifest",
     )
     prepare_narration.set_defaults(handler=command_prepare_narration)
+
+    narration_check = subparsers.add_parser(
+        "narration-check",
+        help="validate narration cue coverage, durations, and reading rates",
+    )
+    narration_check.add_argument("project")
+    narration_check.add_argument(
+        "--max-wpm",
+        type=float,
+        default=170.0,
+        help="maximum acceptable cue reading rate (default: 170)",
+    )
+    narration_check.add_argument(
+        "--require-recordings",
+        action="store_true",
+        help="require a current prepared recording for every cue",
+    )
+    narration_check.set_defaults(handler=command_narration_check)
 
     audio = subparsers.add_parser("audio", help="mix documented music into a rendered master")
     audio.add_argument("project")

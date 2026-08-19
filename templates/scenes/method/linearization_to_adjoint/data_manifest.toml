@@ -1,0 +1,11 @@
+[[dataset]]
+id = "linearization-to-adjoint-workflow"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/workflow.csv"
+sha256 = "0489cd3445900ca11c55decb68f24b67528fe37d5fcd64aaf80b11b29b4c57a5"
+transformation = "Rows document the ordered symbolic derivation rendered by the recipe."
+displayed_values = ["Equilibrium system", "Linearization", "Welfare projection", "Adjoint system"]
+note = "The formulas are generic and must be matched to a paper's sign conventions before reuse."

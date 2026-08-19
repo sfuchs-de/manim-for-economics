@@ -52,6 +52,8 @@ applicable—the instrument before showing coefficients.
 | Dynamic response | `ImpulseResponsePlot` · `empirical.impulse-response` | Horizon, event date, uncertainty, baseline |
 | Same observations across model states | `EvolvingScatterPlot` · `empirical.evolving-scatter` | Stable identifiers, common sample, fixed benchmark and units |
 | Link values in geographic context | `GeographicNetworkMap` · `empirical.geographic-network-map` | Verified boundaries, coordinates, stable link IDs, values and units |
+| Map, scatter, and ranks across policy states | `LinkedEmpiricalViews` · `empirical.spatial-policy-ladder` | One `SpatialStateDataset`, fixed units, and a declared state order |
+| One selected observation across policy states | `SelectedObservationCard` · `empirical.selected-observation-biography` | A stable identifier and an economically motivated selection rule |
 | Benchmark restrictions | `DivergingBarChart` | Meaning of zero and changed assumption |
 | Compact decomposition | `ResultTable` | Units, row definitions, total construction |
 | Additive path from a benchmark to a final result | `AdditiveWaterfallChart` | Common units, exact starting value, signed contributions |
@@ -103,6 +105,12 @@ policy shocks. The recipe compares repeated state solves with one transposed
 adjoint solve and policy-specific inner products. It states the computational
 condition explicitly: the advantage is strongest when the number of outcomes
 is much smaller than the number of shocks.
+
+Use `method.linearization-to-adjoint` when the audience first needs to see why
+the adjoint appears. It moves from an equilibrium residual to the linearized
+state response, projects that response onto welfare, and only then introduces
+the transposed solve. Use `method.adjoint-sweep` afterward when the main point
+is the computational comparison across many policy shocks.
 
 ## Welfare and policy value
 

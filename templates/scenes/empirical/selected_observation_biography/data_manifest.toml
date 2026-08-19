@@ -1,0 +1,23 @@
+[[dataset]]
+id = "selected-observation-values"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/network_states.csv"
+sha256 = "f8fec7a5b7fccb86a28f3585b3635ca24c3c3aca56ea7fdccbb2afc577b29a6d"
+transformation = "Rows are plotted directly and the selected identifier is preserved in every view."
+displayed_values = ["Eight links across three illustrative model states"]
+note = "The observation biography demonstrates a visual method rather than an empirical result."
+
+[[dataset]]
+id = "selected-observation-map"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/regions.geojson"
+sha256 = "8c40d2e7405cf642dcb1f2823ed6b8ee635bf64644a3ea2104d9494db7aa7158"
+transformation = "The synthetic study-area polygon is projected with the package map component."
+displayed_values = ["One synthetic study-area polygon"]
+note = "The boundary is schematic."

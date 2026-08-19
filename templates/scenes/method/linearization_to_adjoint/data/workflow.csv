@@ -1,0 +1,7 @@
+step,label,formula
+1,Equilibrium system,"G(z,theta)=0"
+2,Linearization,"J dz + b_e dtheta_e = 0"
+3,State response,"dz/dtheta_e = -J^{-1}b_e"
+4,Welfare projection,"d ln W/dtheta_e = q^T dz/dtheta_e"
+5,Adjoint system,"J^T ell = q"
+6,Policy value,"d ln W/dtheta_e = -ell^T b_e"

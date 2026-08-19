@@ -1,0 +1,42 @@
+[project]
+title = "Linearization to Adjoint Recipe"
+entrypoint = "recipe.py"
+scene = "LinearizationToAdjointRecipe"
+output_file = "linearization_to_adjoint_recipe"
+theme = "ivory"
+
+[render]
+preview_width = 854
+preview_height = 480
+preview_fps = 15
+width = 1920
+height = 1080
+fps = 30
+
+[[qa.frame]]
+time = 1.3
+label = "equilibrium system and interpretation"
+kind = "settled"
+
+[[qa.frame]]
+time = 2.0
+label = "linearization transition"
+kind = "transition"
+
+[[qa.frame]]
+time = 3.4
+label = "direct state response"
+kind = "settled"
+
+[[qa.frame]]
+time = 5.0
+label = "welfare projection transition"
+kind = "transition"
+
+[[qa.frame]]
+time = 8.0
+label = "adjoint result"
+kind = "settled"
+
+[audio]
+enabled = false

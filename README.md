@@ -104,7 +104,9 @@ uv run econ-manim scenes
 
 Complete runnable examples are indexed in [`examples/`](examples/README.md).
 The format gallery is a component tour; the economic-diversity project is the
-end-to-end published-paper case study.
+end-to-end published-paper case study; and the network-policy ladder is a
+fully synthetic example of synchronized maps, scatters, ranks, and selected
+observations across policy states.
 
 For an existing paper, a practical first pass is:
 
@@ -179,6 +181,7 @@ paper and its replication files.
 | `econ-manim render PROJECT` | Render the silent 1920×1080, 30 fps master |
 | `econ-manim record-narration PROJECT` | Create a private offline recorder from the project's narration cues |
 | `econ-manim prepare-narration PROJECT RECORDINGS` | Normalize returned human recordings for the Manim scene |
+| `econ-manim narration-check PROJECT` | Check cue coverage, script hashes, recording files, durations, and speaking rates |
 | `econ-manim audio PROJECT` | Mix documented music or narration into the master |
 
 All generated output goes below the selected project's `build/` directory and

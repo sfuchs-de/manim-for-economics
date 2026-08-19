@@ -4,8 +4,23 @@ All notable changes to this repository are recorded here.
 
 ## Unreleased
 
+## 0.3.0 — 2026-08-19
+
 ### Added
 
+- Installed-wheel support for `econ-manim new`, `preview-scene`, `add-scene`,
+  and `demo`, with generated media excluded from package resources.
+- `SpatialStateDataset` and `LinkedEmpiricalViews` as one validated contract
+  for synchronized maps, scatters, and selected-rank histories.
+- Transition-safe state-label replacement, compact rank headers, and optional
+  rank-history tracking for focused selected-observation scenes.
+- Composite recipes for a spatial policy ladder, a selected-observation
+  biography, and the derivation from equilibrium linearization to an adjoint.
+- A complete synthetic network-policy example that stages locations, network
+  extent, policy values, model-state changes, and a selected link biography.
+- Cue-driven narration helpers and `narration-check` for script coverage,
+  recording coverage, duration, and speaking-rate validation.
+- Installed-wheel smoke testing in continuous integration.
 - Atomic recipes for additive mechanism waterfalls, recursive network impulses,
   and adjoint evaluation of many policy shocks.
 - An `examples` catalog and CLI command that distinguishes the component tour

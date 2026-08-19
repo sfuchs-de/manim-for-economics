@@ -1,0 +1,37 @@
+[project]
+title = "Selected Observation Biography Recipe"
+entrypoint = "recipe.py"
+scene = "SelectedObservationBiographyRecipe"
+output_file = "selected_observation_biography_recipe"
+theme = "midnight"
+
+[render]
+preview_width = 854
+preview_height = 480
+preview_fps = 15
+width = 1920
+height = 1080
+fps = 30
+
+[[qa.frame]]
+time = 1.5
+label = "selected link on map and scatter"
+kind = "settled"
+
+[[qa.frame]]
+time = 2.5
+label = "selected link moves under spatial adjustment"
+kind = "transition"
+
+[[qa.frame]]
+time = 4.2
+label = "selected link moves to extended result"
+kind = "transition"
+
+[[qa.frame]]
+time = 6.5
+label = "state-by-state observation biography"
+kind = "settled"
+
+[audio]
+enabled = false

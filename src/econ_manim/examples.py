@@ -34,6 +34,14 @@ EXAMPLE_PROJECTS = (
         use_when="learning the complete paper-to-video and provenance workflow",
         source="examples/economic_diversity",
     ),
+    ExampleProject(
+        identifier="network-policy-ladder",
+        title="Synthetic network policy ladder",
+        kind="linked spatial workflow",
+        evidence="illustrative local data and synthetic geography",
+        use_when="learning synchronized maps, scatters, ranks, and observation stories",
+        source="examples/network_policy_ladder",
+    ),
 )
 
 

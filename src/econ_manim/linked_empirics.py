@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import math
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import numpy as np
@@ -15,6 +15,7 @@ from manim import (
     PI,
     RIGHT,
     UP,
+    Animation,
     AnimationGroup,
     Axes,
     DashedLine,
@@ -51,6 +52,85 @@ class NetworkLink:
     identifier: str
     start: tuple[float, float]
     end: tuple[float, float]
+
+
+@dataclass(frozen=True, slots=True)
+class SpatialStateDataset:
+    """One validated data contract for synchronized spatial empirical views."""
+
+    observations: tuple[ScatterObservation, ...]
+    links: tuple[NetworkLink, ...]
+    state_order: tuple[str, ...]
+    unit: str
+    state_labels: Mapping[str, str] = field(default_factory=dict)
+    selected_labels: Mapping[str, str] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        _validate_observations(self.observations, self.state_order)
+        if not self.unit.strip():
+            raise ValueError("a spatial-state dataset requires a nonempty unit")
+        observation_ids = {observation.identifier for observation in self.observations}
+        link_ids = [link.identifier for link in self.links]
+        if not link_ids or len(link_ids) != len(set(link_ids)):
+            raise ValueError("spatial-state links must be nonempty and unique")
+        if observation_ids != set(link_ids):
+            raise ValueError(
+                "spatial-state observations and links must use exactly the same identifiers"
+            )
+        unknown_states = set(self.state_labels) - set(self.state_order)
+        if unknown_states:
+            names = ", ".join(sorted(unknown_states))
+            raise ValueError(f"state labels contain unknown states: {names}")
+        unknown_selected = set(self.selected_labels) - observation_ids
+        if unknown_selected:
+            names = ", ".join(sorted(unknown_selected))
+            raise ValueError(f"selected labels contain unknown observations: {names}")
+
+    @property
+    def identifiers(self) -> tuple[str, ...]:
+        """Return stable identifiers in observation order."""
+
+        return tuple(observation.identifier for observation in self.observations)
+
+    def values(self, state: str) -> dict[str, float]:
+        """Return state values keyed by the shared observation identifier."""
+
+        if state not in self.state_order:
+            raise KeyError(state)
+        return {
+            observation.identifier: float(observation.states[state])
+            for observation in self.observations
+        }
+
+    def benchmarks(self) -> dict[str, float]:
+        """Return the common horizontal benchmark used by linked scatters."""
+
+        return {
+            observation.identifier: float(observation.benchmark)
+            for observation in self.observations
+        }
+
+    def ranks(self, state: str) -> dict[str, int]:
+        """Return deterministic descending ranks for one model state."""
+
+        values = self.values(state)
+        ordered = sorted(values, key=lambda identifier: (-values[identifier], identifier))
+        return {identifier: index + 1 for index, identifier in enumerate(ordered)}
+
+    def value_groups(
+        self,
+        state: str,
+        *,
+        groups: int = 5,
+        descending: bool = True,
+    ) -> tuple[tuple[str, ...], ...]:
+        """Create deterministic reveal groups from one validated state."""
+
+        return ranked_value_groups(
+            self.values(state),
+            groups=groups,
+            descending=descending,
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -196,6 +276,29 @@ def _rendered_opacity(mobject) -> float:
         if fill_opacity is not None:
             return float(fill_opacity)
     return 1.0
+
+
+class _FadeSwapText(Animation):
+    """Replace prose while it is invisible instead of morphing its glyphs."""
+
+    def __init__(self, mobject, target, **kwargs) -> None:
+        self.target = target.copy()
+        self.visible_opacity = _rendered_opacity(mobject)
+        super().__init__(mobject, **kwargs)
+
+    def interpolate_mobject(self, alpha: float) -> None:
+        if alpha < 0.5:
+            self.mobject.become(self.starting_mobject)
+            opacity = self.visible_opacity * (1.0 - 2.0 * alpha)
+        else:
+            self.mobject.become(self.target)
+            opacity = self.visible_opacity * (2.0 * alpha - 1.0)
+        self.mobject.set_opacity(max(0.0, opacity))
+
+    def finish(self) -> None:
+        super().finish()
+        self.mobject.become(self.target)
+        self.mobject.set_opacity(self.visible_opacity)
 
 
 class EvolvingScatterPlot(VGroup):
@@ -435,10 +538,19 @@ class EvolvingScatterPlot(VGroup):
             font_size=21,
             color=self._theme.foreground,
         ).move_to(self.state_label)
-        target_label.set_opacity(_rendered_opacity(self.state_label))
+        current_opacity = _rendered_opacity(self.state_label)
+        target_label.set_opacity(current_opacity)
+        if current_opacity < 0.05:
+            label_animation = Transform(self.state_label, target_label)
+        else:
+            label_animation = _FadeSwapText(
+                self.state_label,
+                target_label,
+                run_time=run_time,
+            )
         animation = AnimationGroup(
             Transform(self.dots, target_dots),
-            Transform(self.state_label, target_label),
+            label_animation,
             lag_ratio=0,
             run_time=run_time,
         )
@@ -1289,3 +1401,178 @@ class GeographicNetworkMap(VGroup):
         highlight_ids = tuple(self.highlights)
         copy[5][highlight_ids.index(identifier)].set_stroke(width=8.5, opacity=1)
         return copy
+
+
+class LinkedEmpiricalViews:
+    """Coordinate a map, scatter, and rank history from one validated dataset."""
+
+    def __init__(
+        self,
+        dataset: SpatialStateDataset,
+        regions: Sequence[GeographicRegion],
+        *,
+        extent: tuple[float, float, float, float],
+        selected_colors: Mapping[str, str],
+        initial_state: str | None = None,
+        scatter_width: float = 6.5,
+        scatter_height: float = 4.1,
+        map_width: float = 6.1,
+        map_height: float = 3.8,
+        rank_headers: Mapping[str, str] | None = None,
+        track_rank_history: bool = True,
+        theme: VideoTheme = ECON_DARK,
+    ) -> None:
+        state = initial_state or dataset.state_order[0]
+        if state not in dataset.state_order:
+            raise KeyError(state)
+        selected = dict(selected_colors)
+        if set(selected) != set(dataset.selected_labels):
+            raise ValueError(
+                "selected colors must cover exactly the dataset's selected labels"
+            )
+
+        all_values = [
+            value
+            for model_state in dataset.state_order
+            for value in dataset.values(model_state).values()
+        ]
+        all_benchmarks = list(dataset.benchmarks().values())
+        lower = min(0.0, *all_values, *all_benchmarks)
+        upper = max(*all_values, *all_benchmarks)
+        if math.isclose(lower, upper):
+            upper = lower + 1.0
+        padding = 0.08 * (upper - lower)
+        plot_range = (lower - padding, upper + padding, (upper - lower) / 4.0)
+
+        state_colors = {
+            model_state: {
+                identifier: _sequential_color(
+                    (value - lower) / (upper - lower),
+                    GeographicNetworkMap.DEFAULT_COLORS,
+                ).to_hex()
+                for identifier, value in dataset.values(model_state).items()
+            }
+            for model_state in dataset.state_order
+        }
+        self.scatter = EvolvingScatterPlot(
+            dataset.observations,
+            dataset.state_order,
+            state_labels=dataset.state_labels,
+            initial_state=state,
+            selected_colors=selected,
+            state_colors=state_colors,
+            x_range=plot_range,
+            y_range=plot_range,
+            width=scatter_width,
+            height=scatter_height,
+            x_label="Traditional approach",
+            y_label=f"Welfare gain ({dataset.unit})",
+            theme=theme,
+        )
+        self.map = GeographicNetworkMap(
+            regions,
+            dataset.links,
+            values=dataset.values(state),
+            extent=extent,
+            value_range=(lower, upper + padding),
+            width=map_width,
+            height=map_height,
+            selected_colors=selected,
+            legend_title=dataset.unit,
+            show_legend=False,
+            theme=theme,
+        )
+        self.rank_history = SelectedRankHistoryPanel(
+            self.scatter,
+            dataset.selected_labels,
+            states=dataset.state_order,
+            state_headers=rank_headers or dataset.state_labels,
+            theme=theme,
+        )
+        for model_state in dataset.state_order:
+            self.rank_history.state_groups[model_state].set_opacity(
+                1.0 if model_state == state else 0.0
+            )
+        self.dataset = dataset
+        self.current_state = state
+        self.track_rank_history = bool(track_rank_history)
+
+    def animate_to(self, state: str, *, run_time: float = 1.6) -> AnimationGroup:
+        """Move every linked view to the same model state."""
+
+        if state not in self.dataset.state_order:
+            raise KeyError(state)
+        if self.dataset.state_order.index(state) < self.dataset.state_order.index(
+            self.current_state
+        ):
+            raise ValueError("linked empirical states must be revealed in declared order")
+        animations = [
+            self.scatter.animate_to(state, run_time=run_time),
+            self.map.animate_values(self.dataset.values(state), run_time=run_time),
+        ]
+        if self.track_rank_history:
+            state_group = self.rank_history.state_groups[state]
+            if _rendered_opacity(state_group) < 1.0:
+                animations.append(state_group.animate.set_opacity(1.0))
+        self.current_state = state
+        return AnimationGroup(*animations, lag_ratio=0, run_time=run_time)
+
+
+class SelectedObservationCard(VGroup):
+    """Compact state-by-state biography for one selected spatial observation."""
+
+    def __init__(
+        self,
+        dataset: SpatialStateDataset,
+        identifier: str,
+        *,
+        color: str,
+        value_decimals: int = 2,
+        width: float = 4.0,
+        theme: VideoTheme = ECON_DARK,
+    ) -> None:
+        if identifier not in dataset.identifiers:
+            raise KeyError(identifier)
+        label = dataset.selected_labels.get(identifier, identifier)
+        title = fit_prose_text(
+            label,
+            max_width=width - 0.42,
+            font_size=20,
+            min_font_size=14,
+            color=color,
+            weight="BOLD",
+        )
+        ranks_by_state = {
+            state: dataset.ranks(state)[identifier] for state in dataset.state_order
+        }
+        observation = next(
+            item for item in dataset.observations if item.identifier == identifier
+        )
+        rows = VGroup()
+        for state in dataset.state_order:
+            state_name = dataset.state_labels.get(state, state)
+            text = (
+                f"{state_name}: {observation.states[state]:.{value_decimals}f} "
+                f"{dataset.unit} · rank {ranks_by_state[state]}"
+            )
+            rows.add(
+                fit_prose_text(
+                    text,
+                    max_width=width - 0.42,
+                    font_size=15,
+                    min_font_size=11,
+                    color=theme.foreground,
+                )
+            )
+        rows.arrange(DOWN, aligned_edge=LEFT, buff=0.13)
+        content = VGroup(title, rows).arrange(DOWN, aligned_edge=LEFT, buff=0.23)
+        box = Rectangle(
+            width=width,
+            height=content.height + 0.48,
+            stroke_color=color,
+            stroke_width=1.4,
+            fill_color=theme.card,
+            fill_opacity=0.94,
+        )
+        content.move_to(box)
+        super().__init__(box, content)
