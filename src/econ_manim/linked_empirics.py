@@ -1420,6 +1420,7 @@ class LinkedEmpiricalViews:
         map_height: float = 3.8,
         rank_headers: Mapping[str, str] | None = None,
         track_rank_history: bool = True,
+        scatter_show_coordinates: bool = True,
         theme: VideoTheme = ECON_DARK,
     ) -> None:
         state = initial_state or dataset.state_order[0]
@@ -1467,6 +1468,7 @@ class LinkedEmpiricalViews:
             height=scatter_height,
             x_label="Traditional approach",
             y_label=f"Welfare gain ({dataset.unit})",
+            show_coordinates=scatter_show_coordinates,
             theme=theme,
         )
         self.map = GeographicNetworkMap(

@@ -61,6 +61,7 @@ def test_linked_empirical_views_use_one_state_contract():
         extent=(-0.5, 3.5, -0.5, 0.5),
         selected_colors={"a": "#CA6B3C", "b": "#2A9D8F"},
         rank_headers={"traditional": "Trad.", "extended": "Extended"},
+        scatter_show_coordinates=False,
     )
     assert views.current_state == "traditional"
     assert views.scatter.current_state == "traditional"
@@ -85,6 +86,7 @@ def test_linked_empirical_views_can_omit_rank_history_from_transitions():
         selected_colors={"a": "#CA6B3C", "b": "#2A9D8F"},
         rank_headers={"traditional": "Trad.", "extended": "Extended"},
         track_rank_history=False,
+        scatter_show_coordinates=False,
     )
 
     animation = views.animate_to("extended")
