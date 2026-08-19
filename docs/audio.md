@@ -77,6 +77,24 @@ During script development, pass an explicit `duration` without an audio file.
 This creates narration-paced holds and subtitle timing before a final voice is
 recorded. Replace estimated timing with the finished WAV files before release.
 
+For a cue-driven project, load the narration once and start sections by ID:
+
+```python
+self.configure_narration(ROOT)
+self.begin_cue("mechanism")
+# Reveal only the objects named by this cue.
+self.finish_voiceover()
+```
+
+Check cue coverage and reading rates before rendering:
+
+```bash
+uv run econ-manim narration-check projects/my-paper
+uv run econ-manim narration-check projects/my-paper --require-recordings
+```
+
+The second command also requires a current prepared audio file for every cue.
+
 ## Separate display numbers from spoken numbers
 
 Compact chart labels and natural narration need different formatting. Use

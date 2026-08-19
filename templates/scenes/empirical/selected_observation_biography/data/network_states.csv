@@ -1,0 +1,9 @@
+id,label,x1,y1,x2,y2,benchmark,spatial,extended
+west_north,West to North,0,3,3,6,0.74,0.88,0.56
+west_center,West to Center,0,3,3,3,0.63,0.72,0.45
+north_east,North to East,3,6,7,5,0.68,0.59,0.41
+center_east,Center to East,3,3,7,5,0.49,0.71,0.47
+center_port,Center to Port,3,3,7,1,0.57,0.64,0.36
+east_hub,East to Hub,7,5,10,3,0.60,0.67,0.40
+port_hub,Port to Hub,7,1,10,3,0.46,0.58,0.29
+east_port,East to Port,7,5,7,1,0.35,0.44,0.27

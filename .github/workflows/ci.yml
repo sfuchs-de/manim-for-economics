@@ -34,6 +34,11 @@ jobs:
       - run: uv sync --frozen
       - run: uv run ruff check .
       - run: uv run pytest
+      - name: Build and smoke-test the installed wheel
+        if: runner.os == 'Linux'
+        run: |
+          uv build --wheel --out-dir dist
+          uv run python scripts/wheel_smoke.py "$(find dist -name '*.whl' -print -quit)"
       - name: Validate container definition
         if: runner.os == 'Linux'
         run: docker compose config --quiet

@@ -68,9 +68,13 @@ make test
 ## What is bundled
 
 - Every project template, theme, reusable component, and Codex workflow file.
+- The starter and copyable scene resources inside the installed wheel, so
+  project creation does not depend on a repository checkout.
 - Runnable generic scenes and their illustrative data manifests.
 - Curated preview videos and contact sheets for visual inspection.
-- The economic-diversity animation code and every numeric value it displays.
+- The economic-diversity animation code and every numeric value it displays,
+  plus a synthetic network-policy example that links maps, scatters, ranks,
+  and selected observations through one data contract.
 - Checksummed local CSV files for the released shocks, digitized response
   paths, and welfare table.
 - Tests for configuration, provenance, components, layout, themes, media, and

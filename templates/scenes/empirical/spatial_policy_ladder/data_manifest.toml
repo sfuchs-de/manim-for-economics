@@ -1,0 +1,23 @@
+[[dataset]]
+id = "spatial-policy-ladder-values"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/network_states.csv"
+sha256 = "7796e9d786e9fcf876added77fe77802bf2c58cf55e5b7750508396526a032f9"
+transformation = "Rows are plotted directly in every linked view; ranks are recomputed by state."
+displayed_values = ["Twelve links across traditional, spatial-adjustment, and extended states"]
+note = "The values are designed to demonstrate synchronized model comparisons, not to reproduce a paper."
+
+[[dataset]]
+id = "spatial-policy-ladder-map"
+status = "illustrative"
+classification = "illustrative"
+source_url = ""
+license = ""
+local_path = "data/regions.geojson"
+sha256 = "8c40d2e7405cf642dcb1f2823ed6b8ee635bf64644a3ea2104d9494db7aa7158"
+transformation = "The synthetic study-area polygon is projected with the package map component."
+displayed_values = ["One synthetic study-area polygon"]
+note = "The boundary is schematic."

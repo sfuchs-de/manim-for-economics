@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import textwrap
 from pathlib import Path
@@ -20,8 +21,10 @@ from manim import (
     VGroup,
 )
 
+from .config import ConfigError
 from .layout import assert_within_frame
 from .media import probe_audio_duration
+from .narration import load_narration_script
 from .theme import ECON_DARK, VideoTheme, get_theme
 from .typography import ProseText as Text
 from .typography import assert_prose_is_unscaled, fit_prose_text, resolve_font
@@ -43,6 +46,8 @@ class ResearchScene(Scene):
         self._title_group = VGroup()
         self._caption_group = VGroup()
         self._voiceover_end: float | None = None
+        self._narration_cues: dict[str, dict[str, object]] = {}
+        self._narration_root: Path | None = None
         if os.getenv("ECON_MANIM_QA", "0") == "1":
             self.add(self.safe_area_overlay())
 
@@ -234,6 +239,70 @@ class ResearchScene(Scene):
             self.add_subcaption(text, duration=duration)
         self._voiceover_end = self.time + duration
         return duration
+
+    def configure_narration(
+        self,
+        project: str | Path,
+        *,
+        enabled: bool | None = None,
+    ) -> None:
+        """Load prepared recordings or timing estimates for cue-driven scenes."""
+
+        root = Path(project).expanduser().resolve()
+        narration_enabled = (
+            os.getenv("ECON_MANIM_NARRATION", "1") != "0"
+            if enabled is None
+            else bool(enabled)
+        )
+        self._narration_root = root
+        if not narration_enabled:
+            self._narration_cues = {}
+            return
+        script = load_narration_script(root)
+        manifest_path = root / "assets" / "narration" / "manifest.json"
+        if manifest_path.is_file():
+            try:
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as error:
+                raise ConfigError(
+                    f"invalid narration manifest {manifest_path}: {error}"
+                ) from error
+            if manifest.get("source_script_sha256") != script.sha256:
+                raise ConfigError("prepared narration does not match narration.toml")
+            cues = dict(manifest.get("cues", {}))
+        else:
+            cues = {
+                cue.identifier: {
+                    "text": cue.text,
+                    "duration": cue.target_duration,
+                    "file": None,
+                }
+                for cue in script.cues
+            }
+        expected = {cue.identifier for cue in script.cues}
+        if set(cues) != expected:
+            raise ConfigError("narration cue coverage does not match narration.toml")
+        self._narration_cues = cues
+
+    def begin_cue(self, identifier: str, *, section: str | None = None) -> None:
+        """Close the prior cue, mark a Manim section, and start one narration cue."""
+
+        self.finish_voiceover()
+        self.next_section(section or identifier)
+        if not self._narration_cues:
+            return
+        cue = self._narration_cues.get(identifier)
+        if cue is None:
+            raise KeyError(f"narration cue is missing: {identifier!r}")
+        audio = cue.get("file")
+        source = self._narration_root / str(audio) if audio and self._narration_root else None
+        if source is not None and source.is_file():
+            self.start_voiceover(source, text=str(cue["text"]))
+        else:
+            self.start_voiceover(
+                text=str(cue["text"]),
+                duration=float(cue["duration"]),
+            )
 
     def finish_voiceover(
         self,

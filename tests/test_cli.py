@@ -30,6 +30,7 @@ def test_cli_exposes_planned_commands():
         "qa",
         "record-narration",
         "prepare-narration",
+        "narration-check",
         "audio",
     }
 
@@ -135,6 +136,8 @@ def test_scenes_lists_and_filters_atomic_recipes(capsys):
     assert "empirical.impulse-response" in output
     assert "empirical.evolving-scatter" in output
     assert "empirical.geographic-network-map" in output
+    assert "empirical.spatial-policy-ladder" in output
+    assert "empirical.selected-observation-biography" in output
     assert "mechanism.path-flow" not in output
 
     assert main(["scenes", "--category", "mechanism"]) == 0
@@ -146,6 +149,7 @@ def test_scenes_lists_and_filters_atomic_recipes(capsys):
     assert main(["scenes", "--category", "method"]) == 0
     method_output = capsys.readouterr().out
     assert "method.adjoint-sweep" in method_output
+    assert "method.linearization-to-adjoint" in method_output
     assert "mechanism.network-impulse" not in method_output
 
 

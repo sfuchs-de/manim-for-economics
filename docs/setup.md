@@ -110,5 +110,9 @@ python -m pip install -e .
 econ-manim doctor --strict
 ```
 
+The wheel includes the starter project and all copyable project and scene
+templates. Commands such as `econ-manim new` and `econ-manim add-scene`
+therefore work from an installed wheel outside the repository checkout.
+
 Use `python -m manim` in place of `manim` if the console entry point is not on
 your shell's `PATH`.

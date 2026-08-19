@@ -25,12 +25,15 @@ from .linked_empirics import (
     EvolvingScatterPlot,
     GeographicNetworkMap,
     GeographicRegion,
+    LinkedEmpiricalViews,
     NetworkInset,
     NetworkLink,
     ScatterObservation,
+    SelectedObservationCard,
     SelectedRankHistoryPanel,
     SelectedRankPanel,
     SelectedRankProjections,
+    SpatialStateDataset,
     ranked_value_groups,
     read_geojson_regions,
 )
@@ -82,6 +85,7 @@ __all__ = [
     "ImpulseResponsePlot",
     "IVORY",
     "LayoutError",
+    "LinkedEmpiricalViews",
     "LinkedViews",
     "MIDNIGHT",
     "MetricPhrase",
@@ -97,10 +101,12 @@ __all__ = [
     "SCENE_TEMPLATES",
     "ScatterObservation",
     "SceneTemplate",
+    "SelectedObservationCard",
     "ShockDistribution",
     "SelectedRankHistoryPanel",
     "SelectedRankPanel",
     "SelectedRankProjections",
+    "SpatialStateDataset",
     "THEMES",
     "VideoTheme",
     "WorkerToken",
@@ -127,4 +133,4 @@ __all__ = [
     "theme_names",
 ]
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"

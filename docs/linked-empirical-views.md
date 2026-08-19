@@ -7,6 +7,12 @@ into another. The `EvolvingScatterPlot`, `SelectedRankPanel`,
 `GeographicNetworkMap` components use one stable identifier across the chart,
 ranking, and map.
 
+For composite scenes, define these objects through one `SpatialStateDataset`.
+It rejects mismatched link and observation identifiers, missing model states,
+nonfinite values, unknown selected observations, and empty units before Manim
+constructs a view. `LinkedEmpiricalViews` then builds the map, scatter, and
+rank history from that contract and moves them together with `animate_to`.
+
 The atomic `empirical.evolving-scatter` recipe demonstrates the pattern with
 illustrative data. A paper-specific project should supply one table containing
 the fixed benchmark and every vertical state. Ranks are then recomputed from
@@ -19,6 +25,14 @@ replacing the value encoding. Its bundled demonstration uses public Census
 boundaries and public-safe derived traffic measures for 352 links in the U.S.
 highway application. Restricted raw network inputs are not included. The
 recipe can be copied independently of the evolving scatter.
+
+Two composite recipes cover the next level of reuse. The
+`empirical.spatial-policy-ladder` recipe keeps the map, scatter, and cumulative
+rank columns synchronized across an ordered model sequence. The
+`empirical.selected-observation-biography` recipe follows one verified ID
+through its geography, scatter trajectory, values, and ranks. The complete
+`examples/network_policy_ladder` project combines the location-first map,
+model ladder, and observation biography with synthetic local data.
 
 For a network application, the map should show the complete distribution of
 link-level results rather than only the observations discussed in the
@@ -99,16 +113,18 @@ horizontal guide from each dot to the welfare axis and labels the intercept
 with the observation's rank. Calling `animate_to(state)` moves the guide and
 recomputes the rank from the same state column used by the scatter. This makes
 re-ranking visible in the chart without treating rank as a second coordinate.
-For long state names or changing rank labels, fade the labels out while the
-points move and restore them after `animate_to`. This avoids asking Pango to
-morph one line of text into another. The bundled recipe implements that
-sequence.
+`EvolvingScatterPlot.animate_to` fades its state heading through an invisible
+text swap while the points move. This avoids asking Pango to morph one line of
+text into another. A recipe may still hide selected labels and projections
+explicitly when those objects should return only after the new state settles.
 
 When the argument depends on remembering several intermediate rankings, use
 `SelectedRankHistoryPanel`. It keeps one column per model state instead of
 replacing the previous ranks. Reveal each new column only after its scatter and
 map transition is complete, so viewers can compare traditional, intermediate,
-and final rankings without scrubbing backward.
+and final rankings without scrubbing backward. Set
+`LinkedEmpiricalViews(track_rank_history=False)` when a selected-observation
+card, rather than cumulative rank columns, carries that part of the argument.
 
 ## Current Manim choices
 
@@ -138,23 +154,11 @@ Official references:
 - [Manim Voiceover](https://voiceover.manim.community/en/stable/)
 - [Manim Slides](https://manim-slides.eertmans.be/latest/)
 
-## Next reusable recipes
+## Further extensions
 
-One useful next addition would combine the evolving scatter and network inset into a
-single spatial-biography recipe. One selected observation would remain linked
-to its map segment, trajectory, mechanism values, and rank. A parameter-sweep
-recipe could then move all observations continuously as an elasticity changes,
-with the mean effect and rank correlation updating from the same parameter
-tracker.
-
-A rank-flow recipe would be useful when the main result is a policy-ordering
-change rather than a level change. A network-impulse recipe could start from one
-improved edge and reveal how market-access effects spread across neighboring
-nodes. An adjoint-sweep recipe should compare an \(n\)-by-\(E\) matrix of direct
-state responses with the single \(n\)-vector welfare adjoint. It should state
-the computational contract precisely: construct and factor the equilibrium
-Jacobian once, solve the transposed system for the welfare adjoint, and then
-evaluate all policy derivatives as inner products with the forcing matrix.
-Finally, a section-to-slides export command and an optional generated-speech
-adapter would make the same scene usable in a narrated video and a seminar
-without maintaining separate animation code.
+A parameter-sweep recipe could move observations continuously as an elasticity
+changes, with the mean effect and rank correlation updating from the same
+tracker. A rank-flow recipe would help when the main result is a policy-ordering
+change rather than a level change. Section-to-slides export remains a separate
+workflow improvement; generated speech should remain optional because silent
+and human-narrated renders must continue to work without an online service.
